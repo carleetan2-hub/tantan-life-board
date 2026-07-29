@@ -330,6 +330,12 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
 .collection-item-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
 .collection-note{white-space:pre-wrap;line-height:1.65}
 .collection-summary{white-space:pre-wrap;line-height:1.65;background:#fff;border:1px dashed var(--input-border);border-radius:12px;padding:8px;margin-top:8px;font-size:12px;color:var(--text-sec)}
+.late-sleep{color:#d64545;font-weight:700}
+.idea-card{border:1px solid var(--input-border);border-radius:14px;background:var(--input-bg);padding:12px;display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
+.idea-body{white-space:pre-wrap;line-height:1.75;margin-top:6px}
+.idea-body h4{margin:8px 0 4px;color:var(--primary)}
+.idea-body ul{margin:6px 0 6px 18px}
+.writing-feedback{white-space:pre-wrap;line-height:1.7;background:var(--primary-light);border:1px dashed var(--primary);border-radius:12px;padding:10px;margin-top:8px;font-size:13px;color:var(--text-sec)}
 /* ========== 动画 ========== */
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
@@ -406,7 +412,7 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
       <div>状态：<strong>迭代中</strong></div>
       <div id="siteVersion">V7.12</div>
       <div style="font-size:11px;color:var(--text-light);margin-top:4px">小改动用小数点后两位（V7.11），大改动用V7.x</div>
-      <div style="margin-top:6px"><button class="btn btn-ghost btn-sm" id="moreChangelogBtn" style="padding:0;font-size:12px">迭代更新</button></div>
+      <div style="margin-top:6px"><button class="btn btn-ghost btn-sm" id="moreChangelogBtn" style="padding:0;font-size:12px">更新日志</button></div>
     </div>
   </aside>
   <section class="content-area">
@@ -612,6 +618,11 @@ function weekDates(){
   const monday=addDays(now,(now.getDay()+6)%7*-1);
   return Array.from({length:7},(_,i)=>addDays(monday,i));
 }
+function weekDatesWithOffset(offset=0){
+  const now=new Date();
+  const monday=addDays(now,(now.getDay()+6)%7*-1+(+offset||0)*7);
+  return Array.from({length:7},(_,i)=>addDays(monday,i));
+}
 function monthDates(date=new Date()){
   const y=date.getFullYear(),m=date.getMonth();
   const first=new Date(y,m,1);
@@ -691,6 +702,50 @@ function englishCompletion(rec={}){
     (+rec.shadowMinutes||0)>=5
   ].filter(Boolean).length;
   return {done,total:5,rate:Math.round(done/5*100)};
+}
+function visibleSleepNote(note=''){
+  const text=String(note||'').trim();
+  return text==='由1-6月手写睡眠记录导入，可继续编辑'?'':text;
+}
+function markdownLite(text=''){
+  const lines=String(text||'').split('\n');
+  return lines.map(line=>{
+    const s=esc(line);
+    if(/^#{1,3}\s+/.test(line))return `<h4>${s.replace(/^#{1,3}\s+/,'')}</h4>`;
+    if(/^[-*]\s+/.test(line))return `<div>• ${s.replace(/^[-*]\s+/,'')}</div>`;
+    return s||'<br>';
+  }).join('\n');
+}
+function englishWritingFeedback(text='',packWords=[]){
+  const raw=String(text||'').trim();
+  if(!raw)return '';
+  const used=packWords.filter(w=>new RegExp(`\\b${w}\\b`,'i').test(raw));
+  const tips=[];
+  if(/\bi\b/.test(raw))tips.push('英文里第一人称 I 需要大写。');
+  if(!/[.!?]$/.test(raw))tips.push('句末建议加句号、问号或感叹号，让表达更完整。');
+  if(/\bvery very\b/i.test(raw))tips.push('可以避免重复 very very，改用 really / extremely / quite。');
+  if(raw.split(/\s+/).length<8)tips.push('可以再补充一个原因或细节，例如 because / when / after 引导的从句。');
+  const polished=raw
+    .replace(/\bi\b/g,'I')
+    .replace(/\s+/g,' ')
+    .replace(/very very/ig,'really')
+    .replace(/([^.!?])$/,'$1.');
+  return `做得好的：你已经主动用英文表达当天感受，这比只背单词更能真正转化为输出能力。${used.length?`这次还用到了 ${used.join('、')}，很好。`:''}\n\n可以优化的地方：${tips.length?tips.join(' '):'整体表达比较清楚，下一步可以尝试使用更具体的动词和连接词。'}\n\n参考表达：${polished}\n\n学习建议：下次可以按「感受 → 原因 → 下一步」三句来写，例如 I feel..., because..., so I will...。`;
+}
+function weeklyReflectionText(summary){
+  const rate=summary.planTotal?Math.round(summary.planDone/summary.planTotal*100):0;
+  const earlyRate=summary.sleep?Math.round(summary.earlySleep/summary.sleep*100):0;
+  const good=[];
+  const improve=[];
+  if(rate>=70)good.push(`计划完成率达到 ${rate}%`);
+  else improve.push(`计划完成率为 ${rate}%，可以减少当天计划数量，先保证核心事项完成`);
+  if(summary.sleep&&earlyRate>=60)good.push(`早睡率 ${earlyRate}%，睡眠节奏比较稳定`);
+  else if(summary.sleep)improve.push(`早睡率 ${earlyRate}%，建议固定一个睡前收尾动作，降低晚睡概率`);
+  if(summary.reading>0)good.push(`本周阅读 ${summary.reading} 分钟`);
+  else improve.push('阅读记录较少，可以先设置每天 10 分钟低门槛阅读');
+  if(summary.english>0)good.push(`英语学习累计 ${summary.english} 分钟`);
+  if(summary.review<3)improve.push('复盘天数偏少，建议至少在周三和周日各做一次短复盘');
+  return `本周复盘总结\n\n做得好的：${good.length?good.join('；'):'已经开始记录和看见自己的状态，这是持续进步的基础。'}。\n\n需要改进：${improve.length?improve.join('；'):'继续保持当前节奏，下周可以提高一个小目标。'}。\n\n下周建议：采用「保留一个优势习惯 + 优化一个薄弱习惯」的方式推进，不要同时改太多。`;
 }
 function periodKeys(kind='week'){
   const now=new Date();let start,end;
@@ -777,6 +832,7 @@ async function summarizeLinkOrNote(entry,statusEl){
     }catch(err){lastErr=err;}
   }
   if(statusEl)statusEl.textContent='自动获取失败';
+  if(note.trim())return simpleSummaryFromText(note,title);
   return `自动读取链接失败（${lastErr?.message||lastErr}）。\n\n这通常是因为目标网站禁止了跨域访问，或网络不稳定。\n\n你可以这样做：\n1. 把文章正文复制到备注框，保存后再点击「生成总结」。\n2. 直接手动在备注里写几句要点。\n\n当前标题：${title}\n链接：${entry.link}`;
 }
 function normalizeHotPayload(payload){
@@ -976,7 +1032,7 @@ const DB={
         {id:genId(),type:'trending',title:'爆款话题',visible:true,data:{entries:[],filter:'all',hotBase:'https://dailyhot.cmcq.xyz',hotSource:'weibo',hotResults:[],autoImportUrl:'./hot-topics.json'}},
         {id:genId(),type:'inspiration',title:'灵感记录',visible:true,data:{}},
         {id:genId(),type:'collection',title:'收藏库',visible:true,data:{entries:[],filter:'all',categories:DEFAULT_COLLECTION_CATEGORIES.slice()}},
-        {id:genId(),type:'changelog',title:'迭代更新',visible:true,data:{
+        {id:genId(),type:'changelog',title:'更新日志',visible:true,data:{
           logs:[{id:genId(),date:todayStr(),version:'v1.0',changes:'初始版本发布：\n• 创建每日计划、睡眠记录、运动记录、每日复盘、阅读、英语学习、技能提升、爆款话题、灵感记录、迭代更新共10个模块\n• 支持6种主题配色自选\n• 支持在线编辑，数据自动保存\n• 响应式设计，支持iPhone访问编辑\n• 支持模块增删管理\n• 支持数据导入导出备份'}]
         }},
       ]
@@ -1172,14 +1228,16 @@ const MODULE_TYPES={
   /* ---- 行动总览 ---- */
   'overview':{
     title:'行动总览',icon:'overview',desc:'按周回顾每天完成了什么',
-    defaultData:{},
-    render(){
+    defaultData:{weekOffset:0},
+    render(d){
+      d.weekOffset=d.weekOffset||0;
       const mods=DB.data.modules||[];
       const get=(type)=>mods.find(m=>m.type===type)?.data||{};
       const plan=get('daily-plan'), sleep=get('sleep'), exercise=get('exercise'), meditation=get('meditation'), reading=get('reading'), english=get('english'), review=get('review');
       const summary={sleep:0,earlySleep:0,exercise:0,meditation:0,meditationDays:0,reading:0,english:0,review:0,planDone:0,planTotal:0};
-      const days=weekDates();
+      const days=weekDatesWithOffset(d.weekOffset);
       const dayKeys=days.map(dateKey);
+      const weekTitle=`${days[0].getFullYear()}年${days[0].getMonth()+1}/${days[0].getDate()} - ${days[6].getMonth()+1}/${days[6].getDate()}`;
       const routines=(plan.routineTasks||[]).filter(r=>r.text).map(r=>({id:r.id,label:r.text,type:'routine'}));
       const extraTaskLabels=[...new Set((plan.tasks||[]).filter(t=>dayKeys.includes(t.date)&&!t.routineId).map(t=>t.text).filter(Boolean))].map(text=>({id:text,label:text,type:'extra'}));
       const matrixRows=[...routines,...extraTaskLabels];
@@ -1254,9 +1312,12 @@ const MODULE_TYPES={
           ${items.length?items.map(i=>`<div class="overview-item">${esc(i)}</div>`).join(''):'<div class="small-text">暂无记录</div>'}
         </div>`;
       }).join('');
+      const reflection=weeklyReflectionText(summary);
       return`
         <div class="week-head" style="border:1px solid var(--card-border);border-radius:12px;margin-bottom:8px">
-          <strong>本周行动回顾</strong><span class="small-text">适合周总结前快速扫一遍</span>
+          <button class="btn btn-ghost btn-sm ov-prev" style="padding:2px 8px">‹ 上周</button>
+          <strong>${d.weekOffset===0?'本周':d.weekOffset===-1?'上周':d.weekOffset===1?'下周':'周'}行动回顾 · ${weekTitle}</strong>
+          <button class="btn btn-ghost btn-sm ov-next" style="padding:2px 8px">下周 ›</button>
         </div>
         <div class="quick-chips" style="margin-bottom:10px">
           <span class="tag">完成率 ${summary.planTotal?Math.round(summary.planDone/summary.planTotal*100):0}%</span>
@@ -1271,10 +1332,14 @@ const MODULE_TYPES={
         </div>
         ${matrix}
         <div class="overview-detail-grid">${cards}</div>
+        <div class="report-text" style="margin-top:10px">${esc(reflection)}</div>
         <div class="small-text" style="margin-top:8px">上方矩阵自动读取“每日计划”的常规事项；✓ 表示已完成，○ 表示当天有计划但未完成，- 表示当天未生成该事项。下方保留每天的具体记录。</div>
       `;
     },
-    bind(){}
+    bind(body,mod,save){
+      body.querySelector('.ov-prev')?.addEventListener('click',()=>{mod.data.weekOffset=(mod.data.weekOffset||0)-1;save();rerender(mod);});
+      body.querySelector('.ov-next')?.addEventListener('click',()=>{mod.data.weekOffset=(mod.data.weekOffset||0)+1;save();rerender(mod);});
+    }
   },
 
   /* ---- 目标规划 ---- */
@@ -1447,7 +1512,7 @@ const MODULE_TYPES={
               const dur=sleepDurationText(r.bedtime,r.wakeTime,false);
               return `<div class="month-day ${inMonth?'':'empty'} ${key===todayK?'today':''}" data-date="${key}">
                 <div class="month-day-num">${day.getDate()}</div>
-                <div class="month-day-info">${r.bedtime?`<span class="${isEarly?'early-sleep':''}">${esc(r.bedtime)}</span> → ${esc(r.wakeTime||'未填')}<br><span class="small-text">${esc(dur||'时长未填')}</span><br>${'★'.repeat(+r.quality||3)}${r.notes?`<br>${esc(r.notes)}`:''}`:'<span class="small-text">-</span>'}</div>
+                <div class="month-day-info">${r.bedtime?`<span class="${isEarly?'early-sleep':'late-sleep'}">${esc(r.bedtime)}</span> → ${esc(r.wakeTime||'未填')}<br><span class="small-text">${esc(dur||'时长未填')}</span><br>${'★'.repeat(+r.quality||3)}${visibleSleepNote(r.notes)?`<br>${esc(visibleSleepNote(r.notes))}`:''}`:'<span class="small-text">-</span>'}</div>
               </div>`;
             }).join('')}
           </div>
@@ -1496,7 +1561,7 @@ const MODULE_TYPES={
               <div class="record-content">
                 <strong>${esc(r.bedtime)}</strong> → <strong>${esc(r.wakeTime)}</strong>
                 <span class="tag" style="margin-left:4px">${'★'.repeat(r.quality)}</span>
-                ${r.notes?`<div class="small-text">${esc(r.notes)}</div>`:''}
+                ${visibleSleepNote(r.notes)?`<div class="small-text">${esc(visibleSleepNote(r.notes))}</div>`:''}
                 <div class="record-meta">${formatDate(r.date)}</div>
               </div>
               <button class="record-del sl-del" data-id="${r.id}">✕</button>
@@ -2000,13 +2065,13 @@ const MODULE_TYPES={
   /* ---- 英语学习 ---- */
   'english':{
     title:'英语学习',icon:'english',desc:'单词、句子与学习记录',
-    defaultData:{words:[],sentences:[],studyLog:[],daily:{},selectedDate:'',monthOffset:0,soundEnabled:true},
+    defaultData:{words:[],sentences:[],studyLog:[],daily:{},writing:{},selectedDate:'',monthOffset:0,soundEnabled:true},
     render(d){
-      d.words=d.words||[];d.sentences=d.sentences||[];d.studyLog=dedupeByDate(d.studyLog||[]);d.daily=d.daily||{};d.selectedDate=d.selectedDate||todayStr();d.monthOffset=d.monthOffset||0;d.soundEnabled=d.soundEnabled!==false;
+      d.words=d.words||[];d.sentences=d.sentences||[];d.studyLog=dedupeByDate(d.studyLog||[]);d.daily=d.daily||{};d.writing=d.writing||{};d.selectedDate=d.selectedDate||todayStr();d.monthOffset=d.monthOffset||0;d.soundEnabled=d.soundEnabled!==false;
       const ctx=monthContext(d.monthOffset);const monthKeys=ctx.monthDays.map(dateKey).filter(k=>k.slice(0,7)===ctx.monthKey);
       const doneSum=monthKeys.reduce((s,k)=>s+englishCompletion(d.daily[k]||{}).done,0), totalSum=monthKeys.length*5;
       const monthBoard=renderMonthBoard('英语看板',d.monthOffset,(day,key)=>{const rec=d.daily[key]||{};const c=englishCompletion(rec);return c.done?`<span class="month-dot"></span>${c.done}/5<br>${c.rate}%${rec.note?`<br>${esc(rec.note).slice(0,18)}`:''}`:'';},`<div class="small-text" style="margin:8px 0;text-align:center">本月完成率 ${totalSum?Math.round(doneSum/totalSum*100):0}% · 完成 ${doneSum}/${totalSum} 项</div>`);
-      const selectedDaily=d.daily[d.selectedDate]||{};const selectedLog=findByDate(d.studyLog,d.selectedDate)||{};const pack=englishPackFor(d.selectedDate);
+      const selectedDaily=d.daily[d.selectedDate]||{};const selectedLog=findByDate(d.studyLog,d.selectedDate)||{};const pack=englishPackFor(d.selectedDate);const writing=d.writing[d.selectedDate]||{};
       const englishWeek=weekDates().map(day=>{const key=dateKey(day), rec=d.daily[key]||{};return `<div class="day-card ${key===todayStr()?'today':''}" data-date="${key}"><div class="day-name">周${dayLabel(day)}</div><div class="day-num">${day.getDate()}</div><div class="quick-chips"><label class="chip"><input type="checkbox" class="en-day-words" ${rec.words10?'checked':''}>10个单词</label><label class="chip"><input type="checkbox" class="en-day-chunk" ${rec.chunk1?'checked':''}>1个词组</label><label class="chip"><input type="checkbox" class="en-day-pattern" ${rec.pattern1?'checked':''}>1个句型</label></div><div class="mini-field"><label>AI对话(分)</label><input type="number" class="en-day-ai" value="${rec.aiMinutes||0}" min="0"></div><div class="mini-field"><label>影子跟读(分)</label><input type="number" class="en-day-shadow" value="${rec.shadowMinutes||0}" min="0"></div><div class="mini-field"><label>备注</label><input type="text" class="en-day-note" value="${esc(rec.note||'')}" placeholder="主题/材料"></div></div>`;}).join('');
       const selC=englishCompletion(selectedDaily);
       return`${monthBoard}${renderWeekShell('英语打卡日历',englishWeek)}<button class="btn btn-primary btn-sm btn-block en-week-save">保存本周英语打卡</button>
@@ -2016,6 +2081,10 @@ const MODULE_TYPES={
         <div class="form-row"><div class="form-group"><label>AI对话(分)</label><input type="number" class="en-selected-ai" value="${selectedDaily.aiMinutes||0}" min="0"></div><div class="form-group"><label>影子跟读(分)</label><input type="number" class="en-selected-shadow" value="${selectedDaily.shadowMinutes||0}" min="0"></div><div class="form-group"><label>学习时长(分)</label><input type="number" class="en-min" value="${selectedLog.minutes||30}" min="1" max="600"></div></div>
         <div class="form-group"><label>备注</label><input type="text" class="en-selected-note" value="${esc(selectedDaily.note||'')}" placeholder="主题/材料"></div><button class="btn btn-primary btn-sm btn-block en-save-selected">保存选中日期英语打卡</button>
         <div class="english-pack"><h4>选中日期英语包：10个生活词 + chunk + 短文</h4><div class="word-grid">${pack.words.map(([w,m,extra])=>{const e=extra||{};const cols=(e.collocations||[]).map(c=>`<span class="tag" style="margin:2px 2px 0 0;font-size:11px">${esc(c)}</span>`).join('');const exs=(e.examples||[]).map(ex=>`<div class="en-example" style="margin-top:3px;font-size:12px;color:#888;cursor:pointer" data-text="${esc(ex)}">${esc(ex)}</div>`).join('');return `<div class="word-card" style="position:relative"><div style="display:flex;align-items:center;flex-wrap:wrap"><span class="word">${w}</span><span class="en-speak-word" data-word="${esc(w)}" style="cursor:pointer;margin-left:4px" title="朗读"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;pointer-events:none"><path d="M3 9v6h4l5 5V4L7 9H3zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg></span>${e.phonetic?`<span style="margin-left:6px;color:#666;font-size:13px">${esc(e.phonetic)}</span>`:''}</div><div class="meaning">${m}</div>${cols?`<div style="margin-top:4px">${cols}</div>`:''}${exs}</div>`;}).join('')}</div><div style="margin-top:8px">${pack.chunks.map((c,i)=>i%2===0?`<span class="tag" style="margin:2px">${esc(c)} / ${esc(pack.chunks[i+1]||'')}</span>`:'').join('')}</div><div class="small-text" style="margin-top:8px;line-height:1.7">${esc(pack.text)}</div><button class="btn btn-ghost btn-sm en-speak-text" style="margin-top:6px">朗读短文</button><button class="btn btn-primary btn-sm btn-block en-import-pack" style="margin-top:8px">加入选中日期学习记录</button></div>
+        <div class="section-label">英文写作练习</div>
+        <div class="form-group"><label>用英文写几句今天的感想</label><textarea class="en-writing" placeholder="Try to write 2-5 sentences. You can use today's words." style="min-height:96px">${esc(writing.text||'')}</textarea></div>
+        <button class="btn btn-primary btn-sm btn-block en-writing-save">保存写作并生成反馈</button>
+        ${writing.feedback?`<div class="writing-feedback">${esc(writing.feedback)}</div>`:''}
         <div class="section-label">生词本 (${d.words.length})</div><div class="form-row"><div class="form-group"><input type="text" class="en-word" placeholder="单词"></div><div class="form-group"><input type="text" class="en-meaning" placeholder="释义"></div><button class="btn btn-primary btn-sm en-add-word">添加</button></div><div class="record-list" style="max-height:120px">${d.words.length?d.words.slice(-8).reverse().map(w=>`<div class="word-card"><div class="flex-between"><span class="word">${esc(w.word)}</span><button class="record-del en-del-word" data-id="${w.id}">✕</button></div><div class="meaning">${esc(w.meaning)}</div></div>`).join(''):'<div class="empty-state">暂无生词</div>'}</div>
         <div class="section-label">例句 (${d.sentences.length})</div><div class="form-row"><div class="form-group"><input type="text" class="en-sentence" placeholder="英文句子"></div><button class="btn btn-primary btn-sm en-add-sent">添加</button></div><div class="record-list" style="max-height:100px">${d.sentences.length?d.sentences.slice(-5).reverse().map(s=>`<div class="record-item"><div class="record-content">${esc(s.text)}</div><button class="record-del en-del-sent" data-id="${s.id}">✕</button></div>`).join(''):'<div class="empty-state">暂无例句</div>'}</div>`;
     },
@@ -2030,6 +2099,7 @@ const MODULE_TYPES={
       body.querySelector('.en-save-selected').addEventListener('click',saveSelectedEnglish);
       body.querySelector('.en-week-save')?.addEventListener('click',()=>{mod.data.daily=mod.data.daily||{};body.querySelectorAll('.day-card').forEach(card=>{const words10=!!card.querySelector('.en-day-words')?.checked,chunk1=!!card.querySelector('.en-day-chunk')?.checked,pattern1=!!card.querySelector('.en-day-pattern')?.checked,aiMinutes=+(card.querySelector('.en-day-ai')?.value||0),shadowMinutes=+(card.querySelector('.en-day-shadow')?.value||0),note=card.querySelector('.en-day-note')?.value.trim()||'';if(words10||chunk1||pattern1||aiMinutes||shadowMinutes||note)mod.data.daily[card.dataset.date]={words10,chunk1,pattern1,aiMinutes,shadowMinutes,note};});save();rerender(mod);});
       body.querySelector('.en-import-pack')?.addEventListener('click',()=>{const date=dateInput.value||todayStr();const pack=englishPackFor(date);pack.words.forEach(([word,meaning])=>{if(!mod.data.words.some(w=>w.word===word))mod.data.words.push({id:genId(),word,meaning});});mod.data.sentences.push({id:genId(),text:pack.chunks.filter((_,i)=>i%2===0).join(' / ')});mod.data.studyLog=upsertByDate(mod.data.studyLog||[],date,{minutes:+body.querySelector('.en-min').value||10,pack:true});mod.data.daily[date]={...(mod.data.daily[date]||{}),words10:true,chunk1:true,pattern1:true};mod.data.selectedDate=date;save();rerender(mod);});
+      body.querySelector('.en-writing-save')?.addEventListener('click',()=>{const date=dateInput.value||todayStr();const text=body.querySelector('.en-writing')?.value.trim()||'';if(!text){alert('请先写几句英文感想');return;}const pack=englishPackFor(date);mod.data.writing=mod.data.writing||{};mod.data.writing[date]={text,feedback:englishWritingFeedback(text,pack.words.map(w=>w[0])),updatedAt:nowStr()};mod.data.daily[date]={...(mod.data.daily[date]||{}),writing:true};save();rerender(mod);});
       body.querySelectorAll('.en-del-word').forEach(b=>b.addEventListener('click',()=>{mod.data.words=mod.data.words.filter(x=>x.id!==b.dataset.id);save();rerender(mod);}));body.querySelectorAll('.en-del-sent').forEach(b=>b.addEventListener('click',()=>{mod.data.sentences=mod.data.sentences.filter(x=>x.id!==b.dataset.id);save();rerender(mod);}));
       body.querySelector('.en-sound-toggle')?.addEventListener('change',e=>{mod.data.soundEnabled=e.target.checked;save();});
       body.querySelector('.en-speak-text')?.addEventListener('click',()=>{if(mod.data.soundEnabled){const pack=englishPackFor(dateInput.value||todayStr());speakText(pack.text);}});
@@ -2350,24 +2420,35 @@ const MODULE_TYPES={
   /* ---- 灵感记录 ---- */
   'inspiration':{
     title:'灵感记录',icon:'inspiration',desc:'随时捕捉灵感想法',
-    defaultData:{ideas:[]},
+    defaultData:{ideas:[],tags:['生活','工作','写作','成长','其他'],filter:'all'},
     render(d){
       d.ideas=d.ideas||[];
+      d.tags=Array.isArray(d.tags)&&d.tags.length?d.tags:['生活','工作','写作','成长','其他'];
+      d.filter=d.filter||'all';
+      const rows=(d.filter==='all'?d.ideas:d.ideas.filter(i=>i.tag===d.filter)).slice().reverse();
       return`
-        <div class="form-row">
-          <div class="form-group"><input type="text" class="in-text" placeholder="此刻的灵感..." maxlength="200"></div>
-          <button class="btn btn-primary btn-sm in-add">记录</button>
+        <div class="category-manager">
+          <div class="quick-chips">
+            <span class="tab ${d.filter==='all'?'active':''}" data-filter="all">全部</span>
+            ${d.tags.map(t=>`<span class="tab ${d.filter===t?'active':''}" data-filter="${esc(t)}">${esc(t)}</span>`).join('')}
+          </div>
+          <div class="form-row" style="margin-top:8px">
+            <div class="form-group"><input type="text" class="in-new-tag" placeholder="新增标签，如：生活、工作、内容创作"></div>
+            <button class="btn btn-ghost btn-sm in-tag-add">新增标签</button>
+          </div>
         </div>
         <div class="form-row">
-          <div class="form-group"><input type="text" class="in-tag" placeholder="标签(可选，如:产品、写作...)" maxlength="20"></div>
+          <div class="form-group" style="max-width:180px"><label>日期</label><input type="date" class="in-date" value="${todayStr()}"></div>
+          <div class="form-group" style="max-width:180px"><label>标签</label><select class="in-tag">${d.tags.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join('')}</select></div>
         </div>
-        <div class="record-list" style="max-height:400px">
-          ${d.ideas.length?d.ideas.slice().reverse().map(i=>`
-            <div class="record-item">
+        <div class="form-group"><label>正文（支持简单 Markdown：# 标题、- 列表）</label><textarea class="in-text" placeholder="# 今天的灵感\n\n记录正文..." style="min-height:120px"></textarea></div>
+        <button class="btn btn-primary btn-sm btn-block in-add">保存灵感</button>
+        <div class="record-list" style="max-height:520px">
+          ${rows.length?rows.map(i=>`
+            <div class="idea-card">
               <div class="record-content">
-                ${esc(i.text)}
-                ${i.tag?`<span class="tag" style="margin-left:4px">${esc(i.tag)}</span>`:''}
-                <div class="record-meta">${formatDateTime(i.timestamp)}</div>
+                <div class="flex-between"><span class="tag">${esc(i.tag||'其他')}</span><span class="record-meta">${formatDate(i.date||i.timestamp)}</span></div>
+                <div class="idea-body">${markdownLite(i.text)}</div>
               </div>
               <button class="record-del in-del" data-id="${i.id}">✕</button>
             </div>
@@ -2380,14 +2461,16 @@ const MODULE_TYPES={
         const text=body.querySelector('.in-text').value.trim();if(!text)return;
         mod.data.ideas.push({
           id:genId(),text,
-          tag:body.querySelector('.in-tag').value.trim(),
+          tag:body.querySelector('.in-tag').value.trim()||'其他',
+          date:body.querySelector('.in-date').value||todayStr(),
           timestamp:nowStr()
         });
-        body.querySelector('.in-text').value='';body.querySelector('.in-tag').value='';
+        body.querySelector('.in-text').value='';
         save();rerender(mod);
       };
       body.querySelector('.in-add').addEventListener('click',addIdea);
-      body.querySelector('.in-text').addEventListener('keydown',e=>{if(e.key==='Enter')addIdea();});
+      body.querySelectorAll('.tab[data-filter]').forEach(tab=>tab.addEventListener('click',()=>{mod.data.filter=tab.dataset.filter;save();rerender(mod);}));
+      body.querySelector('.in-tag-add')?.addEventListener('click',()=>{const v=body.querySelector('.in-new-tag').value.trim();if(!v)return;mod.data.tags=mod.data.tags||[];if(!mod.data.tags.includes(v))mod.data.tags.push(v);save();rerender(mod);});
       body.querySelectorAll('.in-del').forEach(b=>{
         b.addEventListener('click',()=>{mod.data.ideas=mod.data.ideas.filter(x=>x.id!==b.dataset.id);save();rerender(mod);});
       });
@@ -2427,9 +2510,9 @@ const MODULE_TYPES={
     }
   },
 
-  /* ---- 迭代更新记录 ---- */
+  /* ---- 更新日志 ---- */
   'changelog':{
-    title:'迭代更新',icon:'changelog',desc:'版本更新记录',
+    title:'更新日志',icon:'changelog',desc:'版本更新记录',
     defaultData:{logs:[]},
     render(d){
       d.logs=d.logs||[];
@@ -2554,7 +2637,7 @@ const MODULE_TYPES={
                       <div class="form-group" style="margin-bottom:6px"><label>分类</label><select class="cl-edit-cat" data-id="${e.id}">${categories.map(c=>`<option value="${esc(c)}" ${c===e.category?'selected':''}>${esc(c)}</option>`).join('')}</select></div>
                       <div class="form-group" style="margin-bottom:6px"><label>备注</label><textarea class="cl-edit-note" data-id="${e.id}" style="min-height:60px">${esc(e.note||'')}</textarea></div>
                       <div style="display:flex;gap:8px">
-                        <button class="btn btn-primary btn-sm cl-edit-save" data-id="${e.id}">保存</button>
+                        <button class="btn btn-primary btn-sm cl-edit-save" data-id="${e.id}">完成</button>
                         <button class="btn btn-ghost btn-sm cl-edit-cancel" data-id="${e.id}">取消</button>
                       </div>
                     `:`
@@ -2671,6 +2754,7 @@ const MODULE_TYPES={
           entry.link=newLink;
           entry.category=newCat;
           entry.note=newNote;
+          entry.summary='';
           if(!mod.data.categories.includes(newCat))mod.data.categories.push(newCat);
           delete mod.data.editingId;
           save();DB.save();rerender(mod);
@@ -2753,7 +2837,7 @@ function renderSideNav(){
   if(!nav)return;
   const navCustom=DB.data.navCustom||{pinned:[],hidden:[]};
   const pinnedIds=navCustom.pinned||[];
-  const visibleModules=DB.data.modules.filter(m=>m.visible&&MODULE_TYPES[m.type]);
+  const visibleModules=DB.data.modules.filter(m=>m.visible&&MODULE_TYPES[m.type]&&m.type!=='changelog');
   const pinnedModules=visibleModules.filter(m=>pinnedIds.includes(m.id));
   const otherModules=visibleModules.filter(m=>!pinnedIds.includes(m.id));
   const orderedModules=[...pinnedModules,...otherModules];
@@ -3357,8 +3441,17 @@ function migrateWorkbenchData(){
     english.data.sentences=english.data.sentences||[];
     english.data.studyLog=dedupeByDate(english.data.studyLog||[]);
     english.data.daily=english.data.daily||{};
+    english.data.writing=english.data.writing||{};
     english.data.selectedDate=english.data.selectedDate||todayStr();
     english.data.monthOffset=english.data.monthOffset||0;
+  }
+  const inspiration=DB.data.modules.find(m=>m.type==='inspiration');
+  if(inspiration){
+    inspiration.data=inspiration.data||{};
+    inspiration.data.ideas=Array.isArray(inspiration.data.ideas)?inspiration.data.ideas:[];
+    inspiration.data.tags=Array.isArray(inspiration.data.tags)&&inspiration.data.tags.length?inspiration.data.tags:['生活','工作','写作','成长','其他'];
+    inspiration.data.ideas.forEach(i=>{if(i.tag&&!inspiration.data.tags.includes(i.tag))inspiration.data.tags.push(i.tag);});
+    inspiration.data.filter=inspiration.data.filter||'all';
   }
   const trending=DB.data.modules.find(m=>m.type==='trending');
   if(trending){
@@ -3382,6 +3475,7 @@ function migrateWorkbenchData(){
   }
   const changelog=DB.data.modules.find(m=>m.type==='changelog');
   if(changelog){
+    changelog.title='更新日志';
     changelog.data=changelog.data||{logs:[]};
     changelog.data.logs=changelog.data.logs||[];
     if(!changelog.data.logs.some(l=>l.version==='v1.2')){

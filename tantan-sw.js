@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tantan-workbench-v10';
+const CACHE_NAME = 'tantan-workbench-v11';
 const ASSETS = [
   './tantan-workbench.html',
   './tantan-manifest.webmanifest',
