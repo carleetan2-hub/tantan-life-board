@@ -183,8 +183,10 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
 .modal-overlay.active{display:flex;animation:fadeIn .2s}
 .modal{background:var(--card-bg);border-radius:var(--radius);max-width:520px;width:100%;max-height:85vh;overflow-y:auto;padding:24px;box-shadow:0 8px 40px rgba(0,0,0,.2)}
 .modal h2{font-size:18px;font-weight:700;margin-bottom:16px;color:var(--primary)}
-.modal-close{float:right;font-size:22px;cursor:pointer;color:var(--text-sec);border:none;background:transparent;line-height:1}
-.modal-close:hover{color:var(--text)}
+.modal-close{float:right;font-size:22px;cursor:pointer;color:var(--text-sec);border:none;background:transparent;line-height:1;width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;transition:all .2s}
+.modal-close:hover{color:var(--text);background:var(--primary-light)}
+.modal-back-btn{display:flex;align-items:center;gap:6px;padding:10px 18px;border:1.2px solid var(--card-border);border-radius:var(--radius-sm);background:var(--input-bg);color:var(--text-sec);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;margin-top:16px;width:100%;justify-content:center}
+.modal-back-btn:hover{background:var(--primary-light);color:var(--primary);border-color:var(--primary)}
 .modal-section{margin-bottom:20px}
 .modal-section h3{font-size:14px;font-weight:700;margin-bottom:10px;color:var(--text-sec)}
 /* 主题选择网格 */
@@ -344,6 +346,15 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
 .dashboard.focused{grid-template-columns:1fr!important}
 .dashboard.focused .module-card{max-width:none;width:100%;margin:0}
 .show-all-btn{color:var(--text-sec)!important}
+/* ========== 移动端菜单按钮 ========== */
+.mobile-menu-btn{display:none;background:transparent;border:none;cursor:pointer;padding:6px;border-radius:8px;color:var(--text-sec);font-size:20px;transition:all .2s;line-height:1;align-items:center;justify-content:center;width:34px;height:34px}
+.mobile-menu-btn:hover{background:var(--primary-light);color:var(--primary)}
+/* ========== 移动端侧栏遮罩 ========== */
+.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:149;display:none;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+.sidebar-overlay.active{display:block}
+/* 移动端侧栏关闭按钮 */
+.mobile-menu-close{display:none;background:transparent;border:none;font-size:24px;cursor:pointer;color:var(--text-sec);padding:2px 6px;border-radius:6px;line-height:1}
+.mobile-menu-close:hover{color:var(--text);background:var(--primary-light)}
 /* ========== 响应式 ========== */
 @media(max-width:900px){
   .app-shell{grid-template-columns:178px minmax(0,1fr);gap:12px;padding:12px}
@@ -359,32 +370,96 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
   .content-title{display:none}
 }
 @media(max-width:600px){
-  .app-shell{grid-template-columns:132px minmax(0,1fr);gap:8px;padding:10px}
+  .mobile-menu-btn{display:inline-flex}
+  .mobile-menu-close{display:inline-flex;align-items:center;justify-content:center}
+  .header{padding:8px 12px;gap:6px}
+  .header-left{gap:8px;flex:1;min-width:0;overflow:hidden}
+  .header h1{font-size:16px}
+  .header .date-display{font-size:10px;display:none}
+  .daily-quote{display:none}
+  .theme-switcher{gap:3px}
+  .theme-dot{width:20px;height:20px}
+  .app-shell{grid-template-columns:1fr;padding:8px;gap:8px}
+  .sidebar{position:fixed;top:0;left:-280px;width:260px;max-height:100vh;height:100%;z-index:150;border-radius:0;transition:left .28s ease;box-shadow:0 0 40px rgba(0,0,0,.15);overflow-y:auto;padding-top:env(safe-area-inset-top,0);display:flex;flex-direction:column}
+  .sidebar.open{left:0}
+  .sidebar-profile{padding:20px 18px}
+  .sidebar-name{font-size:20px}
+  .sidebar-subtitle{display:block}
+  .more-panel{display:block}
+  .side-nav-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .side-nav{padding:14px 12px;flex:1}
+  .side-nav-item{font-size:15px;gap:12px;padding:12px 14px}
+  .side-nav-icon{width:24px;height:24px}
   .dashboard,.dashboard.view-grid,.dashboard.view-list,.dashboard.view-columns{grid-template-columns:1fr;gap:12px}
-  .header{padding:10px 14px}
-  .header h1{font-size:17px}
-  .header .date-display{font-size:11px}
-  .theme-switcher{gap:4px}
-  .theme-dot{width:18px;height:18px}
-  .fab{bottom:20px;right:20px;width:48px;height:48px;font-size:22px}
-  .modal{padding:18px;margin:10px}
+  .fab{bottom:16px;right:16px;width:48px;height:48px;font-size:22px}
+  .modal{padding:16px;margin:8px;max-height:90vh;border-radius:16px}
+  .modal h2{font-size:17px}
   .theme-grid{grid-template-columns:repeat(2,1fr)}
   .add-module-grid{grid-template-columns:1fr}
-  .module-body{padding:12px 14px}
-  .view-btn{width:36px;height:31px;font-size:18px}
-  .week-grid,.overview-grid,.overview-detail-grid{grid-template-columns:repeat(7,78vw)}
+  .module-body{padding:10px 12px}
+  .module-header{padding:10px 14px;flex-wrap:wrap}
+  .module-title{font-size:14px}
+  .module-actions{gap:2px}
+  .view-btn{width:32px;height:28px;font-size:16px}
+  .content-toolbar{margin-bottom:10px;flex-wrap:wrap}
+  .content-title{font-size:15px}
+  .view-switcher{padding:3px}
+  .week-grid,.overview-grid,.overview-detail-grid{grid-template-columns:repeat(7,minmax(130px,1fr));overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px;scrollbar-width:thin}
+  .overview-day{min-width:130px}
+  .day-card{min-width:130px}
+  .habit-matrix{min-width:600px}
   .template-grid,.word-grid{grid-template-columns:1fr}
-  .side-nav-item{font-size:12px;gap:8px;padding:10px 8px}
-  .side-nav-icon{width:20px;height:20px}
+  .goal-year-grid{grid-template-columns:1fr}
+  .goal-board-grid{grid-template-columns:1fr}
+  .month-grid{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}
+  .month-day{min-width:80px;min-height:80px}
+  .tabs{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;padding-bottom:4px;gap:6px}
+  .tab{white-space:nowrap;flex-shrink:0}
+  .trend-grid{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}
+  .report-grid{grid-template-columns:1fr}
+  .form-row{flex-direction:column;gap:6px}
+  .form-group{min-width:0}
+  .record-list{max-height:200px}
+  .week-head{padding:8px 10px;flex-wrap:wrap;gap:4px}
+  .week-head strong{font-size:13px}
+  .month-panel{border-radius:12px}
+  .header-right{gap:6px}
+  /* 防止 iOS 上 input 自动缩放 */
+  input,textarea,select{font-size:16px!important}
 }
 @media(max-width:380px){
-  .header{flex-direction:column;align-items:flex-start}
-  .header-right{width:100%;justify-content:space-between}
-  .app-shell{grid-template-columns:118px minmax(0,1fr)}
+  .header-left{overflow:hidden}
+  .header h1{font-size:14px}
+  .theme-dot{width:17px;height:17px}
+  .app-shell{padding:6px}
+  .week-grid,.overview-grid,.overview-detail-grid{grid-template-columns:repeat(7,minmax(110px,1fr))}
+  .day-card{min-width:110px;padding:8px}
+  .overview-day{min-width:110px;padding:8px}
+  .modal{padding:14px;margin:6px}
+  .module-body{padding:8px 10px}
+  .fab{bottom:12px;right:12px;width:44px;height:44px;font-size:20px}
+}
+/* 自动更新提示条 */
+.update-bar{position:fixed;top:0;left:0;right:0;z-index:10000;background:var(--primary);color:#fff;text-align:center;padding:10px 16px;font-size:14px;font-weight:600;display:none;align-items:center;justify-content:center;gap:12px;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+.update-bar.show{display:flex}
+.update-bar button{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:#fff;padding:4px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
+.update-bar button:hover{background:rgba(255,255,255,.35)}
+.update-bar .update-close{background:transparent;border:none;padding:4px;color:rgba(255,255,255,.7);font-size:16px;line-height:1;cursor:pointer}
+.update-bar .update-close:hover{color:#fff}
+@media(max-width:600px){
+  .update-bar{font-size:13px;padding:8px 12px;gap:8px}
+  .update-bar button{padding:3px 10px}
 }
 </style>
 </head>
 <body data-theme="soft-lavender">
+
+<!-- 自动更新提示条 -->
+<div id="updateBar" class="update-bar">
+  <span>🎉 发现新版本，建议刷新页面获取最新功能</span>
+  <button id="updateRefreshBtn">立即刷新</button>
+  <button class="update-close" id="updateCloseBtn" title="忽略">✕</button>
+</div>
 
 <header class="header">
   <div class="header-left">
@@ -396,25 +471,32 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
   <div class="header-right">
     <div class="theme-switcher" id="themeSwitcher"></div>
     <button class="btn-icon" id="settingsBtn" title="设置" aria-label="设置"></button>
+    <button class="mobile-menu-btn" id="mobileMenuBtn" title="打开导航" aria-label="打开导航">☰</button>
   </div>
 </header>
 
 <div class="app-shell">
   <aside class="sidebar" aria-label="栏目导航">
     <div class="sidebar-profile">
-      <div class="sidebar-name">Tantan</div>
-      <div class="sidebar-subtitle">Life Board</div>
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div class="sidebar-name">Tantan</div>
+          <div class="sidebar-subtitle">Life Board</div>
+        </div>
+        <button class="mobile-menu-close" id="sidebarCloseBtn" aria-label="关闭导航">&times;</button>
+      </div>
     </div>
     <nav class="side-nav" id="sideNav"></nav>
     <div class="more-panel" id="morePanel">
       <div><strong>关于本站</strong></div>
       <div>tantan的个人成长空间</div>
       <div>状态：<strong>迭代中</strong></div>
-      <div id="siteVersion">V7.12</div>
+      <div id="siteVersion">V7.14</div>
       <div style="font-size:11px;color:var(--text-light);margin-top:4px">小改动用小数点后两位（V7.11），大改动用V7.x</div>
       <div style="margin-top:6px"><button class="btn btn-ghost btn-sm" id="moreChangelogBtn" style="padding:0;font-size:12px">更新日志</button></div>
     </div>
   </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
   <section class="content-area">
     <div class="content-toolbar">
       <div class="content-title">Tantan Life Board · <span id="moduleCount">0</span> 个栏目</div>
@@ -469,7 +551,7 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
       <div style="display:flex;flex-direction:column;gap:10px">
         <div class="form-group">
           <label>服务器地址</label>
-          <input type="text" id="syncServerUrl" placeholder="http://你的服务器IP:3456" style="font-size:13px">
+          <input type="text" id="syncServerUrl" placeholder="https://你的render应用名.onrender.com" style="font-size:13px">
         </div>
         <div class="form-group">
           <label>同步密钥（多设备用同一个密钥）</label>
@@ -495,6 +577,7 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
         </div>
       </div>
     </div>
+    <button class="modal-back-btn" data-close="settingsModal">← 返回工作台</button>
   </div>
 </div>
 
@@ -508,6 +591,57 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
 </div>
 
 <script>
+/* ============================================================
+   应用版本与自动更新检测
+============================================================ */
+const APP_VERSION = 'v25';
+const APP_BUILD_TIME = '2026-07-29';
+
+/**
+ * 检查是否有新版本可用
+ * 原理：fetch index.html 并提取其中的版本号，与当前版本对比
+ */
+async function checkForUpdate() {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    const res = await fetch('./index.html?t=' + Date.now(), {
+      cache: 'no-store',
+      signal: controller.signal
+    });
+    clearTimeout(timeout);
+    if (!res.ok) return;
+    const html = await res.text();
+    const match = html.match(/tantan-workbench\.html\?v=(\d+)/);
+    if (!match) return;
+    const remoteVer = parseInt(match[1], 10);
+    const localVer = parseInt(APP_VERSION.replace(/\D/g, ''), 10) || 0;
+    if (remoteVer > localVer) {
+      showUpdateBar();
+    }
+  } catch (e) {
+    // 静默失败，不影响正常使用
+  }
+}
+
+function showUpdateBar() {
+  const bar = document.getElementById('updateBar');
+  if (!bar) return;
+  bar.classList.add('show');
+  // 头部留出空间，避免被遮挡
+  const header = document.querySelector('.header');
+  if (header) header.style.marginTop = '44px';
+}
+
+function hideUpdateBar() {
+  const bar = document.getElementById('updateBar');
+  if (!bar) return;
+  bar.classList.remove('show');
+  const header = document.querySelector('.header');
+  if (header) header.style.marginTop = '';
+  try { localStorage.setItem('tantan_update_dismissed', Date.now().toString()); } catch (e) {}
+}
+
 let moreOpen=false;
 
 /* ============================================================
@@ -527,6 +661,19 @@ function sleepDurationText(bed,wake,prefix=true){
   if(wakeMin<bedMin)wakeMin+=24*60;
   const diff=wakeMin-bedMin,h=Math.floor(diff/60),m=diff%60;
   return `${prefix?'睡眠时长：':''}${h}小时${m}分钟`;
+}
+function isEarlySleep(bedtime){
+  // 早睡定义：21:00 - 23:00 算早睡；23:01之后和07:00之前都算晚睡（熬夜）
+  if(!bedtime)return false;
+  return bedtime>'07:00'&&bedtime<='23:00';
+}
+function sleepMinutes(bed,wake){
+  if(!bed||!wake)return 0;
+  const[bh,bm]=bed.split(':').map(Number),[wh,wm]=wake.split(':').map(Number);
+  if([bh,bm,wh,wm].some(Number.isNaN))return 0;
+  let bedMin=bh*60+bm,wakeMin=wh*60+wm;
+  if(wakeMin<bedMin)wakeMin+=24*60;
+  return wakeMin-bedMin;
 }
 const STORAGE_KEYS=[
   'tantan_workbench_data',
@@ -719,18 +866,124 @@ function markdownLite(text=''){
 function englishWritingFeedback(text='',packWords=[]){
   const raw=String(text||'').trim();
   if(!raw)return '';
-  const used=packWords.filter(w=>new RegExp(`\\b${w}\\b`,'i').test(raw));
-  const tips=[];
-  if(/\bi\b/.test(raw))tips.push('英文里第一人称 I 需要大写。');
-  if(!/[.!?]$/.test(raw))tips.push('句末建议加句号、问号或感叹号，让表达更完整。');
-  if(/\bvery very\b/i.test(raw))tips.push('可以避免重复 very very，改用 really / extremely / quite。');
-  if(raw.split(/\s+/).length<8)tips.push('可以再补充一个原因或细节，例如 because / when / after 引导的从句。');
-  const polished=raw
+  const used=packWords.filter(w=>new RegExp(`\\b${w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}\\b`,'i').test(raw));
+  // 逐句分析
+  const sentences=raw.split(/(?<=[.!?])\s+/).filter(Boolean);
+  const errors=[];
+  const suggestions=[];
+  const corrections=[];
+
+  // 通用检查（全文级）
+  if(raw.split(/\s+/).length<8){
+    suggestions.push('可以再补充一个原因或细节，使用 because / when / after 等引导从句使表达更丰富。');
+  }
+
+  // 逐句检查
+  sentences.forEach((s,i)=>{
+    const trimmed=s.trim();
+    if(!trimmed)return;
+    const lineNum=i+1;
+    // 1. 首字母大写检查
+    if(/^[a-z]/.test(trimmed)){
+      errors.push({line:lineNum,found:'句首字母小写',fix:`首字母大写：${trimmed.charAt(0).toUpperCase()+trimmed.slice(1)}`,rule:'英文句子首字母必须大写。'});
+    }
+    // 2. 第一人称 I 大写
+    const iMatches=trimmed.match(/\bi\b/g);
+    if(iMatches&&iMatches.length){
+      errors.push({line:lineNum,found:'第一人称 I 未大写',fix:`将 "i" 改为 "I"`,rule:'英文中第一人称单数 I 永远大写。'});
+    }
+    // 3. 句末标点
+    if(!/[.!?]/.test(trimmed.charAt(trimmed.length-1))){
+      errors.push({line:lineNum,found:'句末缺少标点',fix:`在句末添加句号/问号/感叹号`,rule:'英文句子必须以标点符号结尾。'});
+    }
+    // 4. 主谓一致（is/are，has/have）
+    const heSheIt=/\b(he|she|it)\b/i.test(trimmed);
+    if(heSheIt&&/\b(are|have|was)\b/i.test(trimmed)&&!/\byou\b/i.test(trimmed)){
+      // 更精确：检查 he/she/it 后面是否跟了错误的动词形式
+      const wrongVerb=trimmed.match(/\b(he|she|it)\s+(are|have|was)\b/i);
+      if(wrongVerb){
+        const subj=wrongVerb[1].toLowerCase();
+        const verb=wrongVerb[2].toLowerCase();
+        const fixMap={are:'is',have:'has',was:'was'};
+        errors.push({line:lineNum,found:`"${subj} ${verb}" 主谓不一致`,fix:`应改为 "${subj} ${verb==='are'?'is':verb==='have'?'has':'was'}"`,rule:`第三人称单数 (he/she/it) 后动词用第三人称单数形式：is / has / was。`});
+      }
+    }
+    // 5. 动词时态 - 检查 be+动词原形
+    const beV=trimmed.match(/\b(am|is|are|was|were)\s+(go|do|make|take|write|read|eat|drink|play|work|study|sleep|run|walk|talk|think|want|like|need|know|get|put|come|see|say|buy|use|try|ask|tell|find|give|keep|leave|start|stop|help|watch|live|stay|sit|stand|look|listen|feel|hope|wish|plan|learn|teach|bring|send|show|call|meet|pay|cut|draw|hold|set|let|begin|understand|spend|check|create|build|choose|offer|serve|join|turn|grow|practice|prepare|wait|change|follow|expect|explain|miss|move|reach|share|add|believe|happen|notice|pick|remember|support|accept|allow|appear|continue|cover|decide|describe|develop|discuss|enjoy|expect|finish|form|happen|identify|improve|include|influence|inform|invest|manage|need|note|obtain|order|participate|perform|possess|prefer|present|produce|promote|protect|prove|publish|pursue|raise|recognize|recommend|record|reduce|refer|reflect|refuse|regard|regulate|reject|relate|release|rely|remain|remove|replace|report|represent|request|require|resolve|respond|restore|result|retain|retire|return|reveal|review|revise|satisfy|schedule|secure|seek|select|settle|solve|submit|succeed|suggest|supply|survey|survive|suspect|sustain|tend|threaten|train|transfer|transform|treat|undertake|update|utilize|vary|verify|volunteer|warn|welcome|witness)\b/i);
+    if(beV){
+      const verb=beV[2];
+      errors.push({line:lineNum,found:`"${beV[1]} ${verb}" 动词形式有误`,fix:`应改为 "${beV[1]} ${verb}ing"（现在分词）或 "${beV[1]} planning to ${verb}"`,rule:`be 动词后跟动词原形时，应改为现在分词（-ing）或不定式。例如：I am going → ✓, I am go → ✗。`});
+    }
+    // 6. 可数名词单数前缺少冠词
+    const countableSingular=trimmed.match(/\b(a|an|the|my|your|his|her|its|our|their|this|that|each|every|some|any|no)\s+(\w+)\b/i)||[];
+    const noArticle=trimmed.match(/\b(book|cat|dog|car|phone|table|chair|room|door|window|pen|paper|cup|bag|box|tree|flower|bird|fish|house|school|friend|student|teacher|doctor|nurse|child|baby|parent|brother|sister|husband|wife|man|woman|boy|girl|day|week|month|year|hour|minute|second|idea|plan|problem|question|answer|word|name|place|city|country|river|mountain|road|street|store|shop|restaurant|hospital|bank|office|company|team|group|family|class|lesson|course|program|system|method|way|reason|result|goal|task|job|project|meeting|party|event|show|movie|song|game|sport|subject|topic|story|history|news|report|article|letter|email|message|note|list|file|data|image|picture|photo|video|music|sound|voice|color|size|shape|type|kind|part|piece|set|number|level|point|line|page|section|chapter|volume|price|cost|value|rate|score|grade|mark|sign|symbol|code|rule|law|order|power|force|energy|light|heat|air|water|fire|earth|space|time|life|death|love|hate|joy|pain|fear|anger|hope|dream|truth|fact|case|example|thing|item|object|tool|machine|device|screen|key|lock|button|switch|handle|wheel|engine|motor|pump|pipe|wire|cable|signal|wave|track|path|gate|bridge|wall|floor|roof|window|bed|sofa|mirror|clock|map|list|card|ticket|pass|key|coin|stamp|letter|flag|bell|light|lamp|lamp|box|ball|doll|toy|game|puzzle|ride|trip|tour|visit|journey|flight|drive|walk|run|race|match|game|round|set|half|side|end|top|bottom|front|back|center|edge|corner|middle|area|zone|region|district|block|square|circle|row|column|line|list|group|class|type|form|shape|style|sort|kind|variety|brand|model|version|edition|copy|sample|pattern|design|structure|frame|layout|format|mode|state|status|condition|stage|phase|step|level|rank|grade|degree|scale|range|field|domain|area|section|part|portion|segment|piece|bit|item|element|factor|aspect|feature|attribute|quality|property|characteristic|nature|essence|basis|foundation|root|cause|source|origin|start|beginning|end|finish|goal|target|aim|purpose|objective|function|role|position|post|seat|place|spot|site|location|address|destination|station|stop|stand|base|camp|center|hub|node|point|terminal|port|dock|bay|yard|park|lot|zone|area|region|district|sector|quarter|ward|precinct|territory|state|province|county|city|town|village|community|neighborhood|street|road|avenue|drive|way|lane|path|trail|route|pass|gap|space|hole|slot|notch|nick|cut|mark|spot|stain|trace|track|sign|signal|clue|hint|tip|advice|news|information|knowledge|wisdom|intelligence|skill|ability|talent|gift|strength|power|energy|force|might|potential|capacity|capability|competence|expertise|proficiency|mastery|command|control|authority|right|privilege|freedom|liberty|choice|option|alternative|decision|resolution|determination|commitment|dedication|devotion|loyalty|faith|trust|confidence|belief|conviction|opinion|view|thought|idea|concept|notion|impression|sense|feeling|emotion|passion|desire|wish|hope|dream|ambition|aspiration|goal|target|aim|objective|purpose|intention|plan|strategy|tactic|method|approach|technique|system|process|procedure|routine|practice|custom|habit|tradition|convention|norm|standard|criterion|benchmark|measure|indicator|gauge|test|exam|quiz|evaluation|assessment|review|analysis|study|research|survey|investigation|exploration|inquiry|examination|inspection|observation|monitoring|tracking|check|audit|report|account|record|document|file|archive|database|catalog|index|list|register|log|journal|diary|calendar|schedule|timetable|agenda|itinerary|program|curriculum|syllabus|plan|outline|draft|sketch|blueprint|design|pattern|template|model|prototype|sample|specimen|example|instance|case|illustration|demonstration|display|exhibition|show|presentation|demonstration|performance|production|creation|construction|building|structure|fabric|framework|skeleton|chassis|body|shell|casing|cover|lid|top|cap|stopper|plug|stopper|valve|switch|button|knob|dial|lever|handle|grip|bar|rod|shaft|pole|post|pillar|column|beam|girder|truss|frame|rack|shelf|bench|table|desk|counter|board|panel|plate|sheet|slab|block|brick|stone|rock|pebble|grain|particle|speck|dot|point|spot|mark|line|stroke|dash|slash|backslash|pipe|tube|hose|wire|cord|string|rope|chain|cable|thread|yarn|fiber|fabric|cloth|textile|material|substance|matter|stuff|thing|object|item|article|entity|being|creature|organism|person|individual|human|man|woman|child|adult|parent|relative|kin|family|ancestor|descendant|offspring|heir|successor|predecessor|leader|follower|member|participant|contributor|partner|ally|colleague|associate|friend|companion|acquaintance|neighbor|stranger|guest|host|owner|keeper|guardian|caretaker|manager|director|supervisor|coordinator|administrator|executive|officer|official|representative|agent|delegate|ambassador|envoy|messenger|spokesperson|advocate|supporter|promoter|champion|defender|protector|guard|watchman|patrol|officer|soldier|warrior|fighter|combatant|veteran|rookie|beginner|novice|learner|student|pupil|trainee|apprentice|intern|assistant|aide|helper|worker|employee|staff|personnel|crew|team|squad|troop|unit|force|group|band|gang|party|company|firm|enterprise|business|corporation|organization|institution|agency|bureau|department|division|section|branch|office|plant|factory|mill|workshop|studio|lab|center|facility|site|location|venue|place|spot|area|zone|region|district|neighborhood|community|society|population|public|crowd|audience|spectator|viewer|listener|reader|fan|enthusiast|expert|specialist|professional|amateur|novice|beginner|dummy|idiot|fool|genius|prodigy|star|celebrity|hero|legend|icon|symbol|representation|example|model|pattern|archetype|paradigm|standard|benchmark|criterion|yardstick|measure|gauge|test|indicator|barometer|thermometer|compass|guide|direction|instruction|manual|handbook|guidebook|textbook|reference|source|resource|tool|instrument|device|apparatus|equipment|gear|kit|outfit|rig|setup|system|network|grid|web|mesh|matrix|array|cluster|set|collection|group|batch|lot|run|series|sequence|chain|cycle|loop|spiral|helix|curve|arc|angle|corner|edge|side|face|surface|plane|level|layer|tier|rank|grade|class|division|category|group|type|kind|sort|style|genre|species|breed|strain|variety|brand|make|model|version|edition|generation|phase|stage|step|rung|notch|grade|level|point|spot|place|position|rank|status|standing|footing|ground|base|foundation|bedrock|cornerstone|keystone|linchpin|anchor|pillar|column|tower|spire|steeple|dome|roof|ceiling|floor|wall|door|gate|window|porch|patio|deck|balcony|terrace|courtyard|garden|yard|lawn|field|meadow|pasture|forest|woods|jungle|desert|oasis|valley|canyon|gorge|ravine|cliff|bluff|ridge|peak|summit|crest|crown|tip|top|apex|vertex|zenith|pinnacle|acme|climax|culmination|height|depth|breadth|width|length|span|reach|range|extent|scope|scale|magnitude|size|dimension|measurement|proportion|ratio|rate|speed|velocity|pace|tempo|rhythm|beat|pulse|throb|vibration|oscillation|wave|ripple|surge|flow|current|stream|tide|flood|rush|gush|spurt|burst|blast|explosion|eruption|outburst|outbreak|onset|start|beginning|commencement|opening|launch|initiation|inauguration|inception|genesis|origin|source|root|seed|germ|embryo|fetus|infant|baby|toddler|child|adolescent|teenager|youth|adult|elder|senior|veteran|oldster|aged|ancient|antique|vintage|classic|retro|nostalgic|old|new|fresh|novel|modern|contemporary|current|latest|recent|present|future|coming|upcoming|forthcoming|imminent|impending|approaching|near|close|far|distant|remote|faraway|isolated|secluded|lonely|solitary|alone|unique|singular|rare|uncommon|unusual|extraordinary|remarkable|notable|significant|important|crucial|critical|vital|essential|necessary|indispensable|required|mandatory|compulsory|obligatory|optional|voluntary|elective|discretionary|free|open|available|accessible|convenient|useful|helpful|valuable|worthwhile|beneficial|advantageous|profitable|rewarding|fruitful|productive|efficient|effective|potent|powerful|strong|robust|sturdy|durable|lasting|enduring|permanent|eternal|everlasting|infinite|endless|boundless|limitless|unlimited|unrestricted|unconstrained|unfettered|unbridled|rampant|unchecked|uncontrolled|wild|untamed|feral|savage|barbaric|brutal|cruel|harsh|severe|strict|stern|rigid|inflexible|unyielding|adamant|stubborn|obstinate|headstrong|willful|wayward|capricious|whimsical|fickle|inconsistent|unreliable|unpredictable|erratic|volatile|unstable|precarious|shaky|wobbly|unsteady|fragile|delicate|brittle|frail|feeble|weak|faint|dim|pale|light|bright|vivid|brilliant|radiant|luminous|glowing|shining|gleaming|glistening|sparkling|twinkling|glittering|flashing|blazing|burning|fiery|flaming|scorching|boiling|steaming|smoking|fuming|sizzling|crackling|popping|rattling|rumbling|thundering|roaring|howling|screaming|shrieking|wailing|moaning|groaning|grunting|muttering|murmuring|whispering|hissing|buzzing|humming|clicking|ticking|tapping|knocking|banging|pounding|thumping|thudding|crashing|smashing|shattering|splitting|tearing|ripping|shredding|cutting|slicing|dicing|chopping|mincing|grinding|crushing|pressing|squeezing|wringing|twisting|bending|folding|wrapping|rolling|spinning|rotating|turning|revolving|whirling|swirling|eddying|circling|orbiting|spiraling|twirling|dancing|leaping|jumping|springing|bouncing|bounding|vaulting|skipping|hopping|prancing|galloping|racing|sprinting|dashing|rushing|hurrying|hastening|speeding|flying|soaring|hovering|gliding|sailing|floating|drifting|wandering|roaming|strolling|sauntering|ambling|rambling|trekking|hiking|climbing|ascending|rising|mounting|scaling|descending|falling|dropping|plummeting|plunging|diving|sinking|submerging|immersing|dipping|dunking|dousing|soaking|drenching|saturating|suffusing|infusing|imbuing|permeating|penetrating|piercing|puncturing|stabbing|jabbing|poking|prodding|nudging|elbowing|shouldering|shoving|pushing|pulling|tugging|yanking|jerking|tossing|flinging|hurling|throwing|launching|shooting|firing|blasting|bombing|shelling|strafing|raiding|attacking|assaulting|charging|storming|invading|occupying|conquering|subduing|subjugating|overpowering|overwhelming|crushing|defeating|vanquishing|routing|dispersing|scattering|shattering|demolishing|destroying|wrecking|ruining|devastating|ravaging|desolating|depopulating|exterminating|annihilating|obliterating|erasing|eliminating|removing|extracting|withdrawing|retreating|receding|ebbing|subsiding|abating|dwindling|waning|fading|diminishing|lessening|decreasing|shrinking|contracting|compressing|condensing|concentrating|focusing|centering|aligning|orienting|directing|steering|guiding|leading|conducting|escorting|accompanying|convoying|ushering|shepherding|herding|rounding|gathering|collecting|assembling|marshaling|mobilizing|organizing|arranging|ordering|sorting|classifying|categorizing|grouping|labeling|tagging|marking|branding|stamping|imprinting|engraving|etching|carving|sculpting|molding|shaping|forming|creating|making|building|constructing|assembling|fabricating|manufacturing|producing|generating|originating|initiating|starting|beginning|launching|opening|introducing|instituting|establishing|founding|setting|installing|positioning|placing|locating|situating|stationing|posting|assigning|appointing|designating|naming|identifying|specifying|defining|describing|characterizing|qualifying|quantifying|measuring|weighing|assessing|evaluating|judging|rating|ranking|grading|scoring|scaling|calibrating|standardizing|normalizing|regulating|adjusting|tuning|fine-tuning|optimizing|improving|enhancing|upgrading|refining|polishing|perfecting|completing|finishing|concluding|ending|terminating|ceasing|stopping|halting|pausing|suspending|deferring|postponing|delaying|procrastinating|lingering|loitering|dawdling|idling|lounging|resting|sleeping|napping|dozing|snoozing|slumbering|dreaming|daydreaming|fantasizing|imagining|visualizing|envisioning|conceiving|devising|formulating|planning|scheming|plotting|conspiring|collaborating|cooperating|coordinating|synchronizing|harmonizing|balancing|equating|equalizing|leveling|smoothing|flattening|straightening|aligning|adjusting|correcting|rectifying|remedying|fixing|repairing|mending|restoring|renewing|refreshing|revitalizing|reviving|rejuvenating|recharging|reactivating|rekindling|reigniting|renewing|reestablishing|reinstating|reintroducing|recycling|reusing|repurposing|adapting|modifying|changing|altering|varying|diversifying|transforming|converting|translating|interpreting|decoding|deciphering|understanding|comprehending|grasping|knowing|recognizing|identifying|distinguishing|differentiating|discriminating|separating|dividing|splitting|partitioning|segmenting|isolating|insulating|detaching|disconnecting|unplugging|disengaging|releasing|freeing|liberating|emancipating|unchaining|unbinding|untying|unfastening|unlocking|unsealing|opening|cracking|breaching|penetrating|infiltrating|entering|accessing|logging|connecting|linking|attaching|binding|tying|fastening|securing|latching|linking|joining|uniting|merging|combining|blending|fusing|melting|dissolving|integrating|incorporating|assimilating|absorbing|ingesting|consuming|devouring|swallowing|gulping|guzzling|sipping|nibbling|biting|chewing|munching|crunching|tasting|savoring|relishing|enjoying|appreciating|valuing|prizing|treasuring|cherishing|admiring|respecting|honoring|glorifying|praising|commending|applauding|acclaiming|celebrating|congratulating|complimenting|flattering|soothing|calming|relaxing|unwinding|decompressing|resting|sleeping|meditating|contemplating|reflecting|pondering|musing|ruminating|brooding|agonizing|worrying|fretting|fussing|panicking|stressing|straining|struggling|striving|endeavoring|attempting|trying|testing|experimenting|exploring|researching|investigating|examining|inspecting|scrutinizing|analyzing|studying|reviewing|surveying|probing|querying|questioning|interviewing|interrogating|cross-examining|grilling|pumping|extracting|eliciting|drawing|pulling|tugging|yanking|jerking|wrenching|twisting|wringing|squeezing|pressing|compressing|condensing|concentrating|focusing|zeroing|targeting|aiming|pointing|directing|steering|guiding|leading|conducting|ushering|escorting|accompanying|following|pursuing|chasing|tracking|trailing|tracing|shadowing|stalking|tailgating|monitoring|observing|watching|viewing|seeing|noticing|spotting|detecting|discerning|perceiving|sensing|feeling|intuiting|knowing|understanding|comprehending|realizing|recognizing|appreciating|acknowledging|accepting|embracing|adopting|adapting|adjusting|acclimating|accommodating|conforming|complying|obeying|following|observing|respecting|honoring|upholding|maintaining|sustaining|supporting|backing|endorsing|promoting|advocating|championing|defending|protecting|guarding|safeguarding|shielding|screening|filtering|winnowing|sifting|straining|sieving|separating|sorting|classifying|grouping|clustering|aggregating|accumulating|amassing|stockpiling|hoarding|storing|warehousing|archiving|filing|recording|registering|logging|documenting|cataloging|indexing|listing|itemizing|inventorying|tallying|counting|summing|totaling|calculating|computing|figuring|reckoning|estimating|approximating|projecting|forecasting|predicting|anticipating|expecting|hoping|wishing|desiring|wanting|needing|requiring|lacking|missing|wanting|needing|requiring|demanding|insisting|persisting|persevering|enduring|withstanding|bearing|tolerating|suffering|undergoing|experiencing|encountering|meeting|facing|confronting|braving|daring|risking|venturing|undertaking|attempting|essaying|endeavoring|striving|struggling|fighting|contending|competing|rivaling|opposing|resisting|withstanding|defying|challenging|questioning|disputing|contradicting|refuting|rebutting|disproving|debunking|invalidating|nullifying|negating|canceling|reversing|undoing|neutralizing|counteracting|counterbalancing|offsetting|compensating|balancing|equaling|matching|corresponding|paralleling|resembling|mirroring|reflecting|echoing|repeating|reiterating|recapitulating|summarizing|abstracting|condensing|abbreviating|shortening|truncating|curtailing|clipping|trimming|pruning|paring|shaving|shearing|cropping|cutting|slashing|hacking|chopping|slicing|dicing|mincing|grinding|mashing|pureeing|blending|mixing|stirring|whisking|beating|whipping|folding|kneading|rolling|shaping|molding|forming|casting|sculpting|carving|engraving|etching|chiseling|whittling|sanding|buffing|polishing|waxing|oiling|painting|coating|glazing|varnishing|lacquering|shellacking|enameling|gilding|plating|inlaying|overlaying|covering|wrapping|packaging|boxing|crating|bundling|batching|palletizing|containerizing|shipping|transporting|conveying|carrying|bearing|ferrying|shuttling|commuting|traveling|journeying|voyaging|sailing|flying|cruising|gliding|hovering|soaring|drifting|floating|coasting|riding|driving|piloting|navigating|charting|mapping|surveying|exploring|scouting|reconnoitering|patrolling|policing|guarding|protecting|defending|escorting|convoying|accompanying|attending|serving|assisting|helping|aiding|supporting|backing|bolstering|reinforcing|fortifying|strengthening|toughening|hardening|tempering|seasoning|aging|maturing|ripening|blooming|flowering|fruiting|seeding|sprouting|germinating|budding|shooting|growing|expanding|swelling|inflating|distending|dilating|widening|broadening|lengthening|elongating|extending|stretching|spreading|diffusing|scattering|dispersing|disseminating|distributing|allocating|allotting|apportioning|assigning|delegating|commissioning|authorizing|empowering|licensing|certifying|accrediting|qualifying|entitling|enabling|permitting|allowing|letting|granting|conceding|yielding|surrendering|ceding|relinquishing|abandoning|deserting|forsaking|renouncing|waiving|disclaiming|disowning|disavowing|repudiating|rejecting|refusing|declining|spurning|snubbing|slighting|ignoring|disregarding|overlooking|neglecting|omitting|missing|skipping|jumping|leaping|vaulting|bounding|springing|bouncing|rebounding|ricocheting|deflecting|diverting|redirecting|rerouting|rechanneling|recycling|reusing|repurposing|adapting|adjusting|modifying|changing|altering|transforming|converting|shifting|switching|transferring|moving|relocating|reassigning|reappointing|redesignating|renaming|rebranding|relabeling|retagging|reclassifying|recategorizing|regrouping|reorganizing|restructuring|reconfiguring|rearranging|resequencing|reordering|reprioritizing|rescheduling|replanning|rethinking|reconsidering|reevaluating|reassessing|reviewing|revising|reworking|rewriting|rephrasing|recasting|reformulating|redrafting|re-editing|rewriting|retyping|reinputting|reentering|reloading|rebooting|restarting|reactivating|reawakening|rekindling|reviving|resurrecting|reanimating|reinvigorating|rejuvenating|renewing|refreshing|restoring|replenishing|replenishing|recharging|refueling|restocking|resupplying|replenishing|renewing|replacing|substituting|swapping|exchanging|trading|bartering|bargaining|negotiating|mediating|arbitrating|judging|adjudicating|deciding|determining|resolving|settling|concluding|finalizing|consummating|completing|finishing|wrapping|terminating|ending|discontinuing|ceasing|stopping|halting|pausing|interrupting|breaking|suspending|adjourning|recessing|deferring|postponing|delaying|stalling|lingering|loitering|waiting|anticipating|expecting|foreseeing|predicting|forecasting|projecting|envisioning|imagining|dreaming|fantasizing|idealizing|romanticizing|glamorizing|mythologizing|legendizing|heroizing|worshipping|adoring|idolizing|deifying|canonizing|sanctifying|hallowing|consecrating|blessing|anointing|ordaining|initiating|inducting|installing|investing|crowning|coronating|throning|enthroning|acceding|ascending|mounting|rising|climbing|scaling|surmounting|overcoming|conquering|defeating|beating|bested|worsting|vanquishing|subduing|subjugating|overpowering|overwhelming|crippling|paralyzing|immobilizing|stunning|dazing|bewildering|baffling|perplexing|confusing|mystifying|puzzling|vexing|irritating|annoying|bothering|pestering|harassing|badgering|hounding|nagging|needling|taunting|teasing|provoking|inciting|instigating|prompting|spurring|goading|prodding|egging|urging|pressuring|pressuring|coercing|compelling|forcing|obliging|requiring|mandating|dictating|commanding|ordering|directing|instructing|charging|enjoining|adjuring|beseeching|entreating|imploring|pleading|begging|supplicating|petitioning|appealing|soliciting|requesting|applying|seeking|pursuing|chasing|hunting|fishing|trapping|snaring|netting|catching|capturing|seizing|grabbing|snatching|clutching|grappling|grasping|holding|gripping|clinging|clasping|embracing|hugging|squeezing|cuddling|nestling|snuggling|nuzzling|kissing|licking|sucking|nursing|suckling|feeding|nourishing|nurturing|fostering|cultivating|growing|raising|breeding|rearing|tending|managing|supervising|overseeing|directing|conducting|handling|operating|running|administering|governing|ruling|reigning|presiding|chairing|leading|heading|captaining|commanding|controlling|regulating|monitoring|policing|patrolling|guarding|protecting|safeguarding|defending|shielding|screening|filtering|winnowing|sifting|straining|sieving|separating|sorting|classifying|grouping|clustering|aggregating|accumulating|amassing|stockpiling|hoarding|storing|warehousing|archiving|filing|recording|registering|logging|documenting|cataloging|indexing|listing|itemizing|inventorying|tallying|counting|summing|totaling|calculating|computing|figuring|reckoning|estimating|approximating|projecting|forecasting|predicting|anticipating|expecting|hoping|wishing|desiring|wanting|needing|requiring|lacking|missing|yearning|longing|pining|aching|thirsting|hungering|craving|lusting|covering|desiring|fancying|liking|loving|adoring|worshipping|cherishing|treasuring|prizing|valuing|appreciating|savoring|relishing|enjoying|delighting|rejoicing|exulting|glorying|triumphing|celebrating|commemorating|observing|keeping|honoring|respecting|esteeming|regarding|considering|deeming|reckoning|accounting|judging|weighing|balancing|pondering|deliberating|meditating|reflecting|contemplating|musing|ruminating|brooding|agonizing|worrying|fretting|fussing|panicking|stressing|straining|struggling|striving|endeavoring|attempting|trying|testing|experimenting|exploring|researching|investigating|examining|inspecting|scrutinizing|analyzing|studying|reviewing|surveying|probing|querying|questioning|interviewing|interrogating|cross-examining|grilling|pumping|extracting|eliciting|drawing|pulling|tugging|yanking|jerking|wrenching|twisting|wringing|squeezing|pressing|compressing|condensing|concentrating|focusing|zeroing|targeting|aiming|pointing|directing|steering|guiding|leading|conducting|ushering|escorting|accompanying|following|pursuing|chasing|tracking|trailing|tracing|shadowing|stalking|tailgating|monitoring|observing|watching|viewing|seeing|noticing|spotting|detecting|discerning|perceiving|sensing|feeling|intuiting|knowing|understanding|comprehending|realizing|recognizing|appreciating|acknowledging|accepting|embracing|adopting)\b/i);
+    if(noArticle&&!countableSingular[0]){
+      // 初步检查可数名词前是否有冠词或限定词
+      // 过于宽泛，跳过这个检查以避免误报
+    }
+    // 7. 检查常见介词搭配错误
+    const prepErrors=[
+      {re:/\bdepend\s+of\b/gi,fix:'depend on',rule:'depend 后面跟介词 on，不是 of。'},
+      {re:/\b(discuss|mention|describe)\s+about\b/gi,fix:(m)=>`${m[1]} (不用 about)`,rule:'discuss / mention / describe 后直接跟宾语，不需要 about。'},
+      {re:/\b(explain|answer|tell)\s+to\b/gi,fix:(m)=>`${m[1]} (不用 to)`,rule:'explain / answer / tell 后直接跟宾语（tell sb. 除外）。'},
+      {re:/\b(affect|effect)\b/i,fix:'用 affect (动词) 或 effect (名词)',rule:'affect 是动词（影响），effect 是名词（效果）。'},
+      {re:/\b(look|watch|see)\s+and\b/i,fix:'look/watch/see 后不需要 and',rule:'look/watch/see 后直接跟宾语，不需要 and 连接。'},
+    ];
+    prepErrors.forEach(({re,fix,rule})=>{
+      const m=trimmed.match(re);
+      if(m){
+        const fixText=typeof fix==='function'?fix(m):fix;
+        errors.push({line:lineNum,found:`"${m[0]}" 用法有误`,fix:`应改为 "${fixText}"`,rule});
+      }
+    });
+    // 8. 检查双重否定
+    if(/\b(don't|doesn't|didn't|won't|can't|couldn't|wouldn't|shouldn't|isn't|aren't|wasn't|weren't|haven't|hasn't|hadn't|never|no|nothing|nobody|nowhere|neither|nor)\b/i.test(trimmed)&&
+       /\b(no|nobody|nothing|nowhere|never|neither|nor|none|hardly|scarcely|barely)\b/i.test(trimmed)){
+      errors.push({line:lineNum,found:'可能使用了双重否定',fix:'去掉其中一个否定词',rule:'双重否定在英语中通常不标准，除非是刻意表达。'});
+    }
+  });
+
+  // 构建反馈
+  const praiseParts=['你已经主动用英文表达当天感受，这是非常棒的输出练习！'];
+  if(used.length) praiseParts.push(`今天学到的单词你用到了 ${used.join('、')}，学以致用，很好！`);
+  if(sentences.length>=3) praiseParts.push('而且你写了多句话，表达完整，值得鼓励！');
+  const praise=praiseParts.join(' ');
+
+  let errorBlock='';
+  if(errors.length){
+    errorBlock='\n\n🔍 逐句检查：\n';
+    errors.forEach((e,i)=>{
+      errorBlock+=`\n第${e.line}句：${e.found}\n  ✅ 修正建议：${e.fix}\n  📖 语法规则：${e.rule}\n`;
+    });
+  }
+
+  let suggestionBlock='';
+  if(suggestions.length){
+    suggestionBlock='\n\n💡 提升建议：\n';
+    suggestions.forEach(s=>{suggestionBlock+=`• ${s}\n`;});
+  }
+
+  if(!errors.length&&!suggestions.length){
+    suggestionBlock='\n\n💡 提升建议：你的表达整体流畅自然，下次可以尝试：\n• 使用更丰富的连接词（however, moreover, therefore）\n• 增加具体细节（时间、地点、感受）\n• 尝试使用复合句结构\n';
+  }
+
+  // 修正后的参考版本
+  let corrected=raw
     .replace(/\bi\b/g,'I')
     .replace(/\s+/g,' ')
-    .replace(/very very/ig,'really')
-    .replace(/([^.!?])$/,'$1.');
-  return `做得好的：你已经主动用英文表达当天感受，这比只背单词更能真正转化为输出能力。${used.length?`这次还用到了 ${used.join('、')}，很好。`:''}\n\n可以优化的地方：${tips.length?tips.join(' '):'整体表达比较清楚，下一步可以尝试使用更具体的动词和连接词。'}\n\n参考表达：${polished}\n\n学习建议：下次可以按「感受 → 原因 → 下一步」三句来写，例如 I feel..., because..., so I will...。`;
+    .trim();
+  // 应用简单修正
+  if(!/[.!?]$/.test(corrected))corrected+='.';
+  prepErrors.forEach(({re,fix})=>{
+    corrected=corrected.replace(re,(m)=>{
+      if(typeof fix==='function')return fix(re.exec(m)||m);
+      return fix;
+    });
+  });
+  corrected=corrected.replace(/\b(he|she|it)\s+are\b/gi,(m)=>m.toLowerCase().replace('are','is'));
+  corrected=corrected.replace(/\b(he|she|it)\s+have\b/gi,(m)=>m.toLowerCase().replace('have','has'));
+
+  return `${praise}${errorBlock}${suggestionBlock}\n\n📝 参考润色版本：\n${corrected}\n\n📚 写作小贴士：下次可以按「感受 → 原因 → 下一步」的结构来写，让你的表达更有层次感。试试用 because / so that / although 等连接词串联句子。`;
 }
 function weeklyReflectionText(summary){
   const rate=summary.planTotal?Math.round(summary.planDone/summary.planTotal*100):0;
@@ -758,18 +1011,57 @@ function periodKeys(kind='week'){
 function reportStats(kind='week'){
   const keys=periodKeys(kind), mods=DB.data.modules||[];
   const get=t=>mods.find(m=>m.type===t)?.data||{};
-  const plan=get('daily-plan'),sleep=get('sleep'),exercise=get('exercise'),meditation=get('meditation'),english=get('english'),reading=get('reading'),review=get('review');
+  const plan=get('daily-plan'),sleep=get('sleep'),exercise=get('exercise'),meditation=get('meditation'),english=get('english'),reading=get('reading'),review=get('review'),goals=get('goals');
   let planDone=0,planTotal=0,sleepDays=0,early=0,exDays=0,medMin=0,medDays=0,enDone=0,enTotal=0,readMin=0,reviewDays=0;
+  // 目标相关统计
+  let goalPlansDefault=0,goalPlansHealth=0,goalPlansLearning=0,goalPlansLife=0,goalPlansOther=0;
+  let goalDoneDefault=0,goalDoneHealth=0,goalDoneLearning=0,goalDoneLife=0,goalDoneOther=0;
+  const goalBlocks=goals.blocks||[];
+  const goalPlans=goals.plans||{};
   keys.forEach(key=>{
     const tasks=(plan.tasks||[]).filter(t=>t.date===key);planDone+=tasks.filter(t=>t.done).length;planTotal+=tasks.length;
-    const sl=findByDate(sleep.records||[],key);if(sl?.bedtime){sleepDays++;if(sl.bedtime<='23:00')early++;}
+    // 按目标板块分类统计每日计划完成情况
+    if(goalBlocks.length){
+      tasks.forEach(t=>{
+        const text=t.text||'';
+        const isDefault=!goalBlocks.some(b=>text.includes(b));
+        if(isDefault||text.includes('健康')){goalPlansDefault++;if(t.done)goalDoneDefault++;}
+        if(text.includes('学习')){goalPlansLearning++;if(t.done)goalDoneLearning++;}
+        if(text.includes('生活')||text.includes('运动')||text.includes('作息')){goalPlansLife++;if(t.done)goalDoneLife++;}
+        goalBlocks.forEach(b=>{
+          if(text.includes(b)&&!['健康','学习','生活'].includes(b)){goalPlansOther++;if(t.done)goalDoneOther++;}
+        });
+      });
+    }
+    const sl=findByDate(sleep.records||[],key);if(sl?.bedtime){sleepDays++;if(isEarlySleep(sl.bedtime))early++;}
     const quick=exercise.quick?.[key];const ex=(exercise.records||[]).filter(r=>r.date===key);if((quick?.items||[]).length||ex.length)exDays++;
     const md=findByDate(meditation.records||[],key);if(md?.minutes){medDays++;medMin+=(+md.minutes||0);}
     const ec=englishCompletion(english.daily?.[key]||{});enDone+=ec.done;enTotal+=ec.total;
     const rd=reading.daily?.[key];if(rd)readMin+=(+rd.minutes||0);
     if(findByDate(review.records||[],key)?.wellDone)reviewDays++;
   });
-  return {days:keys.length,planDone,planTotal,sleepDays,early,exDays,medMin,medDays,enDone,enTotal,readMin,reviewDays};
+  // 计算目标板块完成率
+  const goalDefRate=goalPlansDefault?Math.round(goalDoneDefault/goalPlansDefault*100):0;
+  const goalHealthRate=goalPlansHealth?Math.round(goalDoneHealth/goalPlansHealth*100):0;
+  const goalLearnRate=goalPlansLearning?Math.round(goalDoneLearning/goalPlansLearning*100):0;
+  const goalLifeRate=goalPlansLife?Math.round(goalDoneLife/goalPlansLife*100):0;
+  const goalOtherRate=goalPlansOther?Math.round(goalDoneOther/goalPlansOther*100):0;
+  // 获取目标规划文本内容作为定性分析参考
+  const goalTexts=[];
+  if(goalPlans){
+    ['year','quarter','month','week','day'].forEach(p=>{
+      if(goalPlans[p]){
+        Object.entries(goalPlans[p]).forEach(([block,text])=>{
+          if(text&&text.trim())goalTexts.push(`${block}(${p}):${text.trim()}`);
+        });
+      }
+    });
+  }
+  return {days:keys.length,planDone,planTotal,sleepDays,early,exDays,medMin,medDays,enDone,enTotal,readMin,reviewDays,
+    goalBlocks,goalDefRate,goalHealthRate,goalLearnRate,goalLifeRate,goalOtherRate,
+    goalPlansDefault,goalPlansHealth,goalPlansLearning,goalPlansLife,goalPlansOther,
+    goalDoneDefault,goalDoneHealth,goalDoneLearning,goalDoneLife,goalDoneOther,
+    goalTexts:goalTexts.slice(0,5)};
 }
 function dailyQuote(){
   const quotes=[
@@ -873,6 +1165,35 @@ function speakText(text){
   const u=new SpeechSynthesisUtterance(text);
   u.lang='en-US';
   window.speechSynthesis.speak(u);
+}
+
+async function lookupWord(word,resultEl){
+  if(!word||!resultEl)return;
+  resultEl.style.display='block';
+  resultEl.innerHTML='<div class="small-text">正在查询...</div>';
+  try{
+    const res=await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word.toLowerCase())}`,{signal:AbortSignal.timeout(10000)});
+    if(!res.ok){
+      resultEl.innerHTML=`<div style="color:var(--text-sec)">未找到「${esc(word)}」的释义，可能是专有名词或拼写有误。</div>`;
+      return;
+    }
+    const data=await res.json();
+    const entry=data[0];
+    let html=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><strong style="font-size:18px;color:var(--primary)">${esc(entry.word)}</strong>${entry.phonetic?`<span style="color:#666;font-size:13px">${esc(entry.phonetic)}</span>`:''}<span class="en-speak-word" data-word="${esc(entry.word)}" style="cursor:pointer" title="朗读"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg></span></div>`;
+    entry.meanings.forEach(m=>{
+      html+=`<div style="margin-top:8px"><span class="tag" style="font-size:11px;background:var(--primary-light);color:var(--primary)">${esc(m.partOfSpeech)}</span>`;
+      m.definitions.slice(0,3).forEach((def,i)=>{
+        html+=`<div style="margin-top:4px;font-size:13px;color:var(--text)"><strong>${i+1}.</strong> ${esc(def.definition)}</div>`;
+        if(def.example)html+=`<div style="margin-top:2px;font-size:12px;color:#888;font-style:italic">${esc(def.example)}</div>`;
+        if(def.synonyms&&def.synonyms.length)html+=`<div style="margin-top:2px;font-size:11px;color:var(--text-light)">同义词：${def.synonyms.slice(0,5).map(s=>esc(s)).join('、')}</div>`;
+      });
+      html+=`</div>`;
+    });
+    resultEl.innerHTML=html;
+    resultEl.querySelector('.en-speak-word')?.addEventListener('click',()=>speakText(entry.word));
+  }catch(e){
+    resultEl.innerHTML=`<div style="color:var(--text-sec)">查询失败：${esc(e.message)}</div>`;
+  }
 }
 
 function englishPackFor(date){
@@ -1283,7 +1604,7 @@ const MODULE_TYPES={
           items.push(`计划 ${done}/${tasks.length}（${Math.round(done/tasks.length*100)}%）${doneNames.length?`：${doneNames.join('、')}`:''}`);
         }
         const sl=findByDate(sleep.records||[],key);
-        if(sl?.bedtime){const isEarly=sl.bedtime<='23:00';if(isEarly)summary.earlySleep++;items.push(`${isEarly?'✓早睡':'⚠晚睡'} ${sl.bedtime}→${sl.wakeTime||'?'} ${sleepDurationText(sl.bedtime,sl.wakeTime,false)}`);summary.sleep++;}
+        if(sl?.bedtime){const early=isEarlySleep(sl.bedtime);if(early)summary.earlySleep++;items.push(`${early?'✓早睡':'⚠晚睡'} ${sl.bedtime}→${sl.wakeTime||'?'} ${sleepDurationText(sl.bedtime,sl.wakeTime,false)}`);summary.sleep++;}
         const quick=exercise.quick?.[key];
         const ex=(exercise.records||[]).filter(r=>r.date===key).map(r=>r.type);
         const exItems=[...(quick?.items||[]),...ex];
@@ -1508,15 +1829,15 @@ const MODULE_TYPES={
             ${['日','一','二','三','四','五','六'].map(w=>`<div class="month-weekday">周${w}</div>`).join('')}
             ${monthDays.map(day=>{
               const key=dateKey(day), r=findByDate(d.records,key)||{}, inMonth=key.slice(0,7)===monthKey;
-              const isEarly=r.bedtime&&r.bedtime<='23:00';
+              const early=isEarlySleep(r.bedtime);
               const dur=sleepDurationText(r.bedtime,r.wakeTime,false);
               return `<div class="month-day ${inMonth?'':'empty'} ${key===todayK?'today':''}" data-date="${key}">
                 <div class="month-day-num">${day.getDate()}</div>
-                <div class="month-day-info">${r.bedtime?`<span class="${isEarly?'early-sleep':'late-sleep'}">${esc(r.bedtime)}</span> → ${esc(r.wakeTime||'未填')}<br><span class="small-text">${esc(dur||'时长未填')}</span><br>${'★'.repeat(+r.quality||3)}${visibleSleepNote(r.notes)?`<br>${esc(visibleSleepNote(r.notes))}`:''}`:'<span class="small-text">-</span>'}</div>
+                <div class="month-day-info">${r.bedtime?`<span class="${early?'early-sleep':'late-sleep'}">${esc(r.bedtime)}</span> → ${esc(r.wakeTime||'未填')}<br><span class="small-text">${esc(dur||'时长未填')}</span><br>${'★'.repeat(+r.quality||3)}${visibleSleepNote(r.notes)?`<br>${esc(visibleSleepNote(r.notes))}`:''}`:'<span class="small-text">-</span>'}</div>
               </div>`;
             }).join('')}
           </div>
-          ${(()=>{const mc=d.records.filter(r=>(r.date||'').slice(0,7)===monthKey);const ec=mc.filter(r=>r.bedtime&&r.bedtime<='23:00').length;return mc.length?`<div class="small-text" style="margin-top:6px;text-align:center">本月记录 ${mc.length} 天 · 早睡(≤23:00) ${ec} 天 · 早睡率 ${Math.round(ec/mc.length*100)}%</div>`:''})()}
+          ${(()=>{const mc=d.records.filter(r=>(r.date||'').slice(0,7)===monthKey);const ec=mc.filter(r=>isEarlySleep(r.bedtime)).length;const validMins=mc.filter(r=>r.bedtime&&r.wakeTime).map(r=>sleepMinutes(r.bedtime,r.wakeTime));const avgMin=validMins.length?Math.round(validMins.reduce((a,b)=>a+b,0)/validMins.length):0;const avgH=Math.floor(avgMin/60),avgM=avgMin%60;return mc.length?`<div class="small-text" style="margin-top:6px;text-align:center">本月记录 ${mc.length} 天 · 早睡 ${ec} 天 · 早睡率 ${Math.round(ec/mc.length*100)}% · 平均睡眠 ${avgH}小时${avgM}分钟</div>`:''})()}
         </div>`;
       const selectedRec=findByDate(d.records,d.selectedDate)||{};
       const selectedQuality=+selectedRec.quality||3;
@@ -2080,13 +2401,17 @@ const MODULE_TYPES={
         <div class="quick-chips"><label class="chip"><input type="checkbox" class="en-selected-words" ${selectedDaily.words10?'checked':''}>10个单词</label><label class="chip"><input type="checkbox" class="en-selected-chunk" ${selectedDaily.chunk1?'checked':''}>1个词组</label><label class="chip"><input type="checkbox" class="en-selected-pattern" ${selectedDaily.pattern1?'checked':''}>1个句型</label><span class="tag">当日完成率 ${selC.rate}% (${selC.done}/5)</span></div>
         <div class="form-row"><div class="form-group"><label>AI对话(分)</label><input type="number" class="en-selected-ai" value="${selectedDaily.aiMinutes||0}" min="0"></div><div class="form-group"><label>影子跟读(分)</label><input type="number" class="en-selected-shadow" value="${selectedDaily.shadowMinutes||0}" min="0"></div><div class="form-group"><label>学习时长(分)</label><input type="number" class="en-min" value="${selectedLog.minutes||30}" min="1" max="600"></div></div>
         <div class="form-group"><label>备注</label><input type="text" class="en-selected-note" value="${esc(selectedDaily.note||'')}" placeholder="主题/材料"></div><button class="btn btn-primary btn-sm btn-block en-save-selected">保存选中日期英语打卡</button>
-        <div class="english-pack"><h4>选中日期英语包：10个生活词 + chunk + 短文</h4><div class="word-grid">${pack.words.map(([w,m,extra])=>{const e=extra||{};const cols=(e.collocations||[]).map(c=>`<span class="tag" style="margin:2px 2px 0 0;font-size:11px">${esc(c)}</span>`).join('');const exs=(e.examples||[]).map(ex=>`<div class="en-example" style="margin-top:3px;font-size:12px;color:#888;cursor:pointer" data-text="${esc(ex)}">${esc(ex)}</div>`).join('');return `<div class="word-card" style="position:relative"><div style="display:flex;align-items:center;flex-wrap:wrap"><span class="word">${w}</span><span class="en-speak-word" data-word="${esc(w)}" style="cursor:pointer;margin-left:4px" title="朗读"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;pointer-events:none"><path d="M3 9v6h4l5 5V4L7 9H3zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg></span>${e.phonetic?`<span style="margin-left:6px;color:#666;font-size:13px">${esc(e.phonetic)}</span>`:''}</div><div class="meaning">${m}</div>${cols?`<div style="margin-top:4px">${cols}</div>`:''}${exs}</div>`;}).join('')}</div><div style="margin-top:8px">${pack.chunks.map((c,i)=>i%2===0?`<span class="tag" style="margin:2px">${esc(c)} / ${esc(pack.chunks[i+1]||'')}</span>`:'').join('')}</div><div class="small-text" style="margin-top:8px;line-height:1.7">${esc(pack.text)}</div><button class="btn btn-ghost btn-sm en-speak-text" style="margin-top:6px">朗读短文</button><button class="btn btn-primary btn-sm btn-block en-import-pack" style="margin-top:8px">加入选中日期学习记录</button></div>
+        <div class="english-pack"><h4>选中日期英语包：10个生活词 + chunk + 短文</h4><div class="word-grid">${pack.words.map(([w,m,extra])=>{const e=extra||{};const cols=(e.collocations||[]).map(c=>`<span class="tag" style="margin:2px 2px 0 0;font-size:11px">${esc(c)}</span>`).join('');const exs=(e.examples||[]).map(ex=>`<div class="en-example" style="margin-top:3px;font-size:12px;color:#888;cursor:pointer" data-text="${esc(ex)}">${esc(ex)}</div>`).join('');const vocabItem=d.words.find(v=>v.word.toLowerCase()===w.toLowerCase());const statusLabels={known:'已认识',fuzzy:'模糊',unknown:'不认识'};const statusColors={known:'#22a06b',fuzzy:'#f5b42f',unknown:'#d64545'};const st=vocabItem?(vocabItem.status||'unknown'):null;const vocabBtn=vocabItem?`<span class="tag" style="margin-left:auto;font-size:11px;background:${statusColors[st]}20;color:${statusColors[st]};border-color:${statusColors[st]}40">${statusLabels[st]}</span>`:`<button class="btn btn-ghost btn-sm en-add-vocab" data-word="${esc(w)}" data-meaning="${esc(m)}" style="margin-left:auto;padding:3px 8px;font-size:11px">+生词本</button>`;return `<div class="word-card" style="position:relative"><div style="display:flex;align-items:center;flex-wrap:wrap"><span class="word">${w}</span><span class="en-speak-word" data-word="${esc(w)}" style="cursor:pointer;margin-left:4px" title="朗读"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;pointer-events:none"><path d="M3 9v6h4l5 5V4L7 9H3zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg></span>${e.phonetic?`<span style="margin-left:6px;color:#666;font-size:13px">${esc(e.phonetic)}</span>`:''}${vocabBtn}</div><div class="meaning">${m}</div>${cols?`<div style="margin-top:4px">${cols}</div>`:''}${exs}</div>`;}).join('')}</div><div style="margin-top:8px">${pack.chunks.map((c,i)=>i%2===0?`<span class="tag" style="margin:2px">${esc(c)} / ${esc(pack.chunks[i+1]||'')}</span>`:'').join('')}</div><div class="small-text" style="margin-top:8px;line-height:1.7">${esc(pack.text)}</div><button class="btn btn-ghost btn-sm en-speak-text" style="margin-top:6px">朗读短文</button><button class="btn btn-primary btn-sm btn-block en-import-pack" style="margin-top:8px">加入选中日期学习记录</button></div>
         <div class="section-label">英文写作练习</div>
         <div class="form-group"><label>用英文写几句今天的感想</label><textarea class="en-writing" placeholder="Try to write 2-5 sentences. You can use today's words." style="min-height:96px">${esc(writing.text||'')}</textarea></div>
         <button class="btn btn-primary btn-sm btn-block en-writing-save">保存写作并生成反馈</button>
         ${writing.feedback?`<div class="writing-feedback">${esc(writing.feedback)}</div>`:''}
-        <div class="section-label">生词本 (${d.words.length})</div><div class="form-row"><div class="form-group"><input type="text" class="en-word" placeholder="单词"></div><div class="form-group"><input type="text" class="en-meaning" placeholder="释义"></div><button class="btn btn-primary btn-sm en-add-word">添加</button></div><div class="record-list" style="max-height:120px">${d.words.length?d.words.slice(-8).reverse().map(w=>`<div class="word-card"><div class="flex-between"><span class="word">${esc(w.word)}</span><button class="record-del en-del-word" data-id="${w.id}">✕</button></div><div class="meaning">${esc(w.meaning)}</div></div>`).join(''):'<div class="empty-state">暂无生词</div>'}</div>
-        <div class="section-label">例句 (${d.sentences.length})</div><div class="form-row"><div class="form-group"><input type="text" class="en-sentence" placeholder="英文句子"></div><button class="btn btn-primary btn-sm en-add-sent">添加</button></div><div class="record-list" style="max-height:100px">${d.sentences.length?d.sentences.slice(-5).reverse().map(s=>`<div class="record-item"><div class="record-content">${esc(s.text)}</div><button class="record-del en-del-sent" data-id="${s.id}">✕</button></div>`).join(''):'<div class="empty-state">暂无例句</div>'}</div>`;
+        <div class="section-label">生词本 (${d.words.length})</div><div class="form-row"><div class="form-group"><input type="text" class="en-word" placeholder="单词"></div><div class="form-group"><input type="text" class="en-meaning" placeholder="释义"></div><button class="btn btn-primary btn-sm en-add-word">添加</button></div><div class="record-list" style="max-height:200px">${d.words.length?d.words.slice().reverse().map(w=>{const statusLabels={known:'已认识',fuzzy:'模糊',unknown:'不认识'};const statusColors={known:'#22a06b',fuzzy:'#f5b42f',unknown:'#d64545'};const st=w.status||'unknown';return `<div class="word-card"><div class="flex-between" style="align-items:center"><span class="word">${esc(w.word)}</span><div style="display:flex;gap:4px;align-items:center"><select class="en-vocab-status" data-id="${w.id}" style="font-size:11px;padding:2px 6px;border-radius:6px;border:1px solid ${statusColors[st]}40;background:${statusColors[st]}15;color:${statusColors[st]};width:auto">${['unknown','fuzzy','known'].map(s=>`<option value="${s}" ${st===s?'selected':''}>${statusLabels[s]}</option>`).join('')}</select><button class="record-del en-del-word" data-id="${w.id}">✕</button></div></div><div class="meaning">${esc(w.meaning)}</div></div>`;}).join(''):'<div class="empty-state">暂无生词，点击上方英语包单词旁的「+生词本」快速添加</div>'}</div>
+        <div class="section-label">例句 (${d.sentences.length})</div><div class="form-row"><div class="form-group"><input type="text" class="en-sentence" placeholder="英文句子"></div><button class="btn btn-primary btn-sm en-add-sent">添加</button></div><div class="record-list" style="max-height:100px">${d.sentences.length?d.sentences.slice(-5).reverse().map(s=>`<div class="record-item"><div class="record-content">${esc(s.text)}</div><button class="record-del en-del-sent" data-id="${s.id}">✕</button></div>`).join(''):'<div class="empty-state">暂无例句</div>'}</div>
+        <div class="section-label">查单词</div>
+        <div class="form-row"><div class="form-group"><input type="text" class="en-lookup-input" placeholder="输入英文单词查询..." style="font-size:14px"></div><button class="btn btn-primary btn-sm en-lookup-btn">查询</button></div>
+        <div class="form-group" style="margin-top:6px"><label style="font-size:12px">📷 上传含英文单词的图片（点击识别后手动输入查询）</label><input type="file" class="en-ocr-file" accept="image/*" style="font-size:13px;padding:6px 0"></div>
+        <div class="en-lookup-result" style="display:none;margin-top:10px;border:1.2px solid var(--card-border);border-radius:12px;padding:12px;background:#fff"></div>`;
     },
     bind(body,mod,save){
       bindMonthBoard(body,mod,save,'.en-date');
@@ -2105,6 +2430,37 @@ const MODULE_TYPES={
       body.querySelector('.en-speak-text')?.addEventListener('click',()=>{if(mod.data.soundEnabled){const pack=englishPackFor(dateInput.value||todayStr());speakText(pack.text);}});
       body.querySelectorAll('.en-speak-word').forEach(el=>el.addEventListener('click',()=>{if(mod.data.soundEnabled)speakText(el.dataset.word);}));
       body.querySelectorAll('.en-example').forEach(el=>el.addEventListener('click',()=>{if(mod.data.soundEnabled)speakText(el.dataset.text);}));
+      // 英语包单词加入生词本
+      body.querySelectorAll('.en-add-vocab').forEach(btn=>btn.addEventListener('click',()=>{
+        const w=btn.dataset.word, m=btn.dataset.meaning;
+        if(!mod.data.words.some(v=>v.word.toLowerCase()===w.toLowerCase())){
+          mod.data.words.push({id:genId(),word:w,meaning:m,status:'unknown'});
+          save();rerender(mod);
+        }
+      }));
+      // 生词本状态修改
+      body.querySelectorAll('.en-vocab-status').forEach(sel=>sel.addEventListener('change',()=>{
+        const item=mod.data.words.find(w=>w.id===sel.dataset.id);
+        if(item){item.status=sel.value;save();rerender(mod);}
+      }));
+      // 查单词
+      const lookupInput=body.querySelector('.en-lookup-input');
+      const lookupResult=body.querySelector('.en-lookup-result');
+      const doLookup=()=>{const w=lookupInput?.value.trim();if(w)lookupWord(w,lookupResult);};
+      body.querySelector('.en-lookup-btn')?.addEventListener('click',doLookup);
+      lookupInput?.addEventListener('keydown',e=>{if(e.key==='Enter')doLookup();});
+      // 图片OCR：上传后显示图片，提示用户输入看到的单词
+      const ocrFile=body.querySelector('.en-ocr-file');
+      ocrFile?.addEventListener('change',e=>{
+        const file=e.target.files[0];if(!file)return;
+        const reader=new FileReader();
+        reader.onload=ev=>{
+          if(!lookupResult)return;
+          lookupResult.style.display='block';
+          lookupResult.innerHTML=`<div style="margin-bottom:8px"><img src="${ev.target.result}" style="max-width:100%;max-height:200px;border-radius:8px;border:1px solid var(--input-border)"></div><div style="font-size:13px;color:var(--text-sec)">图片已上传，请在上方输入框中输入图片中的单词进行查询。</div>`;
+        };
+        reader.readAsDataURL(file);
+      });
     }
   },
 
@@ -2488,7 +2844,27 @@ const MODULE_TYPES={
       const planRate=stats.planTotal?Math.round(stats.planDone/stats.planTotal*100):0;
       const earlyRate=stats.sleepDays?Math.round(stats.early/stats.sleepDays*100):0;
       const enRate=stats.enTotal?Math.round(stats.enDone/stats.enTotal*100):0;
-      const text=`${labels[d.period]}回顾\n\n执行：计划完成 ${stats.planDone}/${stats.planTotal}，完成率 ${planRate}%。\n健康：睡眠记录 ${stats.sleepDays} 天，早睡 ${stats.early} 天，早睡率 ${earlyRate}%；运动 ${stats.exDays} 天；冥想 ${stats.medDays} 天 / ${stats.medMin} 分钟。\n学习：英语完成率 ${enRate}%；阅读 ${stats.readMin} 分钟。\n复盘：记录 ${stats.reviewDays} 天。\n\n建议：保留完成率最高的习惯，挑一个低频项目做下阶段重点。`;
+      // 目标分析
+      let goalSummary='';
+      if(stats.goalBlocks&&stats.goalBlocks.length){
+        const goalParts=[];
+        if(stats.goalPlansHealth>0)goalParts.push(`健康方案：${stats.goalDoneHealth}/${stats.goalPlansHealth}(${stats.goalHealthRate}%)`);
+        if(stats.goalPlansLearning>0)goalParts.push(`学习方案：${stats.goalDoneLearning}/${stats.goalPlansLearning}(${stats.goalLearnRate}%)`);
+        if(stats.goalPlansLife>0)goalParts.push(`生活方案：${stats.goalDoneLife}/${stats.goalPlansLife}(${stats.goalLifeRate}%)`);
+        if(stats.goalPlansDefault>0)goalParts.push(`日常：${stats.goalDoneDefault}/${stats.goalPlansDefault}(${stats.goalDefRate}%)`);
+        if(stats.goalPlansOther>0)goalParts.push(`其他：${stats.goalDoneOther}/${stats.goalPlansOther}(${stats.goalOtherRate}%)`);
+        if(goalParts.length)goalSummary=goalParts.join('｜');
+        // 自动生成文字复盘
+        let advice='';
+        if(stats.goalLearnRate<30)advice+='学习方面完成率偏低，建议将大目标拆解为每日15分钟的小任务。';
+        if(stats.goalHealthRate<30)advice+='健康计划需要加强，可以从每天运动10分钟开始。';
+        if(stats.goalLifeRate<30)advice+='生活作息方面可以设置固定提醒，建立规律节奏。';
+        if(!advice&&stats.planRate>80)advice='各项指标完成度高，继续保持！';
+        if(!advice&&stats.planRate>50)advice='整体表现不错，还有提升空间，集中精力攻克薄弱项。';
+        if(!advice)advice='本周完成率偏低，下阶段建议聚焦1-2个核心目标。';
+        goalSummary+=`\n\n📌 目标复盘：${advice}`;
+      }
+      const text=`${labels[d.period]}回顾\n\n执行：计划完成 ${stats.planDone}/${stats.planTotal}，完成率 ${planRate}%。\n健康：睡眠记录 ${stats.sleepDays} 天，早睡 ${stats.early} 天，早睡率 ${earlyRate}%；运动 ${stats.exDays} 天；冥想 ${stats.medDays} 天 / ${stats.medMin} 分钟。\n学习：英语完成率 ${enRate}%；阅读 ${stats.readMin} 分钟。\n复盘：记录 ${stats.reviewDays} 天。${goalSummary?'\n\n目标板块完成情况：\n'+goalSummary:''}\n\n建议：保留完成率最高的习惯，挑一个低频项目做下阶段重点。`;
       return`<div class="report-panel">
         <div class="form-row">
           <div class="form-group" style="max-width:180px"><label>报告周期</label><select class="rp-period">${[['week','周报告'],['month','月度报告'],['quarter','季度报告'],['year','年报告']].map(([k,v])=>`<option value="${k}" ${d.period===k?'selected':''}>${v}</option>`).join('')}</select></div>
@@ -2501,7 +2877,27 @@ const MODULE_TYPES={
           <div class="report-card"><span class="small-text">冥想</span><strong>${stats.medMin}分</strong><div class="small-text">${stats.medDays} 天</div></div>
           <div class="report-card"><span class="small-text">英语完成率</span><strong>${enRate}%</strong><div class="small-text">${stats.enDone}/${stats.enTotal} 项</div></div>
           <div class="report-card"><span class="small-text">阅读/复盘</span><strong>${stats.readMin}分</strong><div class="small-text">复盘 ${stats.reviewDays} 天</div></div>
-        </div>`:`<div class="report-text">${esc(text)}</div>`}
+        </div>
+        ${goalSummary?`
+        <div class="report-card" style="grid-column:1/-1">
+          <span class="small-text">目标板块完成率</span>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px">
+            ${stats.goalPlansHealth>0?`<div class="tag" style="font-size:12px;padding:4px 10px">健康 ${stats.goalHealthRate}%</div>`:''}
+            ${stats.goalPlansLearning>0?`<div class="tag" style="font-size:12px;padding:4px 10px">学习 ${stats.goalLearnRate}%</div>`:''}
+            ${stats.goalPlansLife>0?`<div class="tag" style="font-size:12px;padding:4px 10px">生活 ${stats.goalLifeRate}%</div>`:''}
+            ${stats.goalPlansDefault>0?`<div class="tag" style="font-size:12px;padding:4px 10px">日常 ${stats.goalDefRate}%</div>`:''}
+            ${stats.goalPlansOther>0?`<div class="tag" style="font-size:12px;padding:4px 10px">其他 ${stats.goalOtherRate}%</div>`:''}
+          </div>
+          <div class="small-text" style="margin-top:6px;line-height:1.6">📌 目标复盘：${
+            stats.goalLearnRate<30?'学习方面完成率偏低，建议将大目标拆解为每日15分钟的小任务。':
+            stats.goalHealthRate<30?'健康计划需要加强，可以从每天运动10分钟开始。':
+            stats.goalLifeRate<30?'生活作息方面可以设置固定提醒，建立规律节奏。':
+            planRate>80?'各项指标完成度高，继续保持！':
+            planRate>50?'整体表现不错，还有提升空间，集中精力攻克薄弱项。':
+            '本周完成率偏低，下阶段建议聚焦1-2个核心目标。'
+          }</div>
+        </div>`:''}
+        `:`<div class="report-text">${esc(text)}</div>`}
       </div>`;
     },
     bind(body,mod,save){
@@ -3188,11 +3584,21 @@ function setSyncStatus(msg,color){
 async function syncCheckConnection(){
   const cfg=getSyncConfig();
   if(!cfg.serverUrl)return null;
-  try{
-    const res=await fetch(cfg.serverUrl.replace(/\/$/,'')+'/api/health',{signal:AbortSignal.timeout(5000)});
-    if(!res.ok)return null;
-    return await res.json();
-  }catch(e){return null;}
+  // Render 冷启动可能需要 10-15 秒，设置较长的超时
+  setSyncStatus('正在测试连接（可能需要 15-20 秒）...','var(--primary)');
+  for(let retry=0;retry<2;retry++){
+    try{
+      const res=await fetch(cfg.serverUrl.replace(/\/$/,'')+'/api/health',{signal:AbortSignal.timeout(20000)});
+      if(!res.ok)return null;
+      return await res.json();
+    }catch(e){
+      if(retry===0){
+        setSyncStatus('首次连接超时，正在重试...','var(--primary)');
+        await new Promise(r=>setTimeout(r,3000));
+      }
+    }
+  }
+  return null;
 }
 async function syncPush(force){
   const cfg=getSyncConfig();
@@ -3212,7 +3618,7 @@ async function syncPush(force){
         deviceName:cfg.deviceName||'unknown',
         clientUpdatedAt:DB.data.updatedAt||now
       }),
-      signal:AbortSignal.timeout(30000)
+      signal:AbortSignal.timeout(45000) // Render 冷启动需要更长时间
     });
     const result=await res.json();
     if(!res.ok){
@@ -3244,7 +3650,7 @@ async function syncPull(){
   setSyncStatus('正在拉取...','var(--primary)');
   try{
     const url=cfg.serverUrl.replace(/\/$/,'')+'/api/sync/'+encodeURIComponent(cfg.syncKey);
-    const res=await fetch(url,{signal:AbortSignal.timeout(30000)});
+    const res=await fetch(url,{signal:AbortSignal.timeout(45000)});
     const result=await res.json();
     if(!res.ok){setSyncStatus('拉取失败：'+res.status,'var(--text-sec)');isSyncing=false;return false;}
     if(!result.data){setSyncStatus('云端暂无数据','var(--text-sec)');isSyncing=false;return false;}
@@ -3323,7 +3729,18 @@ function initSync(){
       setSyncStatus('连接成功！服务器版本：'+health.version,'var(--primary)');
       if(newCfg.autoSync)startAutoSync();
     }else{
-      setSyncStatus('连接失败，请检查服务器地址是否正确','var(--text-sec)');
+      const url=newCfg.serverUrl;
+      let hint='连接失败，请检查：\n1. 服务器地址是否正确（注意 http/https）\n2. Render 免费版冷启动需等待 15-30 秒\n3. 确认服务器已部署并正常运行';
+      // 尝试检测常见问题
+      if(url.startsWith('http://')){
+        hint+='\n\n提示：你使用的是 http://，GitHub Pages 强制 HTTPS，建议改用 https://';
+      }else if(!url.startsWith('https://')&&!url.startsWith('http://')){
+        hint+='\n\n提示：地址需以 https:// 或 http:// 开头';
+      }
+      if(url.includes('localhost')||url.includes('127.0.0.1')){
+        hint+='\n\n提示：localhost 只能在本机访问，手机无法连接。请使用 Render 等公网服务地址';
+      }
+      setSyncStatus(hint,'var(--text-sec)');
     }
   });
   const pushBtn=document.getElementById('syncPushBtn');
@@ -3588,6 +4005,29 @@ function init(){
     openModal('addModuleModal');
   });
 
+  // Mobile sidebar toggle
+  const mobileMenuBtn=document.getElementById('mobileMenuBtn');
+  const sidebar=document.querySelector('.sidebar');
+  const sidebarOverlay=document.getElementById('sidebarOverlay');
+  if(mobileMenuBtn && sidebar && sidebarOverlay){
+    function toggleSidebar(open){
+      sidebar.classList.toggle('open',open);
+      sidebarOverlay.classList.toggle('active',open);
+      document.body.style.overflow=open?'hidden':'';
+    }
+    mobileMenuBtn.addEventListener('click',()=>toggleSidebar(true));
+    sidebarOverlay.addEventListener('click',()=>toggleSidebar(false));
+    document.getElementById('sidebarCloseBtn').addEventListener('click',()=>toggleSidebar(false));
+    // 侧栏内点击导航项后自动关闭
+    sidebar.querySelectorAll('.side-nav-item').forEach(item=>{
+      item.addEventListener('click',()=>toggleSidebar(false));
+    });
+    // 窗口尺寸变化时自动恢复
+    window.addEventListener('resize',()=>{
+      if(window.innerWidth>600) toggleSidebar(false);
+    });
+  }
+
   // Modal close buttons
   document.querySelectorAll('[data-close]').forEach(btn=>{
     btn.addEventListener('click',()=>closeModal(btn.dataset.close));
@@ -3614,6 +4054,36 @@ function init(){
   });
 
   initSync();
+
+  // 自动更新检测：页面加载后延迟检查，避免阻塞首屏
+  setTimeout(() => {
+    // 如果用户最近 1 小时内忽略过更新提示，则不再弹
+    try {
+      const dismissed = parseInt(localStorage.getItem('tantan_update_dismissed') || '0', 10);
+      if (Date.now() - dismissed < 3600000) return;
+    } catch (e) {}
+    checkForUpdate();
+  }, 5000);
+
+  // 更新提示条事件
+  const updateRefreshBtn = document.getElementById('updateRefreshBtn');
+  const updateCloseBtn = document.getElementById('updateCloseBtn');
+  if (updateRefreshBtn) {
+    updateRefreshBtn.addEventListener('click', () => {
+      // 强制清除缓存并刷新
+      if ('caches' in window) {
+        caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k)))).then(() => {
+          window.location.reload(true);
+        }).catch(() => window.location.reload(true));
+      } else {
+        window.location.reload(true);
+      }
+    });
+  }
+  if (updateCloseBtn) {
+    updateCloseBtn.addEventListener('click', hideUpdateBar);
+  }
+
   // Keyboard: Escape closes modals
   document.addEventListener('keydown',e=>{
     if(e.key==='Escape'){
@@ -3624,8 +4094,40 @@ function init(){
 
 // Start
 document.addEventListener('DOMContentLoaded',init);
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.getRegistrations?.().then(regs=>regs.forEach(reg=>reg.unregister())).catch(()=>{});
+
+/* ============================================================
+   Service Worker 注册与管理
+============================================================ */
+if ('serviceWorker' in navigator) {
+  // 页面加载完成后注册 Service Worker
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./tantan-sw.js')
+      .then(registration => {
+        console.log('SW 注册成功:', registration.scope);
+
+        // 监听更新
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              // 新版已安装，但还在等待激活
+              console.log('检测到新版 SW，等待激活...');
+              showUpdateBar();
+            }
+          });
+        });
+      })
+      .catch(err => {
+        console.log('SW 注册失败:', err);
+      });
+
+    // 监听 SW 发送的消息（用于版本对比）
+    navigator.serviceWorker.addEventListener('message', event => {
+      if (event.data && event.data.type === 'NEW_VERSION_AVAILABLE') {
+        showUpdateBar();
+      }
+    });
+  });
 }
 </script>
 </body>
