@@ -2,6 +2,16 @@
 
 你的个人成长工作台，支持每日计划、睡眠记录、运动记录、冥想、每日复盘、阅读、英语学习、技能提升、热点话题、灵感记录、收藏库等模块。
 
+## 版权与许可证
+
+Copyright (c) 2026 carleetan2-hub.
+
+本项目采用 **GNU General Public License v3.0（GPLv3）** 开源许可证，详见仓库根目录的 `LICENSE` 文件。
+
+选择 GPLv3 的原因：仓库公开后，别人可以学习、使用和修改代码，但如果他们分发修改后的版本，也需要在 GPLv3 下公开相应源码，避免代码被直接拿去闭源再发布。
+
+请注意：开源许可证不能阻止别人看到公开仓库里的代码，也不能替代商标、隐私或商业秘密保护。不要把私密数据、密钥、同步密钥、账号信息或个人隐私内容提交到公开仓库。
+
 ## 在线使用
 
 直接打开 `index.html` 即可使用。所有数据保存在浏览器本地（localStorage），无需后端服务。
@@ -134,3 +144,10 @@ CMD ["node", "server.js"]
 - 支持 PWA，可添加到手机主屏幕
 - 响应式设计，适配手机与桌面
 - 同步后端：Node.js + Express + SQLite，轻量易部署
+
+## 公开仓库安全建议
+
+- 开启分支保护规则，避免误改 `main` 分支：Settings → Branches → Add branch protection rule。
+- 开启秘密扫描和依赖检查：Settings → Security and analysis。
+- 不要把真实同步密钥、数据库文件、个人备份 JSON 或浏览器导出的数据上传到仓库。
+- 如果后续部署后端，请把 `server/tantan-sync.db` 和 `.env` 这类文件加入 `.gitignore`。

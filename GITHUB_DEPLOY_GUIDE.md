@@ -22,6 +22,8 @@
 - `tantan-sw.js`
 - `favicon.ico`
 - `.nojekyll`
+- `.gitignore`
+- `LICENSE`
 - `README.md`
 - `GITHUB_DEPLOY_GUIDE.md`
 
