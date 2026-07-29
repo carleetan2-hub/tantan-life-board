@@ -1,0 +1,19 @@
+{
+  "name": "Tantan Life Board",
+  "short_name": "Life Board",
+  "description": "每日计划、睡眠、运动、复盘、阅读、英语学习、技能提升、热点话题与灵感记录。",
+  "start_url": "./tantan-workbench.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#faf7ff",
+  "theme_color": "#9b7edb",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "./tantan-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
