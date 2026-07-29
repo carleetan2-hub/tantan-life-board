@@ -939,6 +939,14 @@ function importHistoricalSleepRecords(sleepData){
   sleepData.historyImport2025=true;
   return added;
 }
+function monthOffsetFromLatestSleepRecord(records){
+  const rows=(records||[]).filter(r=>r?.date&&r?.bedtime).sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+  if(!rows.length)return 0;
+  const latest=rows[rows.length-1].date;
+  const [y,m]=latest.split('-').map(Number);
+  const now=new Date();
+  return (y-now.getFullYear())*12+(m-1-now.getMonth());
+}
 
 /* ============================================================
    数据存储层
@@ -1401,7 +1409,11 @@ const MODULE_TYPES={
     render(d){
       d.records=dedupeByDate(d.records||[]);
       d.selectedDate=d.selectedDate||todayStr();
-      d.monthOffset=d.monthOffset||0;
+      const currentMonth=`${new Date().getFullYear()}-${String(new Date().getMonth()+1).padStart(2,'0')}`;
+      if(d.monthOffset===undefined||d.monthOffset===null)d.monthOffset=0;
+      if(!d.monthViewTouched&&!d.records.some(r=>(r.date||'').slice(0,7)===currentMonth)){
+        d.monthOffset=monthOffsetFromLatestSleepRecord(d.records);
+      }
       const sleepWeek=weekDates().map(day=>{
         const key=dateKey(day), r=findByDate(d.records,key)||{};
         return `<div class="day-card ${key===todayStr()?'today':''}" data-date="${key}">
@@ -1501,8 +1513,8 @@ const MODULE_TYPES={
           stars.querySelectorAll('.star').forEach(x=>x.classList.toggle('active',+x.dataset.n<=n));
         });
       });
-      body.querySelector('.sl-month-prev')?.addEventListener('click',()=>{mod.data.monthOffset=(mod.data.monthOffset||0)-1;save();rerender(mod);});
-      body.querySelector('.sl-month-next')?.addEventListener('click',()=>{mod.data.monthOffset=(mod.data.monthOffset||0)+1;save();rerender(mod);});
+      body.querySelector('.sl-month-prev')?.addEventListener('click',()=>{mod.data.monthViewTouched=true;mod.data.monthOffset=(mod.data.monthOffset||0)-1;save();rerender(mod);});
+      body.querySelector('.sl-month-next')?.addEventListener('click',()=>{mod.data.monthViewTouched=true;mod.data.monthOffset=(mod.data.monthOffset||0)+1;save();rerender(mod);});
       body.querySelectorAll('.month-day[data-date]').forEach(day=>{
         day.addEventListener('click',()=>{
           mod.data.selectedDate=day.dataset.date;
@@ -3324,7 +3336,7 @@ function migrateWorkbenchData(){
     if(mod){
       mod.data=mod.data||{};
       mod.data.records=dedupeByDate(mod.data.records||[]);
-      if(type==='sleep'&&!mod.data.historyImport2025)importHistoricalSleepRecords(mod.data);
+      if(type==='sleep')importHistoricalSleepRecords(mod.data);
       mod.data.selectedDate=mod.data.selectedDate||todayStr();
       mod.data.monthOffset=mod.data.monthOffset||0;
       if(type==='review')mod.data.fields=Array.isArray(mod.data.fields)?mod.data.fields:['经验总结'];
