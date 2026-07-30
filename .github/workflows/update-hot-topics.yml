@@ -1,0 +1,116 @@
+name: 每日更新爆款话题
+
+on:
+  schedule:
+    # 每天北京时间 08:30 自动运行（UTC 00:30）
+    - cron: '30 0 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  update-hot-topics:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 抓取热点数据
+        run: |
+          cat > fetch-hot.js << 'EOF'
+          const https = require('https');
+          const fs = require('fs');
+
+          const sources = [
+            { name: '微博热搜', url: 'https://weibo.com/ajax/side/hotSearch' },
+            { name: '知乎热榜', url: 'https://www.zhihu.com/api/v3/feed/topstory/hot-lists/total?limit=50' }
+          ];
+
+          function fetchJson(url) {
+            return new Promise((resolve, reject) => {
+              https.get(url, { headers: { 'User-Agent': 'Mozilla/5.0' } }, res => {
+                let data = '';
+                res.on('data', chunk => data += chunk);
+                res.on('end', () => {
+                  try { resolve(JSON.parse(data)); }
+                  catch (e) { reject(e); }
+                });
+              }).on('error', reject);
+            });
+          }
+
+          (async () => {
+            const results = {};
+            const now = new Date().toISOString();
+
+            try {
+              const wb = await fetchJson(sources[0].url);
+              results.weibo = {
+                source: '微博热搜',
+                updatedAt: now,
+                items: (wb.data?.realtime || []).slice(0, 30).map((item, i) => ({
+                  rank: i + 1,
+                  title: item.word || item.note || '',
+                  hot: item.num || item.hot || 0,
+                  tag: item.category || '',
+                  url: `https://s.weibo.com/weibo?q=${encodeURIComponent(item.word || '')}`
+                }))
+              };
+            } catch (e) {
+              results.weibo = { source: '微博热搜', updatedAt: now, items: [], error: e.message };
+            }
+
+            try {
+              const zh = await fetchJson(sources[1].url);
+              results.zhihu = {
+                source: '知乎热榜',
+                updatedAt: now,
+                items: (zh.data || []).slice(0, 30).map((item, i) => ({
+                  rank: i + 1,
+                  title: item.target?.title || item.title || '',
+                  hot: item.detail_text || item.hot || 0,
+                  excerpt: item.target?.excerpt || item.excerpt || '',
+                  url: `https://www.zhihu.com/question/${item.target?.id || item.id || ''}`
+                }))
+              };
+            } catch (e) {
+              results.zhihu = { source: '知乎热榜', updatedAt: now, items: [], error: e.message };
+            }
+
+            fs.writeFileSync('hot-topics.json', JSON.stringify(results, null, 2));
+            console.log('热点数据已生成：hot-topics.json');
+          })();
+          EOF
+          node fetch-hot.js
+
+      - name: 提交并推送
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add hot-topics.json
+          if git diff --cached --quiet; then
+            echo "没有变化，无需提交"
+          else
+            git commit -m "自动更新热点数据 $(date +'%Y-%m-%d')"
+            git push
+          fi
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
