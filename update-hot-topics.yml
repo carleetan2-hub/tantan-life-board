@@ -1,9 +1,9 @@
-name: Update Hot Topics
+name: 每日更新爆款话题
 
 on:
   schedule:
-    # 每天北京时间 08:10 自动抓取
-    - cron: '10 0 * * *'
+    # 每天北京时间 08:30 自动运行（UTC 00:30）
+    - cron: '30 0 * * *'
   workflow_dispatch:
 
 permissions:
@@ -18,61 +18,107 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Fetch hot topics
+      - name: 抓取全平台热点数据
         uses: actions/github-script@v7
         with:
           script: |
             const fs = require('fs');
-            const sources = [
-              { platform: 'weibo', url: 'https://dailyhot.cmcq.xyz/weibo' },
-              { platform: 'zhihu', url: 'https://dailyhot.cmcq.xyz/zhihu' },
-              { platform: 'douyin', url: 'https://dailyhot.cmcq.xyz/douyin' },
-              { platform: 'baidu', url: 'https://dailyhot.cmcq.xyz/baidu' },
-              { platform: 'bilibili', url: 'https://dailyhot.cmcq.xyz/bilibili' }
+
+            // DailyHot API 支持的平台列表
+            const API_BASE = 'https://dailyhot.cmcq.xyz';
+            const platforms = [
+              { key: 'weibo',       name: '微博热搜' },
+              { key: 'zhihu',       name: '知乎热榜' },
+              { key: 'douyin',      name: '抖音热搜' },
+              { key: 'xiaohongshu', name: '小红书热搜' },
+              { key: 'weixin',      name: '微信热搜' },
+              { key: 'baidu',       name: '百度热搜' },
+              { key: 'bilibili',    name: 'B站热搜' },
+              { key: 'toutiao',     name: '今日头条' },
+              { key: '36kr',        name: 'AI科技新闻' }
             ];
 
             function pickList(json) {
               if (Array.isArray(json)) return json;
-              if (Array.isArray(json.data)) return json.data;
-              if (Array.isArray(json.data?.list)) return json.data.list;
-              if (Array.isArray(json.list)) return json.list;
+              if (Array.isArray(json?.data)) return json.data;
+              if (Array.isArray(json?.data?.list)) return json.data.list;
+              if (Array.isArray(json?.list)) return json.list;
+              if (Array.isArray(json?.items)) return json.items;
               return [];
             }
 
             const output = [];
-            for (const source of sources) {
+            const summary = {};
+
+            for (const p of platforms) {
               try {
-                const res = await fetch(source.url, { headers: { 'user-agent': 'Tantan-Life-Board' } });
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                console.log(`正在抓取 ${p.name}...`);
+                const res = await fetch(`${API_BASE}/${p.key}`, {
+                  headers: { 'User-Agent': 'Tantan-Life-Board/1.0' },
+                  signal: AbortSignal.timeout(15000)
+                });
+
+                if (!res.ok) {
+                  throw new Error(`HTTP ${res.status}`);
+                }
+
                 const json = await res.json();
-                const list = pickList(json).slice(0, 10);
+                const list = pickList(json).slice(0, 15);
+
+                if (list.length === 0) {
+                  console.log(`⚠️ ${p.name} 返回空列表`);
+                  summary[p.key] = { name: p.name, count: 0, error: '返回空列表' };
+                  continue;
+                }
+
+                console.log(`✅ ${p.name} 抓取到 ${list.length} 条`);
+                summary[p.key] = { name: p.name, count: list.length };
+
                 list.forEach((item, index) => {
                   output.push({
-                    platform: source.platform,
-                    title: item.title || item.name || item.word || item.desc || `热榜 ${index + 1}`,
+                    platform: p.key,
+                    title: item.title || item.name || item.word || item.desc || item.keyword || `热点${index + 1}`,
                     url: item.url || item.link || item.mobileUrl || item.href || '',
-                    hot: item.hot || item.hotValue || item.index || item.rank || item.desc || '',
+                    hot: item.hot || item.hotValue || item.index || item.rank || item.desc || item.summary || '',
                     fetchedAt: new Date().toISOString()
                   });
                 });
               } catch (err) {
-                output.push({
-                  platform: source.platform,
-                  title: `${source.platform} 抓取失败`,
-                  url: '',
-                  hot: err.message,
-                  fetchedAt: new Date().toISOString()
-                });
+                console.error(`❌ ${p.name} 抓取失败: ${err.message}`);
+                summary[p.key] = { name: p.name, count: 0, error: err.message };
               }
             }
 
-            fs.writeFileSync('hot-topics.json', JSON.stringify(output, null, 2), 'utf8');
+            // 输出汇总日志
+            console.log('\n========== 抓取汇总 ==========');
+            for (const [key, info] of Object.entries(summary)) {
+              const status = info.count > 0 ? `✅ ${info.count}条` : `❌ ${info.error || '失败'}`;
+              console.log(`${info.name}: ${status}`);
+            }
+            console.log(`总计: ${output.length} 条热点\n`);
 
-      - name: Commit hot topics
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: '自动更新热点数据'
-          file_pattern: hot-topics.json
+            if (output.length === 0) {
+              console.log('⚠️ 所有平台均抓取失败，保留上次的 hot-topics.json');
+              return;
+            }
+
+            fs.writeFileSync('hot-topics.json', JSON.stringify(output, null, 2), 'utf8');
+            console.log('hot-topics.json 已写入');
+
+            // 保存汇总信息到 GitHub Actions 输出
+            core.setOutput('total', output.length);
+
+      - name: 提交并推送
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add hot-topics.json
+          if git diff --cached --quiet; then
+            echo "热点数据无变化，跳过提交"
+          else
+            git commit -m "自动更新热点数据 $(date +'%Y-%m-%d %H:%M')"
+            git push
+          fi
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -83,4 +129,5 @@ jobs:
           path: '.'
 
       - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4

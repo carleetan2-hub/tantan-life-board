@@ -492,8 +492,8 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
       <div><strong>关于本站</strong></div>
       <div>tantan的个人成长空间</div>
       <div>状态：<strong>迭代中</strong></div>
-      <div id="siteVersion">V7.14</div>
-      <div style="font-size:11px;color:var(--text-light);margin-top:4px">小改动用小数点后两位（V7.11），大改动用V7.x</div>
+      <div id="siteVersion">V8.0</div>
+      <div style="font-size:11px;color:var(--text-light);margin-top:4px">小改动用小数点后一位（V8.1），大改动用V8.x、V9.x</div>
       <div style="margin-top:6px"><button class="btn btn-ghost btn-sm" id="moreChangelogBtn" style="padding:0;font-size:12px">更新日志</button></div>
     </div>
   </aside>
@@ -595,8 +595,8 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
 /* ============================================================
    应用版本与自动更新检测
 ============================================================ */
-const APP_VERSION = 'v27';
-const APP_BUILD_TIME = '2026-07-29';
+const APP_VERSION = 'v28';
+const APP_BUILD_TIME = '2026-07-30';
 
 /**
  * 检查是否有新版本可用
@@ -4078,6 +4078,12 @@ function migrateWorkbenchData(){
       changelog.data.logs.push({
         id:genId(),date:todayStr(),version:'V7.11',
         changes:'修复与优化：\n• 修复更新后旧记录可能不显示的问题：加载时会扫描主数据、旧数据键和备份键，并选择最完整的数据\n• 每次保存前自动生成备份，设置中新增“恢复旧数据”入口\n• 睡眠看板在时间下一行显示睡眠时长\n• 根据1-6月手写记录导入2025年历史睡眠记录，起床时间统一为07:00，且不覆盖已填写日期\n• 行动总览升级为“每日计划 × 日期”的完成矩阵，并保留每天具体完成内容'
+      });
+    }
+    if(!changelog.data.logs.some(l=>l.version==='V8.0')){
+      changelog.data.logs.push({
+        id:genId(),date:todayStr(),version:'V8.0',
+        changes:'V8.0 大版本更新：\n• 设置弹窗增加返回按钮，移动端体验优化\n• 英语学习新增生词本：点击单词直接加入，支持标签（已认识/模糊/不认识）\n• 英语学习新增查单词：手动输入或图片识别，接入词典API显示发音/释义/例句\n• 修复睡眠颜色bug：23:00后入睡（含00:30/2:30等）统一标红\n• 新增平均睡眠时长统计\n• 补充7月睡眠记录（7/1-7/28）\n• 英语写作反馈修复：每次输入都能生成新反馈，不再卡在上一条\n• 收藏库编辑/完成状态切换优化\n• 行动总览支持补填历史计划，自定义追踪板块\n• 修复网格/双栏/列表布局显示一致问题\n• 各模块保存按钮统一加入已保存确认反馈\n• 热点自动化支持9个平台（微博/知乎/抖音/小红书/微信/百度/B站/头条/AI科技新闻）\n• 英语朗读优化：优先选择自然语音，调整语速音高'
       });
     }
   }
