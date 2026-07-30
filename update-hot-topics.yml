@@ -1,0 +1,86 @@
+name: Update Hot Topics
+
+on:
+  schedule:
+    # 每天北京时间 08:10 自动抓取
+    - cron: '10 0 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  update-hot-topics:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fetch hot topics
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const sources = [
+              { platform: 'weibo', url: 'https://dailyhot.cmcq.xyz/weibo' },
+              { platform: 'zhihu', url: 'https://dailyhot.cmcq.xyz/zhihu' },
+              { platform: 'douyin', url: 'https://dailyhot.cmcq.xyz/douyin' },
+              { platform: 'baidu', url: 'https://dailyhot.cmcq.xyz/baidu' },
+              { platform: 'bilibili', url: 'https://dailyhot.cmcq.xyz/bilibili' }
+            ];
+
+            function pickList(json) {
+              if (Array.isArray(json)) return json;
+              if (Array.isArray(json.data)) return json.data;
+              if (Array.isArray(json.data?.list)) return json.data.list;
+              if (Array.isArray(json.list)) return json.list;
+              return [];
+            }
+
+            const output = [];
+            for (const source of sources) {
+              try {
+                const res = await fetch(source.url, { headers: { 'user-agent': 'Tantan-Life-Board' } });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const json = await res.json();
+                const list = pickList(json).slice(0, 10);
+                list.forEach((item, index) => {
+                  output.push({
+                    platform: source.platform,
+                    title: item.title || item.name || item.word || item.desc || `热榜 ${index + 1}`,
+                    url: item.url || item.link || item.mobileUrl || item.href || '',
+                    hot: item.hot || item.hotValue || item.index || item.rank || item.desc || '',
+                    fetchedAt: new Date().toISOString()
+                  });
+                });
+              } catch (err) {
+                output.push({
+                  platform: source.platform,
+                  title: `${source.platform} 抓取失败`,
+                  url: '',
+                  hot: err.message,
+                  fetchedAt: new Date().toISOString()
+                });
+              }
+            }
+
+            fs.writeFileSync('hot-topics.json', JSON.stringify(output, null, 2), 'utf8');
+
+      - name: Commit hot topics
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: '自动更新热点数据'
+          file_pattern: hot-topics.json
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4

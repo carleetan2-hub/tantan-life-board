@@ -148,9 +148,9 @@ https://你的用户名.github.io/仓库名/tantan-workbench.html?v=25
 
 | 文件 | 当前版本 | 作用 |
 |------|---------|------|
-| `index.html` | `?v=25` | 入口跳转页 |
-| `tantan-workbench.html` | `APP_VERSION = 'v25'` | 主应用 |
-| `tantan-sw.js` | `CACHE_NAME = 'tantan-workbench-v25'` | 缓存控制 |
+| `index.html` | `?v=27` | 入口跳转页 |
+| `tantan-workbench.html` | `APP_VERSION = 'v27'` | 主应用 |
+| `tantan-sw.js` | `CACHE_NAME = 'tantan-workbench-v27'` | 缓存控制 |
 
 **每次大更新后，这三个地方都需要同步更新版本号**（例如 25 → 26），确保所有缓存都被刷新。
 

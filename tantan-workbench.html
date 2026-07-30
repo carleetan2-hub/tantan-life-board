@@ -116,10 +116,11 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--primary)
 .view-btn.active{background:var(--card-bg);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.12)}
 /* ========== 仪表盘网格 ========== */
 .dashboard{display:grid;gap:16px}
-.dashboard.view-grid{grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
+.dashboard.view-grid{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
 .dashboard.view-list{grid-template-columns:1fr}
-.dashboard.view-list .module-card{max-width:900px}
-.dashboard.view-columns{grid-template-columns:repeat(2,minmax(0,1fr))}
+.dashboard.view-list .module-card{max-width:none}
+.dashboard.view-columns{grid-template-columns:repeat(2,minmax(420px,1fr))}
+.dashboard.view-columns .module-card{min-width:0}
 /* ========== 模块卡片 ========== */
 .module-card{background:var(--card-bg);border:1.2px solid var(--card-border);border-radius:22px;box-shadow:var(--shadow);overflow:hidden;transition:box-shadow var(--transition);display:flex;flex-direction:column;scroll-margin-top:92px}
 .module-card:hover{box-shadow:var(--shadow-hover)}
@@ -594,7 +595,7 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
 /* ============================================================
    应用版本与自动更新检测
 ============================================================ */
-const APP_VERSION = 'v25';
+const APP_VERSION = 'v27';
 const APP_BUILD_TIME = '2026-07-29';
 
 /**
@@ -651,6 +652,19 @@ function genId(){return Date.now().toString(36)+Math.random().toString(36).subst
 function esc(s){if(!s)return'';const d=document.createElement('div');d.textContent=s;return d.innerHTML}
 function todayStr(){const d=new Date();return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
 function nowStr(){return new Date().toISOString().slice(0,16)}
+function confirmButton(btn,text='已保存'){
+  if(!btn)return;
+  const old=btn.textContent;
+  btn.disabled=true;
+  btn.textContent='✓ '+text;
+  btn.classList.add('btn-primary');
+  setTimeout(()=>{if(btn){btn.disabled=false;btn.textContent=old;}},1200);
+}
+function saveAndRerenderWithConfirm(btn,mod,save,delay=450){
+  confirmButton(btn);
+  save();
+  setTimeout(()=>rerender(mod),delay);
+}
 function formatDate(d){if(!d)return'';const dt=new Date(d);return`${dt.getMonth()+1}月${dt.getDate()}日`}
 function formatDateTime(d){if(!d)return'';const dt=new Date(d);return`${dt.getMonth()+1}/${dt.getDate()} ${String(dt.getHours()).padStart(2,'0')}:${String(dt.getMinutes()).padStart(2,'0')}`}
 function sleepDurationText(bed,wake,prefix=true){
@@ -852,7 +866,7 @@ function englishCompletion(rec={}){
 }
 function visibleSleepNote(note=''){
   const text=String(note||'').trim();
-  return text==='由1-6月手写睡眠记录导入，可继续编辑'?'':text;
+  return ['由1-6月手写睡眠记录导入，可继续编辑','由7月手写睡眠记录导入，起床时间可继续补填'].includes(text)?'':text;
 }
 function markdownLite(text=''){
   const lines=String(text||'').split('\n');
@@ -974,9 +988,17 @@ function englishWritingFeedback(text='',packWords=[]){
     .trim();
   // 应用简单修正
   if(!/[.!?]$/.test(corrected))corrected+='.';
-  prepErrors.forEach(({re,fix})=>{
+  const correctionPrepErrors=[
+    {re:/\bdepend\s+of\b/gi,fix:'depend on'},
+    {re:/\b(discuss|mention|describe)\s+about\b/gi,fix:(m)=>m.replace(/\s+about/i,'')},
+    {re:/\b(explain|answer)\s+to\b/gi,fix:(m)=>m.replace(/\s+to/i,'')},
+    {re:/\blook\s+and\b/gi,fix:'look'},
+    {re:/\bwatch\s+and\b/gi,fix:'watch'},
+    {re:/\bsee\s+and\b/gi,fix:'see'}
+  ];
+  correctionPrepErrors.forEach(({re,fix})=>{
     corrected=corrected.replace(re,(m)=>{
-      if(typeof fix==='function')return fix(re.exec(m)||m);
+      if(typeof fix==='function')return fix(m);
       return fix;
     });
   });
@@ -1162,10 +1184,20 @@ async function fetchHotPayload(url){
 
 function speakText(text){
   if(!window.speechSynthesis)return;
+  window.speechSynthesis.cancel();
   const u=new SpeechSynthesisUtterance(text);
   u.lang='en-US';
+  const voices=window.speechSynthesis.getVoices?.()||[];
+  const preferred=voices.find(v=>/Samantha|Ava|Jenny|Aria|Natural|Premium/i.test(v.name)&&/^en/i.test(v.lang))
+    ||voices.find(v=>/^en-US/i.test(v.lang)&&!/compact|robot|default/i.test(v.name))
+    ||voices.find(v=>/^en/i.test(v.lang));
+  if(preferred)u.voice=preferred;
+  u.rate=0.88;
+  u.pitch=1.04;
+  u.volume=1;
   window.speechSynthesis.speak(u);
 }
+if(window.speechSynthesis)window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();
 
 async function lookupWord(word,resultEl){
   if(!word||!resultEl)return;
@@ -1282,6 +1314,11 @@ const HISTORICAL_SLEEP_RECORDS_2025=[
   ['2025-05-01','22:30'],['2025-05-02','22:40'],['2025-05-03','23:26'],['2025-05-04','23:30'],['2025-05-05','23:00'],['2025-05-06','23:30'],['2025-05-07','23:00'],['2025-05-08','22:20'],['2025-05-09','21:58'],['2025-05-10','23:05'],['2025-05-11','22:48'],['2025-05-12','22:40'],['2025-05-13','22:37'],['2025-05-14','22:55'],['2025-05-16','23:58'],['2025-05-18','22:55'],['2025-05-19','23:12'],['2025-05-20','22:28'],['2025-05-21','22:13'],['2025-05-22','23:50'],['2025-05-23','23:00'],['2025-05-24','23:49'],['2025-05-25','22:15'],['2025-05-26','21:58'],['2025-05-27','22:40'],['2025-05-28','22:30'],['2025-05-29','23:57'],
   ['2025-06-01','22:30'],['2025-06-02','22:25'],['2025-06-03','23:55'],['2025-06-04','00:55'],['2025-06-05','22:50'],['2025-06-06','22:45'],['2025-06-07','22:15'],['2025-06-08','22:30'],['2025-06-09','22:35'],['2025-06-10','22:35'],['2025-06-11','22:43'],['2025-06-12','22:55'],['2025-06-13','23:35'],['2025-06-14','22:30'],['2025-06-15','23:00'],['2025-06-16','22:40'],['2025-06-17','00:30'],['2025-06-18','23:30'],['2025-06-19','22:30'],['2025-06-20','23:30'],['2025-06-21','23:35'],['2025-06-22','22:32'],['2025-06-23','23:05'],['2025-06-24','23:55'],['2025-06-25','02:30'],['2025-06-26','22:40'],['2025-06-27','22:40'],['2025-06-28','22:35'],['2025-06-29','22:35'],['2025-06-30','23:12']
 ];
+const JULY_SLEEP_RECORDS_2026=[
+  ['2026-07-01','00:45'],['2026-07-02','22:45'],['2026-07-03','22:45'],['2026-07-04','22:15'],['2026-07-05','22:55'],['2026-07-06','22:55'],['2026-07-07','23:50'],['2026-07-08','23:38'],['2026-07-09','22:28'],['2026-07-10','22:57'],['2026-07-11','22:35'],
+  ['2026-07-12','23:12'],['2026-07-13','23:15'],['2026-07-14','22:35'],['2026-07-15','23:30'],['2026-07-16','23:21'],['2026-07-17','22:45'],['2026-07-18','22:35'],['2026-07-19','22:35'],['2026-07-20','23:30'],['2026-07-21','00:40'],['2026-07-22','22:45'],
+  ['2026-07-23','22:45'],['2026-07-24','23:01'],['2026-07-25','23:50'],['2026-07-26','22:35'],['2026-07-27','22:30'],['2026-07-28','23:35']
+];
 function ensureRoutineTasks(data){
   data.routineTasks=data.routineTasks||DEFAULT_ROUTINE_TASKS.map(text=>({id:genId(),text}));
   const today=todayStr();
@@ -1314,6 +1351,26 @@ function importHistoricalSleepRecords(sleepData){
   });
   sleepData.records=dedupeByDate(sleepData.records);
   sleepData.historyImport2025=true;
+  return added;
+}
+function importJulySleepRecords2026(sleepData){
+  sleepData.records=Array.isArray(sleepData.records)?sleepData.records:[];
+  let added=0;
+  JULY_SLEEP_RECORDS_2026.forEach(([date,bedtime])=>{
+    const existing=findByDate(sleepData.records,date);
+    if(existing?.bedtime)return;
+    sleepData.records.push({
+      id:genId(),
+      date,
+      bedtime,
+      wakeTime:'',
+      quality:3,
+      notes:'由7月手写睡眠记录导入，起床时间可继续补填'
+    });
+    added++;
+  });
+  sleepData.records=dedupeByDate(sleepData.records);
+  sleepData.julyImport2026=true;
   return added;
 }
 function monthOffsetFromLatestSleepRecord(records){
@@ -1549,9 +1606,11 @@ const MODULE_TYPES={
   /* ---- 行动总览 ---- */
   'overview':{
     title:'行动总览',icon:'overview',desc:'按周回顾每天完成了什么',
-    defaultData:{weekOffset:0},
+    defaultData:{weekOffset:0,customRows:[],customDone:{}},
     render(d){
       d.weekOffset=d.weekOffset||0;
+      d.customRows=Array.isArray(d.customRows)?d.customRows:[];
+      d.customDone=d.customDone||{};
       const mods=DB.data.modules||[];
       const get=(type)=>mods.find(m=>m.type===type)?.data||{};
       const plan=get('daily-plan'), sleep=get('sleep'), exercise=get('exercise'), meditation=get('meditation'), reading=get('reading'), english=get('english'), review=get('review');
@@ -1561,14 +1620,17 @@ const MODULE_TYPES={
       const weekTitle=`${days[0].getFullYear()}年${days[0].getMonth()+1}/${days[0].getDate()} - ${days[6].getMonth()+1}/${days[6].getDate()}`;
       const routines=(plan.routineTasks||[]).filter(r=>r.text).map(r=>({id:r.id,label:r.text,type:'routine'}));
       const extraTaskLabels=[...new Set((plan.tasks||[]).filter(t=>dayKeys.includes(t.date)&&!t.routineId).map(t=>t.text).filter(Boolean))].map(text=>({id:text,label:text,type:'extra'}));
-      const matrixRows=[...routines,...extraTaskLabels];
+      const customRows=d.customRows.filter(r=>r&&r.label).map(r=>({id:r.id,label:r.label,type:'custom'}));
+      const matrixRows=[...routines,...extraTaskLabels,...customRows];
       const hasDoneTask=(row,key)=>{
+        if(row.type==='custom')return !!(d.customDone?.[row.id]?.[key]);
         const tasks=(plan.tasks||[]).filter(t=>t.date===key);
         return row.type==='routine'
           ? tasks.some(t=>(t.routineId&&t.routineId===row.id||t.text===row.label)&&t.done)
           : tasks.some(t=>t.text===row.label&&t.done);
       };
       const hasAnyTask=(row,key)=>{
+        if(row.type==='custom')return true;
         const tasks=(plan.tasks||[]).filter(t=>t.date===key);
         return row.type==='routine'
           ? tasks.some(t=>t.routineId===row.id||t.text===row.label)
@@ -1583,10 +1645,11 @@ const MODULE_TYPES={
             </div>
             ${matrixRows.length?matrixRows.map(row=>`
               <div class="habit-row">
-                <div class="habit-cell habit-label">${esc(row.label)}</div>
+                <div class="habit-cell habit-label">${esc(row.label)}${row.type==='custom'?`<button class="record-del ov-custom-del" data-id="${row.id}" title="删除自定义项" style="margin-left:6px">✕</button>`:''}</div>
                 ${dayKeys.map(key=>{
                   const done=hasDoneTask(row,key),planned=hasAnyTask(row,key);
-                  return `<div class="habit-cell">${done?'<span class="habit-check">✓</span>':planned?'<span class="habit-empty">○</span>':'<span class="habit-empty">-</span>'}</div>`;
+                  if(row.type==='custom')return `<div class="habit-cell"><label class="chip" style="padding:3px 7px;margin:0"><input type="checkbox" class="ov-custom-check" data-id="${row.id}" data-date="${key}" ${done?'checked':''}>完成</label></div>`;
+                  return `<div class="habit-cell"><label class="chip" style="padding:3px 7px;margin:0"><input type="checkbox" class="ov-plan-check" data-type="${row.type}" data-id="${esc(row.id)}" data-label="${esc(row.label)}" data-date="${key}" ${done?'checked':''}>${done?'已完成':planned?'补完成':'补填'}</label></div>`;
                 }).join('')}
               </div>
             `).join(''):'<div class="habit-row"><div class="habit-cell habit-label">暂无常规计划</div><div class="habit-cell" style="grid-column:span 7">先在“每日计划”里添加常规项，这里会自动生成看板。</div></div>'}
@@ -1651,15 +1714,69 @@ const MODULE_TYPES={
           <span class="tag">英语 ${summary.english} 分钟</span>
           <span class="tag">复盘 ${summary.review} 天</span>
         </div>
+        <div class="category-manager" style="margin-bottom:10px">
+          <div class="flex-between"><strong>自定义总览板块</strong><span class="small-text">新增后会自动出现在下方矩阵左侧，并生成本周7天勾选列</span></div>
+          <div class="form-row" style="margin-top:8px">
+            <div class="form-group"><input type="text" class="ov-custom-input" placeholder="新增追踪项，如：喝水、护肤、写作、早起"></div>
+            <button class="btn btn-ghost btn-sm ov-custom-add">新增板块</button>
+          </div>
+        </div>
         ${matrix}
         <div class="overview-detail-grid">${cards}</div>
         <div class="report-text" style="margin-top:10px">${esc(reflection)}</div>
-        <div class="small-text" style="margin-top:8px">上方矩阵自动读取“每日计划”的常规事项；✓ 表示已完成，○ 表示当天有计划但未完成，- 表示当天未生成该事项。下方保留每天的具体记录。</div>
+        <div class="small-text" style="margin-top:8px">上方矩阵自动读取“每日计划”的常规事项，也支持自定义追踪项；✓ 表示已完成，○ 表示当天有计划但未完成，- 表示当天未生成该事项。下方保留每天的具体记录。</div>
       `;
     },
     bind(body,mod,save){
       body.querySelector('.ov-prev')?.addEventListener('click',()=>{mod.data.weekOffset=(mod.data.weekOffset||0)-1;save();rerender(mod);});
       body.querySelector('.ov-next')?.addEventListener('click',()=>{mod.data.weekOffset=(mod.data.weekOffset||0)+1;save();rerender(mod);});
+      const addCustom=()=>{
+        const input=body.querySelector('.ov-custom-input');
+        const label=input?.value.trim();
+        if(!label)return;
+        mod.data.customRows=Array.isArray(mod.data.customRows)?mod.data.customRows:[];
+        if(mod.data.customRows.some(r=>r.label===label)){alert('这个自定义板块已存在');return;}
+        mod.data.customRows.push({id:genId(),label});
+        if(input)input.value='';
+        save();rerender(mod);
+      };
+      body.querySelector('.ov-custom-add')?.addEventListener('click',addCustom);
+      body.querySelector('.ov-custom-input')?.addEventListener('keydown',e=>{if(e.key==='Enter')addCustom();});
+      body.querySelectorAll('.ov-custom-check').forEach(chk=>chk.addEventListener('change',()=>{
+        const id=chk.dataset.id,key=chk.dataset.date;
+        mod.data.customDone=mod.data.customDone||{};
+        mod.data.customDone[id]=mod.data.customDone[id]||{};
+        mod.data.customDone[id][key]=chk.checked;
+        save();
+      }));
+      body.querySelectorAll('.ov-plan-check').forEach(chk=>chk.addEventListener('change',()=>{
+        const planMod=DB.data.modules.find(m=>m.type==='daily-plan');
+        if(!planMod)return;
+        planMod.data=planMod.data||{};
+        planMod.data.tasks=Array.isArray(planMod.data.tasks)?planMod.data.tasks:[];
+        planMod.data.routineTasks=Array.isArray(planMod.data.routineTasks)?planMod.data.routineTasks:[];
+        const date=chk.dataset.date,label=chk.dataset.label,type=chk.dataset.type,rowId=chk.dataset.id;
+        let task=type==='routine'
+          ? planMod.data.tasks.find(t=>t.date===date&&(t.routineId===rowId||t.text===label))
+          : planMod.data.tasks.find(t=>t.date===date&&t.text===label);
+        if(!task){
+          task={id:genId(),date,text:label,done:false};
+          if(type==='routine')task.routineId=rowId;
+          planMod.data.tasks.push(task);
+        }
+        task.text=label;
+        task.done=chk.checked;
+        DB.save();
+        const labelEl=chk.closest('label');
+        if(labelEl)labelEl.lastChild.textContent=chk.checked?'已完成':'补完成';
+      }));
+      body.querySelectorAll('.ov-custom-del').forEach(btn=>btn.addEventListener('click',()=>{
+        const id=btn.dataset.id;
+        if(!confirm('确定删除这个自定义总览板块吗？'))return;
+        mod.data.customRows=(mod.data.customRows||[]).filter(r=>r.id!==id);
+        if(mod.data.customDone)delete mod.data.customDone[id];
+        save();rerender(mod);
+      }));
     }
   },
 
@@ -1837,7 +1954,7 @@ const MODULE_TYPES={
               </div>`;
             }).join('')}
           </div>
-          ${(()=>{const mc=d.records.filter(r=>(r.date||'').slice(0,7)===monthKey);const ec=mc.filter(r=>isEarlySleep(r.bedtime)).length;const validMins=mc.filter(r=>r.bedtime&&r.wakeTime).map(r=>sleepMinutes(r.bedtime,r.wakeTime));const avgMin=validMins.length?Math.round(validMins.reduce((a,b)=>a+b,0)/validMins.length):0;const avgH=Math.floor(avgMin/60),avgM=avgMin%60;return mc.length?`<div class="small-text" style="margin-top:6px;text-align:center">本月记录 ${mc.length} 天 · 早睡 ${ec} 天 · 早睡率 ${Math.round(ec/mc.length*100)}% · 平均睡眠 ${avgH}小时${avgM}分钟</div>`:''})()}
+          ${(()=>{const mc=d.records.filter(r=>(r.date||'').slice(0,7)===monthKey);const ec=mc.filter(r=>isEarlySleep(r.bedtime)).length;const validMins=mc.filter(r=>r.bedtime&&r.wakeTime).map(r=>sleepMinutes(r.bedtime,r.wakeTime));const avgMin=validMins.length?Math.round(validMins.reduce((a,b)=>a+b,0)/validMins.length):0;const avgH=Math.floor(avgMin/60),avgM=avgMin%60;const avgText=validMins.length?`平均睡眠 ${avgH}小时${avgM}分钟`:'平均睡眠待补填';return mc.length?`<div class="small-text" style="margin-top:6px;text-align:center">本月记录 ${mc.length} 天 · 早睡 ${ec} 天 · 早睡率 ${Math.round(ec/mc.length*100)}% · ${avgText}</div>`:''})()}
         </div>`;
       const selectedRec=findByDate(d.records,d.selectedDate)||{};
       const selectedQuality=+selectedRec.quality||3;
@@ -1942,7 +2059,7 @@ const MODULE_TYPES={
         updateWeekDuration(card);
       });
       updateDuration();
-      body.querySelector('.sl-add').addEventListener('click',()=>{
+      body.querySelector('.sl-add').addEventListener('click',e=>{
         mod.data.records=mod.data.records||[];
         const date=dateInput.value||todayStr();
         mod.data.selectedDate=date;
@@ -1952,7 +2069,7 @@ const MODULE_TYPES={
           quality:+stars.dataset.val,
           notes:body.querySelector('.sl-notes').value.trim()
         });
-        save();rerender(mod);
+        saveAndRerenderWithConfirm(e.currentTarget,mod,save);
       });
       const weekSave=body.querySelector('.sl-week-save');
       if(weekSave)weekSave.addEventListener('click',()=>{
@@ -1965,7 +2082,7 @@ const MODULE_TYPES={
             mod.data.records=upsertByDate(mod.data.records,card.dataset.date,{bedtime,wakeTime,quality,notes:''});
           }
         });
-        save();rerender(mod);
+        saveAndRerenderWithConfirm(weekSave,mod,save);
       });
       body.querySelectorAll('.sl-del').forEach(b=>{
         b.addEventListener('click',()=>{
@@ -2025,8 +2142,8 @@ const MODULE_TYPES={
       const dateInput=body.querySelector('.ex-date');
       const loadSelected=()=>{mod.data.selectedDate=dateInput.value||todayStr();save();rerender(mod);};
       dateInput.addEventListener('change',loadSelected);body.querySelector('.ex-load-date').addEventListener('click',loadSelected);
-      body.querySelector('.ex-add').addEventListener('click',()=>{const date=dateInput.value||todayStr();mod.data.selectedDate=date;mod.data.records=upsertByDate(mod.data.records||[],date,{type:body.querySelector('.ex-type').value,duration:body.querySelector('.ex-dur').value,notes:body.querySelector('.ex-notes').value.trim()});save();rerender(mod);});
-      body.querySelector('.ex-week-save')?.addEventListener('click',()=>{mod.data.quick=mod.data.quick||{};body.querySelectorAll('.day-card').forEach(card=>{const items=[...card.querySelectorAll('input[type=checkbox]:checked')].map(x=>x.value);const minutes=+(card.querySelector('.ex-week-min')?.value||0);const note=card.querySelector('.ex-week-note')?.value.trim()||'';if(items.length||minutes||note)mod.data.quick[card.dataset.date]={items,minutes,note};});save();rerender(mod);});
+      body.querySelector('.ex-add').addEventListener('click',e=>{const date=dateInput.value||todayStr();mod.data.selectedDate=date;mod.data.records=upsertByDate(mod.data.records||[],date,{type:body.querySelector('.ex-type').value,duration:body.querySelector('.ex-dur').value,notes:body.querySelector('.ex-notes').value.trim()});saveAndRerenderWithConfirm(e.currentTarget,mod,save);});
+      body.querySelector('.ex-week-save')?.addEventListener('click',e=>{mod.data.quick=mod.data.quick||{};body.querySelectorAll('.day-card').forEach(card=>{const items=[...card.querySelectorAll('input[type=checkbox]:checked')].map(x=>x.value);const minutes=+(card.querySelector('.ex-week-min')?.value||0);const note=card.querySelector('.ex-week-note')?.value.trim()||'';if(items.length||minutes||note)mod.data.quick[card.dataset.date]={items,minutes,note};});saveAndRerenderWithConfirm(e.currentTarget,mod,save);});
       body.querySelectorAll('.ex-del').forEach(b=>b.addEventListener('click',()=>{mod.data.records=mod.data.records.filter(r=>r.id!==b.dataset.id);save();rerender(mod);}));
     }
   },
@@ -2058,8 +2175,8 @@ const MODULE_TYPES={
       bindMonthBoard(body,mod,save,'.md-date');
       const dateInput=body.querySelector('.md-date');const loadSelected=()=>{mod.data.selectedDate=dateInput.value||todayStr();save();rerender(mod);};
       dateInput.addEventListener('change',loadSelected);body.querySelector('.md-load-date').addEventListener('click',loadSelected);
-      body.querySelector('.md-save').addEventListener('click',()=>{const date=dateInput.value||todayStr();mod.data.selectedDate=date;mod.data.records=upsertByDate(mod.data.records||[],date,{minutes:+(body.querySelector('.md-min')?.value||0),feeling:body.querySelector('.md-feeling')?.value.trim()||''});save();rerender(mod);});
-      body.querySelector('.md-week-save')?.addEventListener('click',()=>{mod.data.records=mod.data.records||[];body.querySelectorAll('.day-card').forEach(card=>{const minutes=+(card.querySelector('.md-week-min')?.value||0);const feeling=card.querySelector('.md-week-feel')?.value.trim()||'';if(minutes||feeling)mod.data.records=upsertByDate(mod.data.records,card.dataset.date,{minutes,feeling});});save();rerender(mod);});
+      body.querySelector('.md-save').addEventListener('click',e=>{const date=dateInput.value||todayStr();mod.data.selectedDate=date;mod.data.records=upsertByDate(mod.data.records||[],date,{minutes:+(body.querySelector('.md-min')?.value||0),feeling:body.querySelector('.md-feeling')?.value.trim()||''});saveAndRerenderWithConfirm(e.currentTarget,mod,save);});
+      body.querySelector('.md-week-save')?.addEventListener('click',e=>{mod.data.records=mod.data.records||[];body.querySelectorAll('.day-card').forEach(card=>{const minutes=+(card.querySelector('.md-week-min')?.value||0);const feeling=card.querySelector('.md-week-feel')?.value.trim()||'';if(minutes||feeling)mod.data.records=upsertByDate(mod.data.records,card.dataset.date,{minutes,feeling});});saveAndRerenderWithConfirm(e.currentTarget,mod,save);});
       body.querySelectorAll('.md-del').forEach(b=>b.addEventListener('click',()=>{mod.data.records=mod.data.records.filter(r=>r.id!==b.dataset.id);save();rerender(mod);}));
     }
   },
@@ -2137,7 +2254,7 @@ const MODULE_TYPES={
           stars.querySelectorAll('.star').forEach(x=>x.classList.toggle('active',+x.dataset.n<=n));
         });
       });
-      body.querySelector('.rv-save').addEventListener('click',()=>{
+      body.querySelector('.rv-save').addEventListener('click',e=>{
         mod.data.records=mod.data.records||[];
         const date=body.querySelector('.rv-date').value||todayStr();
         mod.data.selectedDate=date;
@@ -2148,7 +2265,7 @@ const MODULE_TYPES={
           rating:+stars.dataset.val,
           extra:Object.fromEntries([...body.querySelectorAll('.rv-extra')].map(x=>[x.dataset.field,x.value.trim()]))
         });
-        save();rerender(mod);
+        saveAndRerenderWithConfirm(e.currentTarget,mod,save);
       });
       const dateInput=body.querySelector('.rv-date');
       const loadSelected=()=>{
@@ -2171,7 +2288,7 @@ const MODULE_TYPES={
             mod.data.records=upsertByDate(mod.data.records,card.dataset.date,{wellDone,improve,gratitude,rating:old.rating||3,extra});
           }
         });
-        save();rerender(mod);
+        saveAndRerenderWithConfirm(weekSave,mod,save);
       });
       body.querySelectorAll('.rv-del').forEach(b=>{
         b.addEventListener('click',()=>{
@@ -2311,7 +2428,7 @@ const MODULE_TYPES={
           const note=card.querySelector('.rd-week-note')?.value.trim()||'';
           if(title||minutes||note)mod.data.daily[card.dataset.date]={title,minutes,note};
         });
-        save();rerender(mod);
+        saveAndRerenderWithConfirm(weekSave,mod,save);
       });
       body.querySelector('.rd-add-cur')?.addEventListener('click',()=>{
         const title=body.querySelector('.rd-new-title').value.trim();
@@ -2327,7 +2444,7 @@ const MODULE_TYPES={
           book.total=+body.querySelector(`.rd-cur-total[data-id="${b.dataset.id}"]`)?.value||0;
           book.startDate=body.querySelector(`.rd-cur-start[data-id="${b.dataset.id}"]`)?.value||book.startDate;
           mod.data.notes=body.querySelector('.rd-notes').value;
-          save();rerender(mod);
+          saveAndRerenderWithConfirm(b,mod,save);
         });
       });
       body.querySelectorAll('.rd-finish-book').forEach(b=>{
@@ -2404,8 +2521,9 @@ const MODULE_TYPES={
         <div class="english-pack"><h4>选中日期英语包：10个生活词 + chunk + 短文</h4><div class="word-grid">${pack.words.map(([w,m,extra])=>{const e=extra||{};const cols=(e.collocations||[]).map(c=>`<span class="tag" style="margin:2px 2px 0 0;font-size:11px">${esc(c)}</span>`).join('');const exs=(e.examples||[]).map(ex=>`<div class="en-example" style="margin-top:3px;font-size:12px;color:#888;cursor:pointer" data-text="${esc(ex)}">${esc(ex)}</div>`).join('');const vocabItem=d.words.find(v=>v.word.toLowerCase()===w.toLowerCase());const statusLabels={known:'已认识',fuzzy:'模糊',unknown:'不认识'};const statusColors={known:'#22a06b',fuzzy:'#f5b42f',unknown:'#d64545'};const st=vocabItem?(vocabItem.status||'unknown'):null;const vocabBtn=vocabItem?`<span class="tag" style="margin-left:auto;font-size:11px;background:${statusColors[st]}20;color:${statusColors[st]};border-color:${statusColors[st]}40">${statusLabels[st]}</span>`:`<button class="btn btn-ghost btn-sm en-add-vocab" data-word="${esc(w)}" data-meaning="${esc(m)}" style="margin-left:auto;padding:3px 8px;font-size:11px">+生词本</button>`;return `<div class="word-card" style="position:relative"><div style="display:flex;align-items:center;flex-wrap:wrap"><span class="word">${w}</span><span class="en-speak-word" data-word="${esc(w)}" style="cursor:pointer;margin-left:4px" title="朗读"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;pointer-events:none"><path d="M3 9v6h4l5 5V4L7 9H3zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg></span>${e.phonetic?`<span style="margin-left:6px;color:#666;font-size:13px">${esc(e.phonetic)}</span>`:''}${vocabBtn}</div><div class="meaning">${m}</div>${cols?`<div style="margin-top:4px">${cols}</div>`:''}${exs}</div>`;}).join('')}</div><div style="margin-top:8px">${pack.chunks.map((c,i)=>i%2===0?`<span class="tag" style="margin:2px">${esc(c)} / ${esc(pack.chunks[i+1]||'')}</span>`:'').join('')}</div><div class="small-text" style="margin-top:8px;line-height:1.7">${esc(pack.text)}</div><button class="btn btn-ghost btn-sm en-speak-text" style="margin-top:6px">朗读短文</button><button class="btn btn-primary btn-sm btn-block en-import-pack" style="margin-top:8px">加入选中日期学习记录</button></div>
         <div class="section-label">英文写作练习</div>
         <div class="form-group"><label>用英文写几句今天的感想</label><textarea class="en-writing" placeholder="Try to write 2-5 sentences. You can use today's words." style="min-height:96px">${esc(writing.text||'')}</textarea></div>
-        <button class="btn btn-primary btn-sm btn-block en-writing-save">保存写作并生成反馈</button>
-        ${writing.feedback?`<div class="writing-feedback">${esc(writing.feedback)}</div>`:''}
+        <button class="btn btn-primary btn-sm btn-block en-writing-save">保存写作并重新生成反馈</button>
+        <div class="writing-feedback en-writing-feedback" style="${writing.feedback?'':'display:none'}">${writing.feedback?esc(writing.feedback):''}</div>
+        ${Array.isArray(writing.history)&&writing.history.length>1?`<details style="margin-top:8px"><summary class="small-text" style="cursor:pointer;color:var(--primary)">查看历史写作反馈（${writing.history.length-1}条）</summary><div class="record-list" style="max-height:160px;margin-top:6px">${writing.history.slice(0,-1).slice(-3).reverse().map(h=>`<div class="record-item"><div class="record-content"><div class="small-text">${formatDateTime(h.updatedAt||'')}</div><div>${esc(h.text||'')}</div></div></div>`).join('')}</div></details>`:''}
         <div class="section-label">生词本 (${d.words.length})</div><div class="form-row"><div class="form-group"><input type="text" class="en-word" placeholder="单词"></div><div class="form-group"><input type="text" class="en-meaning" placeholder="释义"></div><button class="btn btn-primary btn-sm en-add-word">添加</button></div><div class="record-list" style="max-height:200px">${d.words.length?d.words.slice().reverse().map(w=>{const statusLabels={known:'已认识',fuzzy:'模糊',unknown:'不认识'};const statusColors={known:'#22a06b',fuzzy:'#f5b42f',unknown:'#d64545'};const st=w.status||'unknown';return `<div class="word-card"><div class="flex-between" style="align-items:center"><span class="word">${esc(w.word)}</span><div style="display:flex;gap:4px;align-items:center"><select class="en-vocab-status" data-id="${w.id}" style="font-size:11px;padding:2px 6px;border-radius:6px;border:1px solid ${statusColors[st]}40;background:${statusColors[st]}15;color:${statusColors[st]};width:auto">${['unknown','fuzzy','known'].map(s=>`<option value="${s}" ${st===s?'selected':''}>${statusLabels[s]}</option>`).join('')}</select><button class="record-del en-del-word" data-id="${w.id}">✕</button></div></div><div class="meaning">${esc(w.meaning)}</div></div>`;}).join(''):'<div class="empty-state">暂无生词，点击上方英语包单词旁的「+生词本」快速添加</div>'}</div>
         <div class="section-label">例句 (${d.sentences.length})</div><div class="form-row"><div class="form-group"><input type="text" class="en-sentence" placeholder="英文句子"></div><button class="btn btn-primary btn-sm en-add-sent">添加</button></div><div class="record-list" style="max-height:100px">${d.sentences.length?d.sentences.slice(-5).reverse().map(s=>`<div class="record-item"><div class="record-content">${esc(s.text)}</div><button class="record-del en-del-sent" data-id="${s.id}">✕</button></div>`).join(''):'<div class="empty-state">暂无例句</div>'}</div>
         <div class="section-label">查单词</div>
@@ -2420,11 +2538,37 @@ const MODULE_TYPES={
       const addSent=()=>{const s=body.querySelector('.en-sentence').value.trim();if(!s)return;mod.data.sentences.push({id:genId(),text:s});save();rerender(mod);};
       body.querySelector('.en-add-sent')?.addEventListener('click',addSent);body.querySelector('.en-sentence')?.addEventListener('keydown',e=>{if(e.key==='Enter')addSent();});
       const dateInput=body.querySelector('.en-date');const loadSelected=()=>{mod.data.selectedDate=dateInput.value||todayStr();save();rerender(mod);};dateInput.addEventListener('change',loadSelected);body.querySelector('.en-load-date').addEventListener('click',loadSelected);
-      const saveSelectedEnglish=()=>{const date=dateInput.value||todayStr();mod.data.selectedDate=date;mod.data.daily=mod.data.daily||{};mod.data.daily[date]={words10:!!body.querySelector('.en-selected-words')?.checked,chunk1:!!body.querySelector('.en-selected-chunk')?.checked,pattern1:!!body.querySelector('.en-selected-pattern')?.checked,aiMinutes:+(body.querySelector('.en-selected-ai')?.value||0),shadowMinutes:+(body.querySelector('.en-selected-shadow')?.value||0),note:body.querySelector('.en-selected-note')?.value.trim()||''};mod.data.studyLog=upsertByDate(mod.data.studyLog||[],date,{minutes:+body.querySelector('.en-min').value||0});save();rerender(mod);};
-      body.querySelector('.en-save-selected').addEventListener('click',saveSelectedEnglish);
-      body.querySelector('.en-week-save')?.addEventListener('click',()=>{mod.data.daily=mod.data.daily||{};body.querySelectorAll('.day-card').forEach(card=>{const words10=!!card.querySelector('.en-day-words')?.checked,chunk1=!!card.querySelector('.en-day-chunk')?.checked,pattern1=!!card.querySelector('.en-day-pattern')?.checked,aiMinutes=+(card.querySelector('.en-day-ai')?.value||0),shadowMinutes=+(card.querySelector('.en-day-shadow')?.value||0),note=card.querySelector('.en-day-note')?.value.trim()||'';if(words10||chunk1||pattern1||aiMinutes||shadowMinutes||note)mod.data.daily[card.dataset.date]={words10,chunk1,pattern1,aiMinutes,shadowMinutes,note};});save();rerender(mod);});
+      const saveSelectedEnglish=(btn)=>{const date=dateInput.value||todayStr();mod.data.selectedDate=date;mod.data.daily=mod.data.daily||{};mod.data.daily[date]={words10:!!body.querySelector('.en-selected-words')?.checked,chunk1:!!body.querySelector('.en-selected-chunk')?.checked,pattern1:!!body.querySelector('.en-selected-pattern')?.checked,aiMinutes:+(body.querySelector('.en-selected-ai')?.value||0),shadowMinutes:+(body.querySelector('.en-selected-shadow')?.value||0),note:body.querySelector('.en-selected-note')?.value.trim()||''};mod.data.studyLog=upsertByDate(mod.data.studyLog||[],date,{minutes:+body.querySelector('.en-min').value||0});saveAndRerenderWithConfirm(btn,mod,save);};
+      body.querySelector('.en-save-selected').addEventListener('click',e=>saveSelectedEnglish(e.currentTarget));
+      body.querySelector('.en-week-save')?.addEventListener('click',e=>{mod.data.daily=mod.data.daily||{};body.querySelectorAll('.day-card').forEach(card=>{const words10=!!card.querySelector('.en-day-words')?.checked,chunk1=!!card.querySelector('.en-day-chunk')?.checked,pattern1=!!card.querySelector('.en-day-pattern')?.checked,aiMinutes=+(card.querySelector('.en-day-ai')?.value||0),shadowMinutes=+(card.querySelector('.en-day-shadow')?.value||0),note=card.querySelector('.en-day-note')?.value.trim()||'';if(words10||chunk1||pattern1||aiMinutes||shadowMinutes||note)mod.data.daily[card.dataset.date]={words10,chunk1,pattern1,aiMinutes,shadowMinutes,note};});saveAndRerenderWithConfirm(e.currentTarget,mod,save);});
       body.querySelector('.en-import-pack')?.addEventListener('click',()=>{const date=dateInput.value||todayStr();const pack=englishPackFor(date);pack.words.forEach(([word,meaning])=>{if(!mod.data.words.some(w=>w.word===word))mod.data.words.push({id:genId(),word,meaning});});mod.data.sentences.push({id:genId(),text:pack.chunks.filter((_,i)=>i%2===0).join(' / ')});mod.data.studyLog=upsertByDate(mod.data.studyLog||[],date,{minutes:+body.querySelector('.en-min').value||10,pack:true});mod.data.daily[date]={...(mod.data.daily[date]||{}),words10:true,chunk1:true,pattern1:true};mod.data.selectedDate=date;save();rerender(mod);});
-      body.querySelector('.en-writing-save')?.addEventListener('click',()=>{const date=dateInput.value||todayStr();const text=body.querySelector('.en-writing')?.value.trim()||'';if(!text){alert('请先写几句英文感想');return;}const pack=englishPackFor(date);mod.data.writing=mod.data.writing||{};mod.data.writing[date]={text,feedback:englishWritingFeedback(text,pack.words.map(w=>w[0])),updatedAt:nowStr()};mod.data.daily[date]={...(mod.data.daily[date]||{}),writing:true};save();rerender(mod);});
+      body.querySelector('.en-writing-save')?.addEventListener('click',()=>{
+        const btn=body.querySelector('.en-writing-save');
+        const date=dateInput.value||todayStr();
+        const text=body.querySelector('.en-writing')?.value.trim()||'';
+        if(!text){alert('请先写几句英文感想');return;}
+        try{
+          btn.disabled=true;btn.textContent='正在生成反馈...';
+          const pack=englishPackFor(date);
+          const feedback=englishWritingFeedback(text,pack.words.map(w=>w[0]));
+          const updatedAt=nowStr();
+          mod.data.writing=mod.data.writing||{};
+          const old=mod.data.writing[date]||{};
+          const history=Array.isArray(old.history)?old.history.slice():[];
+          history.push({text,feedback,updatedAt});
+          mod.data.writing[date]={text,feedback,updatedAt,history};
+          mod.data.daily[date]={...(mod.data.daily[date]||{}),writing:true};
+          save();DB.save();
+          const fb=body.querySelector('.en-writing-feedback');
+          if(fb){fb.style.display='block';fb.textContent=feedback;}
+          btn.textContent='已生成，可继续修改后再次生成';
+          setTimeout(()=>{if(btn){btn.disabled=false;btn.textContent='保存写作并重新生成反馈';}},1200);
+        }catch(err){
+          console.error('写作反馈生成失败',err);
+          alert('反馈生成失败，请稍后再试。错误：'+(err.message||err));
+          btn.disabled=false;btn.textContent='保存写作并重新生成反馈';
+        }
+      });
       body.querySelectorAll('.en-del-word').forEach(b=>b.addEventListener('click',()=>{mod.data.words=mod.data.words.filter(x=>x.id!==b.dataset.id);save();rerender(mod);}));body.querySelectorAll('.en-del-sent').forEach(b=>b.addEventListener('click',()=>{mod.data.sentences=mod.data.sentences.filter(x=>x.id!==b.dataset.id);save();rerender(mod);}));
       body.querySelector('.en-sound-toggle')?.addEventListener('change',e=>{mod.data.soundEnabled=e.target.checked;save();});
       body.querySelector('.en-speak-text')?.addEventListener('click',()=>{if(mod.data.soundEnabled){const pack=englishPackFor(dateInput.value||todayStr());speakText(pack.text);}});
@@ -3032,9 +3176,10 @@ const MODULE_TYPES={
                       <div class="form-group" style="margin-bottom:6px"><label>链接</label><input type="text" class="cl-edit-link" data-id="${e.id}" value="${esc(e.link||'')}"></div>
                       <div class="form-group" style="margin-bottom:6px"><label>分类</label><select class="cl-edit-cat" data-id="${e.id}">${categories.map(c=>`<option value="${esc(c)}" ${c===e.category?'selected':''}>${esc(c)}</option>`).join('')}</select></div>
                       <div class="form-group" style="margin-bottom:6px"><label>备注</label><textarea class="cl-edit-note" data-id="${e.id}" style="min-height:60px">${esc(e.note||'')}</textarea></div>
-                      <div style="display:flex;gap:8px">
-                        <button class="btn btn-primary btn-sm cl-edit-save" data-id="${e.id}">完成</button>
+                      <div style="display:flex;gap:8px;align-items:center">
+                        <button class="btn btn-primary btn-sm cl-edit-save" data-id="${e.id}">完成编辑</button>
                         <button class="btn btn-ghost btn-sm cl-edit-cancel" data-id="${e.id}">取消</button>
+                        <span class="small-text">点击完成后会切回不可编辑状态</span>
                       </div>
                     `:`
                     <div class="collection-item-head">
@@ -3152,7 +3297,8 @@ const MODULE_TYPES={
           entry.note=newNote;
           entry.summary='';
           if(!mod.data.categories.includes(newCat))mod.data.categories.push(newCat);
-          delete mod.data.editingId;
+          mod.data.editingId='';
+          entry.updatedAt=nowStr();
           save();DB.save();rerender(mod);
         });
       });
@@ -3837,7 +3983,10 @@ function migrateWorkbenchData(){
     if(mod){
       mod.data=mod.data||{};
       mod.data.records=dedupeByDate(mod.data.records||[]);
-      if(type==='sleep')importHistoricalSleepRecords(mod.data);
+      if(type==='sleep'){
+        importHistoricalSleepRecords(mod.data);
+        importJulySleepRecords2026(mod.data);
+      }
       mod.data.selectedDate=mod.data.selectedDate||todayStr();
       mod.data.monthOffset=mod.data.monthOffset||0;
       if(type==='review')mod.data.fields=Array.isArray(mod.data.fields)?mod.data.fields:['经验总结'];
