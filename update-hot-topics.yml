@@ -24,8 +24,12 @@ jobs:
           script: |
             const fs = require('fs');
 
-            // DailyHot API 支持的平台列表
-            const API_BASE = 'https://dailyhot.cmcq.xyz';
+            // DailyHot API 支持的平台列表（多个 API 源作为备选）
+            const API_BASES = [
+              'https://dailyhot.cmcq.xyz',
+              'https://api-hot.imsyy.top',
+              'https://api-hot.cricnep.tech'
+            ];
             const platforms = [
               { key: 'weibo',       name: '微博热搜' },
               { key: 'zhihu',       name: '知乎热榜' },
@@ -51,41 +55,48 @@ jobs:
             const summary = {};
 
             for (const p of platforms) {
-              try {
-                console.log(`正在抓取 ${p.name}...`);
-                const res = await fetch(`${API_BASE}/${p.key}`, {
-                  headers: { 'User-Agent': 'Tantan-Life-Board/1.0' },
-                  signal: AbortSignal.timeout(15000)
-                });
-
-                if (!res.ok) {
-                  throw new Error(`HTTP ${res.status}`);
-                }
-
-                const json = await res.json();
-                const list = pickList(json).slice(0, 15);
-
-                if (list.length === 0) {
-                  console.log(`⚠️ ${p.name} 返回空列表`);
-                  summary[p.key] = { name: p.name, count: 0, error: '返回空列表' };
-                  continue;
-                }
-
-                console.log(`✅ ${p.name} 抓取到 ${list.length} 条`);
-                summary[p.key] = { name: p.name, count: list.length };
-
-                list.forEach((item, index) => {
-                  output.push({
-                    platform: p.key,
-                    title: item.title || item.name || item.word || item.desc || item.keyword || `热点${index + 1}`,
-                    url: item.url || item.link || item.mobileUrl || item.href || '',
-                    hot: item.hot || item.hotValue || item.index || item.rank || item.desc || item.summary || '',
-                    fetchedAt: new Date().toISOString()
+              let success = false;
+              for (const API_BASE of API_BASES) {
+                try {
+                  console.log(`正在抓取 ${p.name} (${API_BASE})...`);
+                  const res = await fetch(`${API_BASE}/${p.key}`, {
+                    headers: { 'User-Agent': 'Tantan-Life-Board/1.0' },
+                    signal: AbortSignal.timeout(15000)
                   });
-                });
-              } catch (err) {
-                console.error(`❌ ${p.name} 抓取失败: ${err.message}`);
-                summary[p.key] = { name: p.name, count: 0, error: err.message };
+
+                  if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}`);
+                  }
+
+                  const json = await res.json();
+                  const list = pickList(json).slice(0, 15);
+
+                  if (list.length === 0) {
+                    throw new Error('返回空列表');
+                  }
+
+                  console.log(`✅ ${p.name} 抓取到 ${list.length} 条 (来源: ${API_BASE})`);
+                  summary[p.key] = { name: p.name, count: list.length };
+
+                  list.forEach((item, index) => {
+                    output.push({
+                      platform: p.key,
+                      title: item.title || item.name || item.word || item.desc || item.keyword || `热点${index + 1}`,
+                      url: item.url || item.link || item.mobileUrl || item.href || '',
+                      hot: item.hot || item.hotValue || item.index || item.rank || item.desc || item.summary || '',
+                      fetchedAt: new Date().toISOString()
+                    });
+                  });
+                  success = true;
+                  break;
+                } catch (err) {
+                  console.error(`  ${API_BASE} 失败: ${err.message}`);
+                }
+              }
+              if (!success) {
+                summary[p.key] = { name: p.name, count: 0, error: '所有 API 源均失败' };
+              }
+            }
               }
             }
 

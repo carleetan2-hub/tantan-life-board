@@ -339,6 +339,10 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
 .idea-body h4{margin:8px 0 4px;color:var(--primary)}
 .idea-body ul{margin:6px 0 6px 18px}
 .writing-feedback{white-space:pre-wrap;line-height:1.7;background:var(--primary-light);border:1px dashed var(--primary);border-radius:12px;padding:10px;margin-top:8px;font-size:13px;color:var(--text-sec)}
+.en-feedback-table{width:100%;border-collapse:collapse;margin:8px 0;font-size:13px}
+.en-feedback-table th{background:var(--primary);color:#fff;padding:6px 10px;text-align:left;font-weight:700}
+.en-feedback-table td{padding:6px 10px;border-bottom:1px solid var(--card-border);vertical-align:top}
+.en-feedback-table tr:nth-child(even){background:rgba(255,255,255,.5)}
 /* ========== 动画 ========== */
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
@@ -492,7 +496,7 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
       <div><strong>关于本站</strong></div>
       <div>tantan的个人成长空间</div>
       <div>状态：<strong>迭代中</strong></div>
-      <div id="siteVersion">V8.0</div>
+      <div id="siteVersion">V8.1</div>
       <div style="font-size:11px;color:var(--text-light);margin-top:4px">小改动用小数点后一位（V8.1），大改动用V8.x、V9.x</div>
       <div style="margin-top:6px"><button class="btn btn-ghost btn-sm" id="moreChangelogBtn" style="padding:0;font-size:12px">更新日志</button></div>
     </div>
@@ -661,9 +665,24 @@ function confirmButton(btn,text='已保存'){
   setTimeout(()=>{if(btn){btn.disabled=false;btn.textContent=old;}},1200);
 }
 function saveAndRerenderWithConfirm(btn,mod,save,delay=450){
+  // 保存撤销快照
+  _undoSnapshot(mod);
   confirmButton(btn);
   save();
   setTimeout(()=>rerender(mod),delay);
+}
+// 全局撤销系统
+const _undoStack={};
+function _undoSnapshot(mod){
+  if(!mod||!mod.id)return;
+  _undoStack[mod.id]=JSON.parse(JSON.stringify(mod.data));
+}
+function _undoRestore(mod,save){
+  if(!mod||!mod.id||!_undoStack[mod.id])return false;
+  mod.data=_undoStack[mod.id];
+  delete _undoStack[mod.id];
+  save();
+  return true;
 }
 function formatDate(d){if(!d)return'';const dt=new Date(d);return`${dt.getMonth()+1}月${dt.getDate()}日`}
 function formatDateTime(d){if(!d)return'';const dt=new Date(d);return`${dt.getMonth()+1}/${dt.getDate()} ${String(dt.getHours()).padStart(2,'0')}:${String(dt.getMinutes()).padStart(2,'0')}`}
@@ -881,104 +900,107 @@ function englishWritingFeedback(text='',packWords=[]){
   const raw=String(text||'').trim();
   if(!raw)return '';
   const used=packWords.filter(w=>new RegExp(`\\b${w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}\\b`,'i').test(raw));
-  // 逐句分析
   const sentences=raw.split(/(?<=[.!?])\s+/).filter(Boolean);
   const errors=[];
-  const suggestions=[];
-  const corrections=[];
-
-  // 通用检查（全文级）
-  if(raw.split(/\s+/).length<8){
-    suggestions.push('可以再补充一个原因或细节，使用 because / when / after 等引导从句使表达更丰富。');
-  }
 
   // 逐句检查
   sentences.forEach((s,i)=>{
     const trimmed=s.trim();
     if(!trimmed)return;
     const lineNum=i+1;
-    // 1. 首字母大写检查
+    // 1. 首字母大写
     if(/^[a-z]/.test(trimmed)){
-      errors.push({line:lineNum,found:'句首字母小写',fix:`首字母大写：${trimmed.charAt(0).toUpperCase()+trimmed.slice(1)}`,rule:'英文句子首字母必须大写。'});
+      errors.push({line:lineNum,pos:trimmed.split(' ').slice(0,3).join(' ')+'...',error:`句首字母小写："${trimmed.charAt(0)}"`,explain:trimmed.charAt(0).toUpperCase()+trimmed.slice(1),rule:'英文句子首字母必须大写。'});
     }
-    // 2. 第一人称 I 大写
-    const iMatches=trimmed.match(/\bi\b/g);
-    if(iMatches&&iMatches.length){
-      errors.push({line:lineNum,found:'第一人称 I 未大写',fix:`将 "i" 改为 "I"`,rule:'英文中第一人称单数 I 永远大写。'});
+    // 2. I 大写
+    if(/\bi\b/g.test(trimmed)){
+      errors.push({line:lineNum,pos:'"i"',error:'第一人称 I 未大写',explain:'改为 "I"',rule:'英文中第一人称单数 I 永远大写。'});
     }
     // 3. 句末标点
-    if(!/[.!?]/.test(trimmed.charAt(trimmed.length-1))){
-      errors.push({line:lineNum,found:'句末缺少标点',fix:`在句末添加句号/问号/感叹号`,rule:'英文句子必须以标点符号结尾。'});
+    if(!/[.!?]$/.test(trimmed)){
+      errors.push({line:lineNum,pos:trimmed.slice(-20),error:'句末缺少标点符号',explain:trimmed+'.',rule:'英文句子必须以 . ! ? 结尾。'});
     }
-    // 4. 主谓一致（is/are，has/have）
-    const heSheIt=/\b(he|she|it)\b/i.test(trimmed);
-    if(heSheIt&&/\b(are|have|was)\b/i.test(trimmed)&&!/\byou\b/i.test(trimmed)){
-      // 更精确：检查 he/she/it 后面是否跟了错误的动词形式
-      const wrongVerb=trimmed.match(/\b(he|she|it)\s+(are|have|was)\b/i);
-      if(wrongVerb){
-        const subj=wrongVerb[1].toLowerCase();
-        const verb=wrongVerb[2].toLowerCase();
-        const fixMap={are:'is',have:'has',was:'was'};
-        errors.push({line:lineNum,found:`"${subj} ${verb}" 主谓不一致`,fix:`应改为 "${subj} ${verb==='are'?'is':verb==='have'?'has':'was'}"`,rule:`第三人称单数 (he/she/it) 后动词用第三人称单数形式：is / has / was。`});
-      }
+    // 4. 主谓一致
+    const svMatch=trimmed.match(/\b(he|she|it)\s+(are|have|were)\b/i);
+    if(svMatch){
+      const fixMap={are:'is',have:'has',were:'was'};
+      errors.push({line:lineNum,pos:`"${svMatch[0]}"`,error:`主谓不一致：${svMatch[1]} 应配 ${fixMap[svMatch[2].toLowerCase()]}`,explain:`${svMatch[1]} ${fixMap[svMatch[2].toLowerCase()]}`,rule:'第三人称单数 (he/she/it) 后动词用单数形式：is / has / was。'});
     }
-    // 5. 动词时态 - 检查 be+动词原形
-    const beV=trimmed.match(/\b(am|is|are|was|were)\s+(go|do|make|take|write|read|eat|drink|play|work|study|sleep|run|walk|talk|think|want|like|need|know|get|put|come|see|say|buy|use|try|ask|tell|find|give|keep|leave|start|stop|help|watch|live|stay|sit|stand|look|listen|feel|hope|wish|plan|learn|teach|bring|send|show|call|meet|pay|cut|draw|hold|set|let|begin|understand|spend|check|create|build|choose|offer|serve|join|turn|grow|practice|prepare|wait|change|follow|expect|explain|miss|move|reach|share|add|believe|happen|notice|pick|remember|support|accept|allow|appear|continue|cover|decide|describe|develop|discuss|enjoy|expect|finish|form|happen|identify|improve|include|influence|inform|invest|manage|need|note|obtain|order|participate|perform|possess|prefer|present|produce|promote|protect|prove|publish|pursue|raise|recognize|recommend|record|reduce|refer|reflect|refuse|regard|regulate|reject|relate|release|rely|remain|remove|replace|report|represent|request|require|resolve|respond|restore|result|retain|retire|return|reveal|review|revise|satisfy|schedule|secure|seek|select|settle|solve|submit|succeed|suggest|supply|survey|survive|suspect|sustain|tend|threaten|train|transfer|transform|treat|undertake|update|utilize|vary|verify|volunteer|warn|welcome|witness)\b/i);
-    if(beV){
-      const verb=beV[2];
-      errors.push({line:lineNum,found:`"${beV[1]} ${verb}" 动词形式有误`,fix:`应改为 "${beV[1]} ${verb}ing"（现在分词）或 "${beV[1]} planning to ${verb}"`,rule:`be 动词后跟动词原形时，应改为现在分词（-ing）或不定式。例如：I am going → ✓, I am go → ✗。`});
+    // 5. "if/whether + 形容词" — 缺少主语和谓语
+    const ifAdj=trimmed.match(/\b(if|whether)\s+(\w+)\s+(for|to)\s+me\b/i);
+    if(ifAdj){
+      errors.push({line:lineNum,pos:`"${ifAdj[0]}"`,error:'缺少主语和谓语',explain:`${ifAdj[1]} it is ${ifAdj[2]} ${ifAdj[3]} me`,rule:'if/whether 引导的从句必须是完整句子，不能只有形容词。例如：if it is good for me ✓，if good for me ✗。'});
     }
-    // 6. 可数名词单数前缺少冠词
-    const countableSingular=trimmed.match(/\b(a|an|the|my|your|his|her|its|our|their|this|that|each|every|some|any|no)\s+(\w+)\b/i)||[];
-    const noArticle=trimmed.match(/\b(book|cat|dog|car|phone|table|chair|room|door|window|pen|paper|cup|bag|box|tree|flower|bird|fish|house|school|friend|student|teacher|doctor|nurse|child|baby|parent|brother|sister|husband|wife|man|woman|boy|girl|day|week|month|year|hour|minute|second|idea|plan|problem|question|answer|word|name|place|city|country|river|mountain|road|street|store|shop|restaurant|hospital|bank|office|company|team|group|family|class|lesson|course|program|system|method|way|reason|result|goal|task|job|project|meeting|party|event|show|movie|song|game|sport|subject|topic|story|history|news|report|article|letter|email|message|note|list|file|data|image|picture|photo|video|music|sound|voice|color|size|shape|type|kind|part|piece|set|number|level|point|line|page|section|chapter|volume|price|cost|value|rate|score|grade|mark|sign|symbol|code|rule|law|order|power|force|energy|light|heat|air|water|fire|earth|space|time|life|death|love|hate|joy|pain|fear|anger|hope|dream|truth|fact|case|example|thing|item|object|tool|machine|device|screen|key|lock|button|switch|handle|wheel|engine|motor|pump|pipe|wire|cable|signal|wave|track|path|gate|bridge|wall|floor|roof|window|bed|sofa|mirror|clock|map|list|card|ticket|pass|key|coin|stamp|letter|flag|bell|light|lamp|lamp|box|ball|doll|toy|game|puzzle|ride|trip|tour|visit|journey|flight|drive|walk|run|race|match|game|round|set|half|side|end|top|bottom|front|back|center|edge|corner|middle|area|zone|region|district|block|square|circle|row|column|line|list|group|class|type|form|shape|style|sort|kind|variety|brand|model|version|edition|copy|sample|pattern|design|structure|frame|layout|format|mode|state|status|condition|stage|phase|step|level|rank|grade|degree|scale|range|field|domain|area|section|part|portion|segment|piece|bit|item|element|factor|aspect|feature|attribute|quality|property|characteristic|nature|essence|basis|foundation|root|cause|source|origin|start|beginning|end|finish|goal|target|aim|purpose|objective|function|role|position|post|seat|place|spot|site|location|address|destination|station|stop|stand|base|camp|center|hub|node|point|terminal|port|dock|bay|yard|park|lot|zone|area|region|district|sector|quarter|ward|precinct|territory|state|province|county|city|town|village|community|neighborhood|street|road|avenue|drive|way|lane|path|trail|route|pass|gap|space|hole|slot|notch|nick|cut|mark|spot|stain|trace|track|sign|signal|clue|hint|tip|advice|news|information|knowledge|wisdom|intelligence|skill|ability|talent|gift|strength|power|energy|force|might|potential|capacity|capability|competence|expertise|proficiency|mastery|command|control|authority|right|privilege|freedom|liberty|choice|option|alternative|decision|resolution|determination|commitment|dedication|devotion|loyalty|faith|trust|confidence|belief|conviction|opinion|view|thought|idea|concept|notion|impression|sense|feeling|emotion|passion|desire|wish|hope|dream|ambition|aspiration|goal|target|aim|objective|purpose|intention|plan|strategy|tactic|method|approach|technique|system|process|procedure|routine|practice|custom|habit|tradition|convention|norm|standard|criterion|benchmark|measure|indicator|gauge|test|exam|quiz|evaluation|assessment|review|analysis|study|research|survey|investigation|exploration|inquiry|examination|inspection|observation|monitoring|tracking|check|audit|report|account|record|document|file|archive|database|catalog|index|list|register|log|journal|diary|calendar|schedule|timetable|agenda|itinerary|program|curriculum|syllabus|plan|outline|draft|sketch|blueprint|design|pattern|template|model|prototype|sample|specimen|example|instance|case|illustration|demonstration|display|exhibition|show|presentation|demonstration|performance|production|creation|construction|building|structure|fabric|framework|skeleton|chassis|body|shell|casing|cover|lid|top|cap|stopper|plug|stopper|valve|switch|button|knob|dial|lever|handle|grip|bar|rod|shaft|pole|post|pillar|column|beam|girder|truss|frame|rack|shelf|bench|table|desk|counter|board|panel|plate|sheet|slab|block|brick|stone|rock|pebble|grain|particle|speck|dot|point|spot|mark|line|stroke|dash|slash|backslash|pipe|tube|hose|wire|cord|string|rope|chain|cable|thread|yarn|fiber|fabric|cloth|textile|material|substance|matter|stuff|thing|object|item|article|entity|being|creature|organism|person|individual|human|man|woman|child|adult|parent|relative|kin|family|ancestor|descendant|offspring|heir|successor|predecessor|leader|follower|member|participant|contributor|partner|ally|colleague|associate|friend|companion|acquaintance|neighbor|stranger|guest|host|owner|keeper|guardian|caretaker|manager|director|supervisor|coordinator|administrator|executive|officer|official|representative|agent|delegate|ambassador|envoy|messenger|spokesperson|advocate|supporter|promoter|champion|defender|protector|guard|watchman|patrol|officer|soldier|warrior|fighter|combatant|veteran|rookie|beginner|novice|learner|student|pupil|trainee|apprentice|intern|assistant|aide|helper|worker|employee|staff|personnel|crew|team|squad|troop|unit|force|group|band|gang|party|company|firm|enterprise|business|corporation|organization|institution|agency|bureau|department|division|section|branch|office|plant|factory|mill|workshop|studio|lab|center|facility|site|location|venue|place|spot|area|zone|region|district|neighborhood|community|society|population|public|crowd|audience|spectator|viewer|listener|reader|fan|enthusiast|expert|specialist|professional|amateur|novice|beginner|dummy|idiot|fool|genius|prodigy|star|celebrity|hero|legend|icon|symbol|representation|example|model|pattern|archetype|paradigm|standard|benchmark|criterion|yardstick|measure|gauge|test|indicator|barometer|thermometer|compass|guide|direction|instruction|manual|handbook|guidebook|textbook|reference|source|resource|tool|instrument|device|apparatus|equipment|gear|kit|outfit|rig|setup|system|network|grid|web|mesh|matrix|array|cluster|set|collection|group|batch|lot|run|series|sequence|chain|cycle|loop|spiral|helix|curve|arc|angle|corner|edge|side|face|surface|plane|level|layer|tier|rank|grade|class|division|category|group|type|kind|sort|style|genre|species|breed|strain|variety|brand|make|model|version|edition|generation|phase|stage|step|rung|notch|grade|level|point|spot|place|position|rank|status|standing|footing|ground|base|foundation|bedrock|cornerstone|keystone|linchpin|anchor|pillar|column|tower|spire|steeple|dome|roof|ceiling|floor|wall|door|gate|window|porch|patio|deck|balcony|terrace|courtyard|garden|yard|lawn|field|meadow|pasture|forest|woods|jungle|desert|oasis|valley|canyon|gorge|ravine|cliff|bluff|ridge|peak|summit|crest|crown|tip|top|apex|vertex|zenith|pinnacle|acme|climax|culmination|height|depth|breadth|width|length|span|reach|range|extent|scope|scale|magnitude|size|dimension|measurement|proportion|ratio|rate|speed|velocity|pace|tempo|rhythm|beat|pulse|throb|vibration|oscillation|wave|ripple|surge|flow|current|stream|tide|flood|rush|gush|spurt|burst|blast|explosion|eruption|outburst|outbreak|onset|start|beginning|commencement|opening|launch|initiation|inauguration|inception|genesis|origin|source|root|seed|germ|embryo|fetus|infant|baby|toddler|child|adolescent|teenager|youth|adult|elder|senior|veteran|oldster|aged|ancient|antique|vintage|classic|retro|nostalgic|old|new|fresh|novel|modern|contemporary|current|latest|recent|present|future|coming|upcoming|forthcoming|imminent|impending|approaching|near|close|far|distant|remote|faraway|isolated|secluded|lonely|solitary|alone|unique|singular|rare|uncommon|unusual|extraordinary|remarkable|notable|significant|important|crucial|critical|vital|essential|necessary|indispensable|required|mandatory|compulsory|obligatory|optional|voluntary|elective|discretionary|free|open|available|accessible|convenient|useful|helpful|valuable|worthwhile|beneficial|advantageous|profitable|rewarding|fruitful|productive|efficient|effective|potent|powerful|strong|robust|sturdy|durable|lasting|enduring|permanent|eternal|everlasting|infinite|endless|boundless|limitless|unlimited|unrestricted|unconstrained|unfettered|unbridled|rampant|unchecked|uncontrolled|wild|untamed|feral|savage|barbaric|brutal|cruel|harsh|severe|strict|stern|rigid|inflexible|unyielding|adamant|stubborn|obstinate|headstrong|willful|wayward|capricious|whimsical|fickle|inconsistent|unreliable|unpredictable|erratic|volatile|unstable|precarious|shaky|wobbly|unsteady|fragile|delicate|brittle|frail|feeble|weak|faint|dim|pale|light|bright|vivid|brilliant|radiant|luminous|glowing|shining|gleaming|glistening|sparkling|twinkling|glittering|flashing|blazing|burning|fiery|flaming|scorching|boiling|steaming|smoking|fuming|sizzling|crackling|popping|rattling|rumbling|thundering|roaring|howling|screaming|shrieking|wailing|moaning|groaning|grunting|muttering|murmuring|whispering|hissing|buzzing|humming|clicking|ticking|tapping|knocking|banging|pounding|thumping|thudding|crashing|smashing|shattering|splitting|tearing|ripping|shredding|cutting|slicing|dicing|chopping|mincing|grinding|crushing|pressing|squeezing|wringing|twisting|bending|folding|wrapping|rolling|spinning|rotating|turning|revolving|whirling|swirling|eddying|circling|orbiting|spiraling|twirling|dancing|leaping|jumping|springing|bouncing|bounding|vaulting|skipping|hopping|prancing|galloping|racing|sprinting|dashing|rushing|hurrying|hastening|speeding|flying|soaring|hovering|gliding|sailing|floating|drifting|wandering|roaming|strolling|sauntering|ambling|rambling|trekking|hiking|climbing|ascending|rising|mounting|scaling|descending|falling|dropping|plummeting|plunging|diving|sinking|submerging|immersing|dipping|dunking|dousing|soaking|drenching|saturating|suffusing|infusing|imbuing|permeating|penetrating|piercing|puncturing|stabbing|jabbing|poking|prodding|nudging|elbowing|shouldering|shoving|pushing|pulling|tugging|yanking|jerking|tossing|flinging|hurling|throwing|launching|shooting|firing|blasting|bombing|shelling|strafing|raiding|attacking|assaulting|charging|storming|invading|occupying|conquering|subduing|subjugating|overpowering|overwhelming|crushing|defeating|vanquishing|routing|dispersing|scattering|shattering|demolishing|destroying|wrecking|ruining|devastating|ravaging|desolating|depopulating|exterminating|annihilating|obliterating|erasing|eliminating|removing|extracting|withdrawing|retreating|receding|ebbing|subsiding|abating|dwindling|waning|fading|diminishing|lessening|decreasing|shrinking|contracting|compressing|condensing|concentrating|focusing|centering|aligning|orienting|directing|steering|guiding|leading|conducting|escorting|accompanying|convoying|ushering|shepherding|herding|rounding|gathering|collecting|assembling|marshaling|mobilizing|organizing|arranging|ordering|sorting|classifying|categorizing|grouping|labeling|tagging|marking|branding|stamping|imprinting|engraving|etching|carving|sculpting|molding|shaping|forming|creating|making|building|constructing|assembling|fabricating|manufacturing|producing|generating|originating|initiating|starting|beginning|launching|opening|introducing|instituting|establishing|founding|setting|installing|positioning|placing|locating|situating|stationing|posting|assigning|appointing|designating|naming|identifying|specifying|defining|describing|characterizing|qualifying|quantifying|measuring|weighing|assessing|evaluating|judging|rating|ranking|grading|scoring|scaling|calibrating|standardizing|normalizing|regulating|adjusting|tuning|fine-tuning|optimizing|improving|enhancing|upgrading|refining|polishing|perfecting|completing|finishing|concluding|ending|terminating|ceasing|stopping|halting|pausing|suspending|deferring|postponing|delaying|procrastinating|lingering|loitering|dawdling|idling|lounging|resting|sleeping|napping|dozing|snoozing|slumbering|dreaming|daydreaming|fantasizing|imagining|visualizing|envisioning|conceiving|devising|formulating|planning|scheming|plotting|conspiring|collaborating|cooperating|coordinating|synchronizing|harmonizing|balancing|equating|equalizing|leveling|smoothing|flattening|straightening|aligning|adjusting|correcting|rectifying|remedying|fixing|repairing|mending|restoring|renewing|refreshing|revitalizing|reviving|rejuvenating|recharging|reactivating|rekindling|reigniting|renewing|reestablishing|reinstating|reintroducing|recycling|reusing|repurposing|adapting|modifying|changing|altering|varying|diversifying|transforming|converting|translating|interpreting|decoding|deciphering|understanding|comprehending|grasping|knowing|recognizing|identifying|distinguishing|differentiating|discriminating|separating|dividing|splitting|partitioning|segmenting|isolating|insulating|detaching|disconnecting|unplugging|disengaging|releasing|freeing|liberating|emancipating|unchaining|unbinding|untying|unfastening|unlocking|unsealing|opening|cracking|breaching|penetrating|infiltrating|entering|accessing|logging|connecting|linking|attaching|binding|tying|fastening|securing|latching|linking|joining|uniting|merging|combining|blending|fusing|melting|dissolving|integrating|incorporating|assimilating|absorbing|ingesting|consuming|devouring|swallowing|gulping|guzzling|sipping|nibbling|biting|chewing|munching|crunching|tasting|savoring|relishing|enjoying|appreciating|valuing|prizing|treasuring|cherishing|admiring|respecting|honoring|glorifying|praising|commending|applauding|acclaiming|celebrating|congratulating|complimenting|flattering|soothing|calming|relaxing|unwinding|decompressing|resting|sleeping|meditating|contemplating|reflecting|pondering|musing|ruminating|brooding|agonizing|worrying|fretting|fussing|panicking|stressing|straining|struggling|striving|endeavoring|attempting|trying|testing|experimenting|exploring|researching|investigating|examining|inspecting|scrutinizing|analyzing|studying|reviewing|surveying|probing|querying|questioning|interviewing|interrogating|cross-examining|grilling|pumping|extracting|eliciting|drawing|pulling|tugging|yanking|jerking|wrenching|twisting|wringing|squeezing|pressing|compressing|condensing|concentrating|focusing|zeroing|targeting|aiming|pointing|directing|steering|guiding|leading|conducting|ushering|escorting|accompanying|following|pursuing|chasing|tracking|trailing|tracing|shadowing|stalking|tailgating|monitoring|observing|watching|viewing|seeing|noticing|spotting|detecting|discerning|perceiving|sensing|feeling|intuiting|knowing|understanding|comprehending|realizing|recognizing|appreciating|acknowledging|accepting|embracing|adopting|adapting|adjusting|acclimating|accommodating|conforming|complying|obeying|following|observing|respecting|honoring|upholding|maintaining|sustaining|supporting|backing|endorsing|promoting|advocating|championing|defending|protecting|guarding|safeguarding|shielding|screening|filtering|winnowing|sifting|straining|sieving|separating|sorting|classifying|grouping|clustering|aggregating|accumulating|amassing|stockpiling|hoarding|storing|warehousing|archiving|filing|recording|registering|logging|documenting|cataloging|indexing|listing|itemizing|inventorying|tallying|counting|summing|totaling|calculating|computing|figuring|reckoning|estimating|approximating|projecting|forecasting|predicting|anticipating|expecting|hoping|wishing|desiring|wanting|needing|requiring|lacking|missing|wanting|needing|requiring|demanding|insisting|persisting|persevering|enduring|withstanding|bearing|tolerating|suffering|undergoing|experiencing|encountering|meeting|facing|confronting|braving|daring|risking|venturing|undertaking|attempting|essaying|endeavoring|striving|struggling|fighting|contending|competing|rivaling|opposing|resisting|withstanding|defying|challenging|questioning|disputing|contradicting|refuting|rebutting|disproving|debunking|invalidating|nullifying|negating|canceling|reversing|undoing|neutralizing|counteracting|counterbalancing|offsetting|compensating|balancing|equaling|matching|corresponding|paralleling|resembling|mirroring|reflecting|echoing|repeating|reiterating|recapitulating|summarizing|abstracting|condensing|abbreviating|shortening|truncating|curtailing|clipping|trimming|pruning|paring|shaving|shearing|cropping|cutting|slashing|hacking|chopping|slicing|dicing|mincing|grinding|mashing|pureeing|blending|mixing|stirring|whisking|beating|whipping|folding|kneading|rolling|shaping|molding|forming|casting|sculpting|carving|engraving|etching|chiseling|whittling|sanding|buffing|polishing|waxing|oiling|painting|coating|glazing|varnishing|lacquering|shellacking|enameling|gilding|plating|inlaying|overlaying|covering|wrapping|packaging|boxing|crating|bundling|batching|palletizing|containerizing|shipping|transporting|conveying|carrying|bearing|ferrying|shuttling|commuting|traveling|journeying|voyaging|sailing|flying|cruising|gliding|hovering|soaring|drifting|floating|coasting|riding|driving|piloting|navigating|charting|mapping|surveying|exploring|scouting|reconnoitering|patrolling|policing|guarding|protecting|defending|escorting|convoying|accompanying|attending|serving|assisting|helping|aiding|supporting|backing|bolstering|reinforcing|fortifying|strengthening|toughening|hardening|tempering|seasoning|aging|maturing|ripening|blooming|flowering|fruiting|seeding|sprouting|germinating|budding|shooting|growing|expanding|swelling|inflating|distending|dilating|widening|broadening|lengthening|elongating|extending|stretching|spreading|diffusing|scattering|dispersing|disseminating|distributing|allocating|allotting|apportioning|assigning|delegating|commissioning|authorizing|empowering|licensing|certifying|accrediting|qualifying|entitling|enabling|permitting|allowing|letting|granting|conceding|yielding|surrendering|ceding|relinquishing|abandoning|deserting|forsaking|renouncing|waiving|disclaiming|disowning|disavowing|repudiating|rejecting|refusing|declining|spurning|snubbing|slighting|ignoring|disregarding|overlooking|neglecting|omitting|missing|skipping|jumping|leaping|vaulting|bounding|springing|bouncing|rebounding|ricocheting|deflecting|diverting|redirecting|rerouting|rechanneling|recycling|reusing|repurposing|adapting|adjusting|modifying|changing|altering|transforming|converting|shifting|switching|transferring|moving|relocating|reassigning|reappointing|redesignating|renaming|rebranding|relabeling|retagging|reclassifying|recategorizing|regrouping|reorganizing|restructuring|reconfiguring|rearranging|resequencing|reordering|reprioritizing|rescheduling|replanning|rethinking|reconsidering|reevaluating|reassessing|reviewing|revising|reworking|rewriting|rephrasing|recasting|reformulating|redrafting|re-editing|rewriting|retyping|reinputting|reentering|reloading|rebooting|restarting|reactivating|reawakening|rekindling|reviving|resurrecting|reanimating|reinvigorating|rejuvenating|renewing|refreshing|restoring|replenishing|replenishing|recharging|refueling|restocking|resupplying|replenishing|renewing|replacing|substituting|swapping|exchanging|trading|bartering|bargaining|negotiating|mediating|arbitrating|judging|adjudicating|deciding|determining|resolving|settling|concluding|finalizing|consummating|completing|finishing|wrapping|terminating|ending|discontinuing|ceasing|stopping|halting|pausing|interrupting|breaking|suspending|adjourning|recessing|deferring|postponing|delaying|stalling|lingering|loitering|waiting|anticipating|expecting|foreseeing|predicting|forecasting|projecting|envisioning|imagining|dreaming|fantasizing|idealizing|romanticizing|glamorizing|mythologizing|legendizing|heroizing|worshipping|adoring|idolizing|deifying|canonizing|sanctifying|hallowing|consecrating|blessing|anointing|ordaining|initiating|inducting|installing|investing|crowning|coronating|throning|enthroning|acceding|ascending|mounting|rising|climbing|scaling|surmounting|overcoming|conquering|defeating|beating|bested|worsting|vanquishing|subduing|subjugating|overpowering|overwhelming|crippling|paralyzing|immobilizing|stunning|dazing|bewildering|baffling|perplexing|confusing|mystifying|puzzling|vexing|irritating|annoying|bothering|pestering|harassing|badgering|hounding|nagging|needling|taunting|teasing|provoking|inciting|instigating|prompting|spurring|goading|prodding|egging|urging|pressuring|pressuring|coercing|compelling|forcing|obliging|requiring|mandating|dictating|commanding|ordering|directing|instructing|charging|enjoining|adjuring|beseeching|entreating|imploring|pleading|begging|supplicating|petitioning|appealing|soliciting|requesting|applying|seeking|pursuing|chasing|hunting|fishing|trapping|snaring|netting|catching|capturing|seizing|grabbing|snatching|clutching|grappling|grasping|holding|gripping|clinging|clasping|embracing|hugging|squeezing|cuddling|nestling|snuggling|nuzzling|kissing|licking|sucking|nursing|suckling|feeding|nourishing|nurturing|fostering|cultivating|growing|raising|breeding|rearing|tending|managing|supervising|overseeing|directing|conducting|handling|operating|running|administering|governing|ruling|reigning|presiding|chairing|leading|heading|captaining|commanding|controlling|regulating|monitoring|policing|patrolling|guarding|protecting|safeguarding|defending|shielding|screening|filtering|winnowing|sifting|straining|sieving|separating|sorting|classifying|grouping|clustering|aggregating|accumulating|amassing|stockpiling|hoarding|storing|warehousing|archiving|filing|recording|registering|logging|documenting|cataloging|indexing|listing|itemizing|inventorying|tallying|counting|summing|totaling|calculating|computing|figuring|reckoning|estimating|approximating|projecting|forecasting|predicting|anticipating|expecting|hoping|wishing|desiring|wanting|needing|requiring|lacking|missing|yearning|longing|pining|aching|thirsting|hungering|craving|lusting|covering|desiring|fancying|liking|loving|adoring|worshipping|cherishing|treasuring|prizing|valuing|appreciating|savoring|relishing|enjoying|delighting|rejoicing|exulting|glorying|triumphing|celebrating|commemorating|observing|keeping|honoring|respecting|esteeming|regarding|considering|deeming|reckoning|accounting|judging|weighing|balancing|pondering|deliberating|meditating|reflecting|contemplating|musing|ruminating|brooding|agonizing|worrying|fretting|fussing|panicking|stressing|straining|struggling|striving|endeavoring|attempting|trying|testing|experimenting|exploring|researching|investigating|examining|inspecting|scrutinizing|analyzing|studying|reviewing|surveying|probing|querying|questioning|interviewing|interrogating|cross-examining|grilling|pumping|extracting|eliciting|drawing|pulling|tugging|yanking|jerking|wrenching|twisting|wringing|squeezing|pressing|compressing|condensing|concentrating|focusing|zeroing|targeting|aiming|pointing|directing|steering|guiding|leading|conducting|ushering|escorting|accompanying|following|pursuing|chasing|tracking|trailing|tracing|shadowing|stalking|tailgating|monitoring|observing|watching|viewing|seeing|noticing|spotting|detecting|discerning|perceiving|sensing|feeling|intuiting|knowing|understanding|comprehending|realizing|recognizing|appreciating|acknowledging|accepting|embracing|adopting)\b/i);
-    if(noArticle&&!countableSingular[0]){
-      // 初步检查可数名词前是否有冠词或限定词
-      // 过于宽泛，跳过这个检查以避免误报
+    // 6. "test the website/app" — 搭配不自然
+    const testMatch=trimmed.match(/\btest\s+(the\s+)?(website|app|software|tool|platform|system)\b/i);
+    if(testMatch){
+      errors.push({line:lineNum,pos:`"${testMatch[0]}"`,error:testMatch[2]+'搭配不太自然',explain:`try ${testMatch[1]||''}${testMatch[2]}`,'rule':'test 通常指技术测试（找bug），try 指试用体验。表达"试用"时更推荐 try / try out。"'});
     }
-    // 7. 检查常见介词搭配错误
-    const prepErrors=[
-      {re:/\bdepend\s+of\b/gi,fix:'depend on',rule:'depend 后面跟介词 on，不是 of。'},
-      {re:/\b(discuss|mention|describe)\s+about\b/gi,fix:(m)=>`${m[1]} (不用 about)`,rule:'discuss / mention / describe 后直接跟宾语，不需要 about。'},
-      {re:/\b(explain|answer|tell)\s+to\b/gi,fix:(m)=>`${m[1]} (不用 to)`,rule:'explain / answer / tell 后直接跟宾语（tell sb. 除外）。'},
-      {re:/\b(affect|effect)\b/i,fix:'用 affect (动词) 或 effect (名词)',rule:'affect 是动词（影响），effect 是名词（效果）。'},
-      {re:/\b(look|watch|see)\s+and\b/i,fix:'look/watch/see 后不需要 and',rule:'look/watch/see 后直接跟宾语，不需要 and 连接。'},
+    // 7. "hope it can run" — 意思模糊
+    const runMatch=trimmed.match(/\b(hope|wish)\s+.*?\b(run)\b/i);
+    if(runMatch){
+      errors.push({line:lineNum,pos:`"${runMatch[0]}"`,error:'意思模糊："run" 含义不明确',explain:runMatch[0].replace('run','work properly'),rule:'run 在技术语境中指"运行程序"，表达"希望它好用/正常运作"建议用 work properly / function well。'});
+    }
+    // 8. be + 动词原形
+    const beV=trimmed.match(/\b(am|is|are|was|were)\s+(go|do|make|take|write|read|eat|drink|play|work|study|sleep|run|walk|talk|think|want|like|need|know|get|put|come|see|say|buy|use|try|ask|tell|find|give|keep|leave|start|stop|help|watch|live|stay|sit|stand|look|listen|feel|hope|wish|plan|learn|teach|bring|send|show|call|meet|pay|hold|set|let|begin|spend|check|create|build|choose|offer|try|wait|change|follow|expect|explain|miss|move|share|add|believe|happen|notice|remember|support|allow|continue|decide|describe|develop|discuss|enjoy|finish|improve|include|produce|prove|reach|remain|return|suggest|train|treat|update|vary|verify|warn|welcome)\b/i);
+    // 限制检查范围，避免误报
+    if(beV&&!/\b(am|is|are|was|were)\s+(going|doing|making|taking|writing|reading|eating|drinking|playing|working|studying|sleeping|running|walking|talking|thinking|wanting|liking|needing|knowing|getting|putting|coming|seeing|saying|buying|using|trying|asking|telling|finding|giving|keeping|leaving|starting|stopping|helping|watching|living|staying|sitting|standing|looking|listening|feeling|hoping|wishing|planning|learning|teaching|bringing|sending|showing|calling|meeting|paying|holding|setting|letting|beginning|spending|checking|creating|building|choosing|offering|trying|waiting|changing|following|expecting|explaining|missing|moving|sharing|adding|believing|happening|noticing|remembering|supporting|allowing|continuing|deciding|describing|developing|discussing|enjoying|finishing|improving|including|producing|proving|reaching|remaining|returning|suggesting|training|treating|updating|varying|verifying|warning|welcoming)\b/i.test(trimmed)){
+      errors.push({line:lineNum,pos:`"${beV[0]}"`,error:'be动词后动词形式有误',explain:`${beV[1]} ${beV[2]}ing`,rule:'be 动词后跟动词原形时，应改为现在分词（-ing）。例如：I am going ✓，I am go ✗。'});
+    }
+    // 9. 缺少冠词 — 常见可数名词单数前缺少 a/an/the
+    const missingArticle=trimmed.match(/(?<!\b(a|an|the|my|your|his|her|its|our|their|this|that|each|every|some|any|no|one)\s)(?<!\w)(idea|plan|problem|question|mistake|decision|solution|result|reason|goal|project|meeting|party|event|story|report|article|letter|email|message|note|list|file|picture|photo|video|song|game|book|movie|show|class|lesson|course|program|system|method|way|place|city|country|friend|student|teacher|doctor|child|baby|parent|brother|sister|husband|wife|man|woman|boy|girl|day|week|month|year|hour|minute|second|room|door|window|table|chair|phone|car|dog|cat|tree|flower|bird|fish|house|school|hospital|store|shop|restaurant|office|company|team|group|family)(?!\w)/gi);
+    if(missingArticle&&missingArticle.length<=2){
+      missingArticle.forEach(w=>{
+        if(!trimmed.match(new RegExp(`\\b(a|an|the|my|your|his|her|our|their|this|that|each|every|some|any|no)\\s+${w}\\b`,'i'))){
+          const article=/^[aeiou]/i.test(w)?'an':'a';
+          errors.push({line:lineNum,pos:`"${w}"`,error:`可数名词单数缺少冠词`,explain:`${article} ${w}`,rule:`可数名词单数前通常需要冠词 (a/an/the) 或限定词。例如：a problem ✓，problem ✗。`});
+        }
+      });
+    }
+    // 10. 常见介词搭配错误
+    const prepChecks=[
+      {re:/\bdepend\s+of\b/gi,pos:'depend of',error:'介词搭配错误',explain:'depend on',rule:'depend 后面跟介词 on，不是 of。'},
+      {re:/\b(discuss|mention|describe)\s+about\b/gi,pos:(m)=>`${m[1]} about`,error:'多余介词',explain:(m)=>`${m[1]}`,rule:'discuss / mention / describe 后直接跟宾语，不需要 about。'},
+      {re:/\b(explain|answer)\s+to\s+(\w+)\b/gi,pos:(m)=>`${m[1]} to ${m[2]}`,error:'多余介词',explain:(m)=>`${m[1]} ${m[2]}`,rule:'explain / answer 后直接跟宾语，不需要 to。'},
+      {re:/\blook\s+forward\s+for\b/gi,pos:'look forward for',error:'介词搭配错误',explain:'look forward to',rule:'look forward 后面跟 to，不是 for。'},
+      {re:/\bmarried\s+with\b/gi,pos:'married with',error:'介词搭配错误',explain:'married to',rule:'表示"和某人结婚"用 married to，不是 with。'},
+      {re:/\blisten\s+(\w+)\b(?!\s+to)/gi,pos:(m)=>`${m[0]}`,error:'缺少介词 to',explain:(m)=>`${m[1]} to ${m[2]}`,rule:'listen 后跟宾语时需要加 to。'},
     ];
-    prepErrors.forEach(({re,fix,rule})=>{
+    prepChecks.forEach(({re,pos,error,explain,rule})=>{
       const m=trimmed.match(re);
       if(m){
-        const fixText=typeof fix==='function'?fix(m):fix;
-        errors.push({line:lineNum,found:`"${m[0]}" 用法有误`,fix:`应改为 "${fixText}"`,rule});
+        const posText=typeof pos==='function'?pos(m):pos;
+        const fixText=typeof explain==='function'?explain(m):explain;
+        errors.push({line:lineNum,pos:posText,error,explain:fixText,rule});
       }
     });
-    // 8. 检查双重否定
-    if(/\b(don't|doesn't|didn't|won't|can't|couldn't|wouldn't|shouldn't|isn't|aren't|wasn't|weren't|haven't|hasn't|hadn't|never|no|nothing|nobody|nowhere|neither|nor)\b/i.test(trimmed)&&
-       /\b(no|nobody|nothing|nowhere|never|neither|nor|none|hardly|scarcely|barely)\b/i.test(trimmed)){
-      errors.push({line:lineNum,found:'可能使用了双重否定',fix:'去掉其中一个否定词',rule:'双重否定在英语中通常不标准，除非是刻意表达。'});
+    // 11. 双重否定
+    const neg1=trimmed.match(/\b(don't|doesn't|didn't|won't|can't|couldn't|wouldn't|shouldn't|isn't|aren't|wasn't|weren't|haven't|hasn't|hadn't|never|no|nothing|nobody|nowhere|neither|nor)\b/gi);
+    const neg2=trimmed.match(/\b(no|nobody|nothing|nowhere|never|neither|nor|none|hardly|scarcely|barely)\b/gi);
+    if(neg1&&neg2&&neg1.length>0&&neg2.length>0){
+      errors.push({line:lineNum,pos:`${neg1[neg1.length-1]} ... ${neg2[0]}`,error:'可能使用了双重否定',explain:'去掉其中一个否定词',rule:'双重否定在标准英语中通常不推荐，除非是刻意强调。'});
     }
   });
 
-  // 构建反馈
+  // 构建反馈 — 表格格式
+  let praise='';
   const praiseParts=['你已经主动用英文表达当天感受，这是非常棒的输出练习！'];
   if(used.length) praiseParts.push(`今天学到的单词你用到了 ${used.join('、')}，学以致用，很好！`);
   if(sentences.length>=3) praiseParts.push('而且你写了多句话，表达完整，值得鼓励！');
-  const praise=praiseParts.join(' ');
+  praise=praiseParts.join(' ');
 
   let errorBlock='';
   if(errors.length){
-    errorBlock='\n\n🔍 逐句检查：\n';
+    errorBlock='\n\n🔍 逐句检查：\n<table class="en-feedback-table"><thead><tr><th>问题位置</th><th>具体错误</th><th>解释</th></tr></thead><tbody>';
     errors.forEach((e,i)=>{
-      errorBlock+=`\n第${e.line}句：${e.found}\n  ✅ 修正建议：${e.fix}\n  📖 语法规则：${e.rule}\n`;
+      errorBlock+=`<tr><td>${esc(e.pos||e.line)}</td><td>${esc(e.error)}</td><td><strong>修正：</strong>${esc(e.explain)}<br><small>${esc(e.rule)}</small></td></tr>`;
     });
+    errorBlock+='</tbody></table>';
   }
 
   let suggestionBlock='';
-  if(suggestions.length){
-    suggestionBlock='\n\n💡 提升建议：\n';
-    suggestions.forEach(s=>{suggestionBlock+=`• ${s}\n`;});
-  }
-
-  if(!errors.length&&!suggestions.length){
-    suggestionBlock='\n\n💡 提升建议：你的表达整体流畅自然，下次可以尝试：\n• 使用更丰富的连接词（however, moreover, therefore）\n• 增加具体细节（时间、地点、感受）\n• 尝试使用复合句结构\n';
+  if(!errors.length){
+    suggestionBlock='\n\n💡 提升建议：你的表达整体流畅自然，下次可以尝试：\n• 使用更丰富的连接词（however, moreover, therefore）\n• 增加具体细节（时间、地点、感受）\n• 尝试使用复合句结构';
   }
 
   // 修正后的参考版本
@@ -986,24 +1008,15 @@ function englishWritingFeedback(text='',packWords=[]){
     .replace(/\bi\b/g,'I')
     .replace(/\s+/g,' ')
     .trim();
-  // 应用简单修正
   if(!/[.!?]$/.test(corrected))corrected+='.';
-  const correctionPrepErrors=[
-    {re:/\bdepend\s+of\b/gi,fix:'depend on'},
-    {re:/\b(discuss|mention|describe)\s+about\b/gi,fix:(m)=>m.replace(/\s+about/i,'')},
-    {re:/\b(explain|answer)\s+to\b/gi,fix:(m)=>m.replace(/\s+to/i,'')},
-    {re:/\blook\s+and\b/gi,fix:'look'},
-    {re:/\bwatch\s+and\b/gi,fix:'watch'},
-    {re:/\bsee\s+and\b/gi,fix:'see'}
-  ];
-  correctionPrepErrors.forEach(({re,fix})=>{
-    corrected=corrected.replace(re,(m)=>{
-      if(typeof fix==='function')return fix(m);
-      return fix;
-    });
-  });
+  corrected=corrected.replace(/\bdepend\s+of\b/gi,'depend on');
+  corrected=corrected.replace(/\b(discuss|mention|describe)\s+about\b/gi,(m,p1)=>p1);
+  corrected=corrected.replace(/\b(explain|answer)\s+to\s+(\w+)\b/gi,(m,p1,p2)=>p1+' '+p2);
+  corrected=corrected.replace(/\blook\s+forward\s+for\b/gi,'look forward to');
+  corrected=corrected.replace(/\bmarried\s+with\b/gi,'married to');
   corrected=corrected.replace(/\b(he|she|it)\s+are\b/gi,(m)=>m.toLowerCase().replace('are','is'));
   corrected=corrected.replace(/\b(he|she|it)\s+have\b/gi,(m)=>m.toLowerCase().replace('have','has'));
+  corrected=corrected.charAt(0).toUpperCase()+corrected.slice(1);
 
   return `${praise}${errorBlock}${suggestionBlock}\n\n📝 参考润色版本：\n${corrected}\n\n📚 写作小贴士：下次可以按「感受 → 原因 → 下一步」的结构来写，让你的表达更有层次感。试试用 because / so that / although 等连接词串联句子。`;
 }
@@ -1172,6 +1185,7 @@ async function fetchHotPayload(url){
   try{return normalizeHotPayload(JSON.parse(text));}
   catch(parseErr){
     const xml=new DOMParser().parseFromString(text,'application/xml');
+    if(xml.querySelector('parsererror'))throw new Error('XML解析失败');
     return [...xml.querySelectorAll('item, entry')].slice(0,50).map((item,i)=>({
       title:item.querySelector('title')?.textContent?.trim()||`热点 ${i+1}`,
       url:item.querySelector('link')?.textContent?.trim()||item.querySelector('link')?.getAttribute('href')||'',
@@ -1411,7 +1425,7 @@ const DB={
         {id:genId(),type:'inspiration',title:'灵感记录',visible:true,data:{}},
         {id:genId(),type:'collection',title:'收藏库',visible:true,data:{entries:[],filter:'all',categories:DEFAULT_COLLECTION_CATEGORIES.slice()}},
         {id:genId(),type:'changelog',title:'更新日志',visible:true,data:{
-          logs:[{id:genId(),date:todayStr(),version:'v1.0',changes:'初始版本发布：\n• 创建每日计划、睡眠记录、运动记录、每日复盘、阅读、英语学习、技能提升、爆款话题、灵感记录、迭代更新共10个模块\n• 支持6种主题配色自选\n• 支持在线编辑，数据自动保存\n• 响应式设计，支持iPhone访问编辑\n• 支持模块增删管理\n• 支持数据导入导出备份'}]
+          logs:[{id:genId(),date:todayStr(),version:'V8.1',changes:'V8.1 功能修复与优化：\n• 修复英语写作纠错反馈表格无法正常渲染的问题（HTML转义bug）\n• 修复睡眠7月记录看板显示问题，优化月视图自动定位逻辑\n• 行动总览补填改为 ○/✓ 圆圈勾选模式，更简洁直观\n• 为睡眠/运动/冥想/复盘/阅读/英语6个板块增加撤回按钮，误操作可一键恢复\n• 优化热点同步机制，增加多URL回退策略\n• 修复睡眠周保存时备注被清空的问题\n• 修复每日复盘评分0被误判为空的问题\n• 修复正则表达式冗余、XML解析错误处理等多处代码健壮性问题\n• 优化写作反馈表格CSS样式'},{id:genId(),date:todayStr(),version:'v1.0',changes:'初始版本发布：\n• 创建每日计划、睡眠记录、运动记录、每日复盘、阅读、英语学习、技能提升、爆款话题、灵感记录、迭代更新共10个模块\n• 支持6种主题配色自选\n• 支持在线编辑，数据自动保存\n• 响应式设计，支持iPhone访问编辑\n• 支持模块增删管理\n• 支持数据导入导出备份'}]
         }},
       ]
     };
@@ -1487,7 +1501,7 @@ function applyTheme(name){
   name=THEME_ALIASES[name]||name;
   if(!THEMES[name])name='soft-lavender';
   document.body.setAttribute('data-theme',name);
-  document.querySelector('meta[name=theme-color]').setAttribute('content',
+  document.querySelector('meta[name=theme-color]')?.setAttribute('content',
     name==='soft-green'?'#78a864':
     name==='soft-apricot'?'#d59a5b':
     name==='mint-green'?'#68b59b':
@@ -1648,8 +1662,8 @@ const MODULE_TYPES={
                 <div class="habit-cell habit-label">${esc(row.label)}${row.type==='custom'?`<button class="record-del ov-custom-del" data-id="${row.id}" title="删除自定义项" style="margin-left:6px">✕</button>`:''}</div>
                 ${dayKeys.map(key=>{
                   const done=hasDoneTask(row,key),planned=hasAnyTask(row,key);
-                  if(row.type==='custom')return `<div class="habit-cell"><label class="chip" style="padding:3px 7px;margin:0"><input type="checkbox" class="ov-custom-check" data-id="${row.id}" data-date="${key}" ${done?'checked':''}>完成</label></div>`;
-                  return `<div class="habit-cell"><label class="chip" style="padding:3px 7px;margin:0"><input type="checkbox" class="ov-plan-check" data-type="${row.type}" data-id="${esc(row.id)}" data-label="${esc(row.label)}" data-date="${key}" ${done?'checked':''}>${done?'已完成':planned?'补完成':'补填'}</label></div>`;
+                  if(row.type==='custom')return `<div class="habit-cell"><label class="chip" style="padding:3px 7px;margin:0"><input type="checkbox" class="ov-custom-check" data-id="${row.id}" data-date="${key}" ${done?'checked':''}>${done?'✓':'○'}</label></div>`;
+                  return `<div class="habit-cell"><label class="chip" style="padding:3px 7px;margin:0"><input type="checkbox" class="ov-plan-check" data-type="${row.type}" data-id="${esc(row.id)}" data-label="${esc(row.label)}" data-date="${key}" ${done?'checked':''}>${done?'✓':planned?'○':'○'}</label></div>`;
                 }).join('')}
               </div>
             `).join(''):'<div class="habit-row"><div class="habit-cell habit-label">暂无常规计划</div><div class="habit-cell" style="grid-column:span 7">先在“每日计划”里添加常规项，这里会自动生成看板。</div></div>'}
@@ -1724,7 +1738,7 @@ const MODULE_TYPES={
         ${matrix}
         <div class="overview-detail-grid">${cards}</div>
         <div class="report-text" style="margin-top:10px">${esc(reflection)}</div>
-        <div class="small-text" style="margin-top:8px">上方矩阵自动读取“每日计划”的常规事项，也支持自定义追踪项；✓ 表示已完成，○ 表示当天有计划但未完成，- 表示当天未生成该事项。下方保留每天的具体记录。</div>
+        <div class="small-text" style="margin-top:8px">上方矩阵自动读取"每日计划"的常规事项，也支持自定义追踪项；点击 ○ 切换为 ✓ 表示完成，再次点击可取消。下方保留每天的具体记录。</div>
       `;
     },
     bind(body,mod,save){
@@ -1768,7 +1782,7 @@ const MODULE_TYPES={
         task.done=chk.checked;
         DB.save();
         const labelEl=chk.closest('label');
-        if(labelEl)labelEl.lastChild.textContent=chk.checked?'已完成':'补完成';
+        if(labelEl)labelEl.lastChild.textContent=chk.checked?'✓':'○';
       }));
       body.querySelectorAll('.ov-custom-del').forEach(btn=>btn.addEventListener('click',()=>{
         const id=btn.dataset.id;
@@ -1914,8 +1928,13 @@ const MODULE_TYPES={
       d.selectedDate=d.selectedDate||todayStr();
       const currentMonth=`${new Date().getFullYear()}-${String(new Date().getMonth()+1).padStart(2,'0')}`;
       if(d.monthOffset===undefined||d.monthOffset===null)d.monthOffset=0;
-      if(!d.monthViewTouched&&!d.records.some(r=>(r.date||'').slice(0,7)===currentMonth)){
-        d.monthOffset=monthOffsetFromLatestSleepRecord(d.records);
+      if(!d.monthViewTouched){
+        const hasCurrentMonth=d.records.some(r=>(r.date||'').slice(0,7)===currentMonth);
+        if(!hasCurrentMonth){
+          d.monthOffset=monthOffsetFromLatestSleepRecord(d.records);
+        }else{
+          d.monthOffset=0;
+        }
       }
       const sleepWeek=weekDates().map(day=>{
         const key=dateKey(day), r=findByDate(d.records,key)||{};
@@ -1976,6 +1995,7 @@ const MODULE_TYPES={
         </div>
         ${renderWeekShell('睡眠日历',sleepWeek)}
         <button class="btn btn-primary btn-sm btn-block sl-week-save">保存本周睡眠</button>
+        <button class="btn btn-ghost btn-sm sl-week-undo" style="display:none;width:100%;margin-top:4px">↩ 撤回本周保存</button>
         <div class="form-row">
           <div class="form-group" style="max-width:180px"><label>选择日期</label><input type="date" class="sl-date" value="${esc(d.selectedDate)}"></div>
           <button class="btn btn-ghost btn-sm sl-load-date">载入选中日期</button>
@@ -2079,10 +2099,16 @@ const MODULE_TYPES={
           const wakeTime=card.querySelector('.sl-week-wake')?.value||'';
           const quality=+(card.querySelector('.sl-week-quality')?.value||3);
           if(bedtime||wakeTime){
-            mod.data.records=upsertByDate(mod.data.records,card.dataset.date,{bedtime,wakeTime,quality,notes:''});
+            const existing=findByDate(mod.data.records,card.dataset.date);
+            mod.data.records=upsertByDate(mod.data.records,card.dataset.date,{bedtime,wakeTime,quality,notes:existing?.notes||''});
           }
         });
         saveAndRerenderWithConfirm(weekSave,mod,save);
+      });
+      const slUndo=body.querySelector('.sl-week-undo');
+      if(slUndo&&_undoStack[mod.id])slUndo.style.display='';
+      if(slUndo)slUndo.addEventListener('click',()=>{
+        if(_undoRestore(mod,save)){rerender(mod);}
       });
       body.querySelectorAll('.sl-del').forEach(b=>{
         b.addEventListener('click',()=>{
@@ -2125,6 +2151,7 @@ const MODULE_TYPES={
         ${monthBoard}
         ${renderWeekShell('运动日历',exerciseWeek)}
         <button class="btn btn-primary btn-sm btn-block ex-week-save">保存本周运动</button>
+        <button class="btn btn-ghost btn-sm ex-week-undo" style="display:none;width:100%;margin-top:4px">↩ 撤回本周保存</button>
         <div class="form-row">
           <div class="form-group" style="max-width:180px"><label>选择日期</label><input type="date" class="ex-date" value="${esc(d.selectedDate)}"></div>
           <button class="btn btn-ghost btn-sm ex-load-date">载入选中日期</button>
@@ -2144,6 +2171,9 @@ const MODULE_TYPES={
       dateInput.addEventListener('change',loadSelected);body.querySelector('.ex-load-date').addEventListener('click',loadSelected);
       body.querySelector('.ex-add').addEventListener('click',e=>{const date=dateInput.value||todayStr();mod.data.selectedDate=date;mod.data.records=upsertByDate(mod.data.records||[],date,{type:body.querySelector('.ex-type').value,duration:body.querySelector('.ex-dur').value,notes:body.querySelector('.ex-notes').value.trim()});saveAndRerenderWithConfirm(e.currentTarget,mod,save);});
       body.querySelector('.ex-week-save')?.addEventListener('click',e=>{mod.data.quick=mod.data.quick||{};body.querySelectorAll('.day-card').forEach(card=>{const items=[...card.querySelectorAll('input[type=checkbox]:checked')].map(x=>x.value);const minutes=+(card.querySelector('.ex-week-min')?.value||0);const note=card.querySelector('.ex-week-note')?.value.trim()||'';if(items.length||minutes||note)mod.data.quick[card.dataset.date]={items,minutes,note};});saveAndRerenderWithConfirm(e.currentTarget,mod,save);});
+      const exUndo=body.querySelector('.ex-week-undo');
+      if(exUndo&&_undoStack[mod.id])exUndo.style.display='';
+      if(exUndo)exUndo.addEventListener('click',()=>{if(_undoRestore(mod,save)){rerender(mod);}});
       body.querySelectorAll('.ex-del').forEach(b=>b.addEventListener('click',()=>{mod.data.records=mod.data.records.filter(r=>r.id!==b.dataset.id);save();rerender(mod);}));
     }
   },
@@ -2166,6 +2196,7 @@ const MODULE_TYPES={
       const selectedRec=findByDate(d.records,d.selectedDate)||{};const recent=d.records.slice(-8).reverse();
       return`${monthBoard}${renderWeekShell('冥想日历',meditationWeek)}
         <button class="btn btn-primary btn-sm btn-block md-week-save">保存本周冥想</button>
+        <button class="btn btn-ghost btn-sm md-week-undo" style="display:none;width:100%;margin-top:4px">↩ 撤回本周保存</button>
         <div class="form-row"><div class="form-group" style="max-width:180px"><label>选择日期</label><input type="date" class="md-date" value="${esc(d.selectedDate)}"></div><button class="btn btn-ghost btn-sm md-load-date">载入选中日期</button></div>
         <div class="form-row"><div class="form-group" style="max-width:120px"><label>冥想分钟</label><input type="number" class="md-min" value="${selectedRec.minutes||5}" min="0" max="300"></div><button class="btn btn-primary btn-sm md-save">保存选中日期冥想</button></div>
         <div class="form-group"><label>冥想感受</label><textarea class="md-feeling" placeholder="冥想后的身体/情绪/念头变化">${esc(selectedRec.feeling||'')}</textarea></div>
@@ -2177,6 +2208,9 @@ const MODULE_TYPES={
       dateInput.addEventListener('change',loadSelected);body.querySelector('.md-load-date').addEventListener('click',loadSelected);
       body.querySelector('.md-save').addEventListener('click',e=>{const date=dateInput.value||todayStr();mod.data.selectedDate=date;mod.data.records=upsertByDate(mod.data.records||[],date,{minutes:+(body.querySelector('.md-min')?.value||0),feeling:body.querySelector('.md-feeling')?.value.trim()||''});saveAndRerenderWithConfirm(e.currentTarget,mod,save);});
       body.querySelector('.md-week-save')?.addEventListener('click',e=>{mod.data.records=mod.data.records||[];body.querySelectorAll('.day-card').forEach(card=>{const minutes=+(card.querySelector('.md-week-min')?.value||0);const feeling=card.querySelector('.md-week-feel')?.value.trim()||'';if(minutes||feeling)mod.data.records=upsertByDate(mod.data.records,card.dataset.date,{minutes,feeling});});saveAndRerenderWithConfirm(e.currentTarget,mod,save);});
+      const mdUndo=body.querySelector('.md-week-undo');
+      if(mdUndo&&_undoStack[mod.id])mdUndo.style.display='';
+      if(mdUndo)mdUndo.addEventListener('click',()=>{if(_undoRestore(mod,save)){rerender(mod);}});
       body.querySelectorAll('.md-del').forEach(b=>b.addEventListener('click',()=>{mod.data.records=mod.data.records.filter(r=>r.id!==b.dataset.id);save();rerender(mod);}));
     }
   },
@@ -2204,6 +2238,7 @@ const MODULE_TYPES={
       return`
         ${renderWeekShell('复盘日历',reviewWeek)}
         <button class="btn btn-primary btn-sm btn-block rv-week-save">保存本周复盘</button>
+        <button class="btn btn-ghost btn-sm rv-week-undo" style="display:none;width:100%;margin-top:4px">↩ 撤回本周保存</button>
         <div class="form-row">
           <div class="form-group" style="max-width:180px"><label>选择日期</label><input type="date" class="rv-date" value="${esc(d.selectedDate)}"></div>
           <button class="btn btn-ghost btn-sm rv-load-date">载入选中日期</button>
@@ -2285,11 +2320,14 @@ const MODULE_TYPES={
           const extra=extraEls.length?Object.fromEntries([...extraEls].map(x=>[x.dataset.field,x.value.trim()])):{};
           if(wellDone||improve||gratitude||Object.values(extra).some(v=>v)){
             const old=findByDate(mod.data.records,card.dataset.date)||{};
-            mod.data.records=upsertByDate(mod.data.records,card.dataset.date,{wellDone,improve,gratitude,rating:old.rating||3,extra});
+            mod.data.records=upsertByDate(mod.data.records,card.dataset.date,{wellDone,improve,gratitude,rating:old.rating??3,extra});
           }
         });
         saveAndRerenderWithConfirm(weekSave,mod,save);
       });
+      const rvUndo=body.querySelector('.rv-week-undo');
+      if(rvUndo&&_undoStack[mod.id])rvUndo.style.display='';
+      if(rvUndo)rvUndo.addEventListener('click',()=>{if(_undoRestore(mod,save)){rerender(mod);}});
       body.querySelectorAll('.rv-del').forEach(b=>{
         b.addEventListener('click',()=>{
           mod.data.records=mod.data.records.filter(r=>r.id!==b.dataset.id);
@@ -2371,6 +2409,7 @@ const MODULE_TYPES={
         </div>
         ${renderWeekShell('阅读日历',readingWeek)}
         <button class="btn btn-primary btn-sm btn-block rd-week-save">保存本周阅读</button>
+        <button class="btn btn-ghost btn-sm rd-week-undo" style="display:none;width:100%;margin-top:4px">↩ 撤回本周保存</button>
         <div class="section-label">正在阅读 (${readingCount})</div>
         <div class="record-list">${currentBooksHtml||'<div class="empty-state">暂无正在阅读的书</div>'}</div>
         <div class="section-label">添加新书到正在阅读</div>
@@ -2430,6 +2469,9 @@ const MODULE_TYPES={
         });
         saveAndRerenderWithConfirm(weekSave,mod,save);
       });
+      const rdUndo=body.querySelector('.rd-week-undo');
+      if(rdUndo&&_undoStack[mod.id])rdUndo.style.display='';
+      if(rdUndo)rdUndo.addEventListener('click',()=>{if(_undoRestore(mod,save)){rerender(mod);}});
       body.querySelector('.rd-add-cur')?.addEventListener('click',()=>{
         const title=body.querySelector('.rd-new-title').value.trim();
         if(!title){alert('请填写书名');return;}
@@ -2513,6 +2555,7 @@ const MODULE_TYPES={
       const englishWeek=weekDates().map(day=>{const key=dateKey(day), rec=d.daily[key]||{};return `<div class="day-card ${key===todayStr()?'today':''}" data-date="${key}"><div class="day-name">周${dayLabel(day)}</div><div class="day-num">${day.getDate()}</div><div class="quick-chips"><label class="chip"><input type="checkbox" class="en-day-words" ${rec.words10?'checked':''}>10个单词</label><label class="chip"><input type="checkbox" class="en-day-chunk" ${rec.chunk1?'checked':''}>1个词组</label><label class="chip"><input type="checkbox" class="en-day-pattern" ${rec.pattern1?'checked':''}>1个句型</label></div><div class="mini-field"><label>AI对话(分)</label><input type="number" class="en-day-ai" value="${rec.aiMinutes||0}" min="0"></div><div class="mini-field"><label>影子跟读(分)</label><input type="number" class="en-day-shadow" value="${rec.shadowMinutes||0}" min="0"></div><div class="mini-field"><label>备注</label><input type="text" class="en-day-note" value="${esc(rec.note||'')}" placeholder="主题/材料"></div></div>`;}).join('');
       const selC=englishCompletion(selectedDaily);
       return`${monthBoard}${renderWeekShell('英语打卡日历',englishWeek)}<button class="btn btn-primary btn-sm btn-block en-week-save">保存本周英语打卡</button>
+        <button class="btn btn-ghost btn-sm en-week-undo" style="display:none;width:100%;margin-top:4px">↩ 撤回本周保存</button>
         <div class="quick-chips" style="margin-top:6px"><label class="chip"><input type="checkbox" class="en-sound-toggle" ${d.soundEnabled?'checked':''}> 朗读开关</label></div>
         <div class="form-row"><div class="form-group" style="max-width:180px"><label>选择日期</label><input type="date" class="en-date" value="${esc(d.selectedDate)}"></div><button class="btn btn-ghost btn-sm en-load-date">载入选中日期</button></div>
         <div class="quick-chips"><label class="chip"><input type="checkbox" class="en-selected-words" ${selectedDaily.words10?'checked':''}>10个单词</label><label class="chip"><input type="checkbox" class="en-selected-chunk" ${selectedDaily.chunk1?'checked':''}>1个词组</label><label class="chip"><input type="checkbox" class="en-selected-pattern" ${selectedDaily.pattern1?'checked':''}>1个句型</label><span class="tag">当日完成率 ${selC.rate}% (${selC.done}/5)</span></div>
@@ -2522,7 +2565,7 @@ const MODULE_TYPES={
         <div class="section-label">英文写作练习</div>
         <div class="form-group"><label>用英文写几句今天的感想</label><textarea class="en-writing" placeholder="Try to write 2-5 sentences. You can use today's words." style="min-height:96px">${esc(writing.text||'')}</textarea></div>
         <button class="btn btn-primary btn-sm btn-block en-writing-save">保存写作并重新生成反馈</button>
-        <div class="writing-feedback en-writing-feedback" style="${writing.feedback?'':'display:none'}">${writing.feedback?esc(writing.feedback):''}</div>
+        <div class="writing-feedback en-writing-feedback" style="${writing.feedback?'':'display:none'}">${writing.feedback||''}</div>
         ${Array.isArray(writing.history)&&writing.history.length>1?`<details style="margin-top:8px"><summary class="small-text" style="cursor:pointer;color:var(--primary)">查看历史写作反馈（${writing.history.length-1}条）</summary><div class="record-list" style="max-height:160px;margin-top:6px">${writing.history.slice(0,-1).slice(-3).reverse().map(h=>`<div class="record-item"><div class="record-content"><div class="small-text">${formatDateTime(h.updatedAt||'')}</div><div>${esc(h.text||'')}</div></div></div>`).join('')}</div></details>`:''}
         <div class="section-label">生词本 (${d.words.length})</div><div class="form-row"><div class="form-group"><input type="text" class="en-word" placeholder="单词"></div><div class="form-group"><input type="text" class="en-meaning" placeholder="释义"></div><button class="btn btn-primary btn-sm en-add-word">添加</button></div><div class="record-list" style="max-height:200px">${d.words.length?d.words.slice().reverse().map(w=>{const statusLabels={known:'已认识',fuzzy:'模糊',unknown:'不认识'};const statusColors={known:'#22a06b',fuzzy:'#f5b42f',unknown:'#d64545'};const st=w.status||'unknown';return `<div class="word-card"><div class="flex-between" style="align-items:center"><span class="word">${esc(w.word)}</span><div style="display:flex;gap:4px;align-items:center"><select class="en-vocab-status" data-id="${w.id}" style="font-size:11px;padding:2px 6px;border-radius:6px;border:1px solid ${statusColors[st]}40;background:${statusColors[st]}15;color:${statusColors[st]};width:auto">${['unknown','fuzzy','known'].map(s=>`<option value="${s}" ${st===s?'selected':''}>${statusLabels[s]}</option>`).join('')}</select><button class="record-del en-del-word" data-id="${w.id}">✕</button></div></div><div class="meaning">${esc(w.meaning)}</div></div>`;}).join(''):'<div class="empty-state">暂无生词，点击上方英语包单词旁的「+生词本」快速添加</div>'}</div>
         <div class="section-label">例句 (${d.sentences.length})</div><div class="form-row"><div class="form-group"><input type="text" class="en-sentence" placeholder="英文句子"></div><button class="btn btn-primary btn-sm en-add-sent">添加</button></div><div class="record-list" style="max-height:100px">${d.sentences.length?d.sentences.slice(-5).reverse().map(s=>`<div class="record-item"><div class="record-content">${esc(s.text)}</div><button class="record-del en-del-sent" data-id="${s.id}">✕</button></div>`).join(''):'<div class="empty-state">暂无例句</div>'}</div>
@@ -2541,6 +2584,9 @@ const MODULE_TYPES={
       const saveSelectedEnglish=(btn)=>{const date=dateInput.value||todayStr();mod.data.selectedDate=date;mod.data.daily=mod.data.daily||{};mod.data.daily[date]={words10:!!body.querySelector('.en-selected-words')?.checked,chunk1:!!body.querySelector('.en-selected-chunk')?.checked,pattern1:!!body.querySelector('.en-selected-pattern')?.checked,aiMinutes:+(body.querySelector('.en-selected-ai')?.value||0),shadowMinutes:+(body.querySelector('.en-selected-shadow')?.value||0),note:body.querySelector('.en-selected-note')?.value.trim()||''};mod.data.studyLog=upsertByDate(mod.data.studyLog||[],date,{minutes:+body.querySelector('.en-min').value||0});saveAndRerenderWithConfirm(btn,mod,save);};
       body.querySelector('.en-save-selected').addEventListener('click',e=>saveSelectedEnglish(e.currentTarget));
       body.querySelector('.en-week-save')?.addEventListener('click',e=>{mod.data.daily=mod.data.daily||{};body.querySelectorAll('.day-card').forEach(card=>{const words10=!!card.querySelector('.en-day-words')?.checked,chunk1=!!card.querySelector('.en-day-chunk')?.checked,pattern1=!!card.querySelector('.en-day-pattern')?.checked,aiMinutes=+(card.querySelector('.en-day-ai')?.value||0),shadowMinutes=+(card.querySelector('.en-day-shadow')?.value||0),note=card.querySelector('.en-day-note')?.value.trim()||'';if(words10||chunk1||pattern1||aiMinutes||shadowMinutes||note)mod.data.daily[card.dataset.date]={words10,chunk1,pattern1,aiMinutes,shadowMinutes,note};});saveAndRerenderWithConfirm(e.currentTarget,mod,save);});
+      const enUndo=body.querySelector('.en-week-undo');
+      if(enUndo&&_undoStack[mod.id])enUndo.style.display='';
+      if(enUndo)enUndo.addEventListener('click',()=>{if(_undoRestore(mod,save)){rerender(mod);}});
       body.querySelector('.en-import-pack')?.addEventListener('click',()=>{const date=dateInput.value||todayStr();const pack=englishPackFor(date);pack.words.forEach(([word,meaning])=>{if(!mod.data.words.some(w=>w.word===word))mod.data.words.push({id:genId(),word,meaning});});mod.data.sentences.push({id:genId(),text:pack.chunks.filter((_,i)=>i%2===0).join(' / ')});mod.data.studyLog=upsertByDate(mod.data.studyLog||[],date,{minutes:+body.querySelector('.en-min').value||10,pack:true});mod.data.daily[date]={...(mod.data.daily[date]||{}),words10:true,chunk1:true,pattern1:true};mod.data.selectedDate=date;save();rerender(mod);});
       body.querySelector('.en-writing-save')?.addEventListener('click',()=>{
         const btn=body.querySelector('.en-writing-save');
@@ -2560,7 +2606,7 @@ const MODULE_TYPES={
           mod.data.daily[date]={...(mod.data.daily[date]||{}),writing:true};
           save();DB.save();
           const fb=body.querySelector('.en-writing-feedback');
-          if(fb){fb.style.display='block';fb.textContent=feedback;}
+          if(fb){fb.style.display='block';fb.innerHTML=feedback;}
           btn.textContent='已生成，可继续修改后再次生成';
           setTimeout(()=>{if(btn){btn.disabled=false;btn.textContent='保存写作并重新生成反馈';}},1200);
         }catch(err){
@@ -2818,8 +2864,23 @@ const MODULE_TYPES={
         const status=body.querySelector('.tr-hot-status');
         status.textContent='正在同步自动化热点文件...';
         try{
-          const list=await fetchHotPayload(`${mod.data.autoImportUrl}${mod.data.autoImportUrl.includes('?')?'&':'?'}t=${Date.now()}`);
-          if(!list.length)throw new Error('文件里没有可用热点');
+          // 尝试多个 URL 获取热点数据
+          const urls=[mod.data.autoImportUrl];
+          // 添加 GitHub Pages 原始文件 URL 作为备选
+          if(mod.data.autoImportUrl==='./hot-topics.json'){
+            urls.push('https://raw.githubusercontent.com/你的用户名/你的仓库名/main/hot-topics.json');
+          }
+          let list=null;
+          let lastErr=null;
+          for(const url of urls){
+            try{
+              const fullUrl=`${url}${url.includes('?')?'&':'?'}t=${Date.now()}`;
+              status.textContent=`尝试：${url.replace(/^https?:\/\//,'').split('/')[0]||'本地文件'}...`;
+              list=await fetchHotPayload(fullUrl);
+              if(list&&list.length)break;
+            }catch(e){lastErr=e;continue;}
+          }
+          if(!list||!list.length)throw lastErr||new Error('所有来源均无可用热点数据');
           mod.data.hotResults=list.slice(0,30);
           mod.data.hotStatus=`已从自动化文件同步 ${mod.data.hotResults.length} 条热点`;
           save();rerender(mod);
@@ -2876,6 +2937,7 @@ const MODULE_TYPES={
                 }
               }catch(parseErr){
                 const xml=new DOMParser().parseFromString(text,'application/xml');
+                if(xml.querySelector('parsererror'))throw new Error('XML解析失败');
                 list=[...xml.querySelectorAll('item, entry')].map(item=>({
                   title:item.querySelector('title')?.textContent?.trim()||'未命名热点',
                   url:item.querySelector('link')?.textContent?.trim()||item.querySelector('link')?.getAttribute('href')||'',
@@ -3986,6 +4048,8 @@ function migrateWorkbenchData(){
       if(type==='sleep'){
         importHistoricalSleepRecords(mod.data);
         importJulySleepRecords2026(mod.data);
+        if(mod.data.monthViewTouched===undefined)mod.data.monthViewTouched=false;
+        if(mod.data.monthOffset===undefined||mod.data.monthOffset===null)mod.data.monthOffset=monthOffsetFromLatestSleepRecord(mod.data.records);
       }
       mod.data.selectedDate=mod.data.selectedDate||todayStr();
       mod.data.monthOffset=mod.data.monthOffset||0;
