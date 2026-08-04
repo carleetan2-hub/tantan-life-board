@@ -618,7 +618,7 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
 /* ============================================================
    应用版本与自动更新检测
 ============================================================ */
-const APP_VERSION = 'v33';
+const APP_VERSION = 'v34';
 const APP_BUILD_TIME = '2026-08-04';
 
 /**
@@ -1482,6 +1482,24 @@ async function translateExample(text){
     return data?.responseData?.translatedText||'';
   }catch(e){return '';}
 }
+// 中英互译：支持中→英和英→中
+async function translateBidirectional(text,from='zh',to='en'){
+  try{
+    const url=`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${from}|${to}`;
+    const res=await fetch(url,{signal:AbortSignal.timeout(8000)});
+    const data=await res.json();
+    const main=data?.responseData?.translatedText||'';
+    // 收集备选翻译
+    const matches=data?.matches||[];
+    const alts=matches.filter(m=>m.translation&&m.translation!==main)
+      .map(m=>m.translation)
+      .filter((v,i,a)=>a.indexOf(v)===i)
+      .slice(0,3);
+    return {main,alts,raw:data};
+  }catch(e){
+    return {main:'',alts:[],error:e.message};
+  }
+}
 // 异步填充例句的中文翻译占位符
 function fillExTranslations(container){
   container.querySelectorAll('.ex-zh[data-en]').forEach(async el=>{
@@ -1736,19 +1754,11 @@ const JULY_SLEEP_RECORDS_2026=[
   ['2026-07-12','23:12'],['2026-07-13','23:15'],['2026-07-14','22:35'],['2026-07-15','23:30'],['2026-07-16','23:21'],['2026-07-17','22:45'],['2026-07-18','22:35'],['2026-07-19','22:35'],['2026-07-20','23:30'],['2026-07-21','00:40'],['2026-07-22','22:45'],
   ['2026-07-23','22:45'],['2026-07-24','23:01'],['2026-07-25','23:50'],['2026-07-26','22:35'],['2026-07-27','22:30'],['2026-07-28','23:35']
 ];
-function ensureRoutineTasks(data){
+function ensureRoutineTasks(data,targetDate){
+  // 仅确保常规任务模板存在，不自动保存到 tasks 数组
+  // 常规任务的显示和保存由 daily-plan 模块的 render 和 bind 处理
   data.routineTasks=data.routineTasks||DEFAULT_ROUTINE_TASKS.map(text=>({id:genId(),text}));
-  const today=todayStr();
-  data.tasks=data.tasks||[];
-  data.routineTasks.forEach(r=>{
-    if(!r.id)r.id=genId();
-    if(!r.text)return;
-    let task=data.tasks.find(t=>t.date===today&&t.routineId===r.id);
-    if(task){task.text=r.text;}
-    else if(!data.tasks.some(t=>t.date===today&&t.text===r.text)){
-      data.tasks.push({id:genId(),text:r.text,done:false,date:today,routineId:r.id});
-    }
-  });
+  data.routineTasks.forEach(r=>{if(!r.id)r.id=genId();});
 }
 function importHistoricalSleepRecords2026(sleepData){
   sleepData.records=Array.isArray(sleepData.records)?sleepData.records:[];
@@ -1936,13 +1946,19 @@ const MODULE_TYPES={
     defaultData:{tasks:[],currentDate:'',selectedDate:'',calViewYear:0,calViewMonth:0,routineTasks:DEFAULT_ROUTINE_TASKS.map(text=>({id:genId(),text}))},
     render(d){
       d.tasks=d.tasks||[];
-      ensureRoutineTasks(d);
       d.selectedDate=d.selectedDate||todayStr();
+      d.routineTasks=d.routineTasks||DEFAULT_ROUTINE_TASKS.map(text=>({id:genId(),text}));
       const selDate=d.selectedDate;
-      const todayTasks=d.tasks.filter(t=>t.date===selDate);
       const isToday=selDate===todayStr();
-      const done=todayTasks.filter(t=>t.done).length;
-      const prog=todayTasks.length?Math.round(done/todayTasks.length*100):0;
+      // 获取已保存的任务（用户实际交互过的）
+      const savedTasks=d.tasks.filter(t=>t.date===selDate);
+      // 将常规任务与已保存任务合并显示（不自动保存到 tasks 数组）
+      const routineIds=new Set(savedTasks.filter(t=>t.routineId).map(t=>t.routineId));
+      const unsavedRoutines=d.routineTasks.filter(r=>r.text&&!routineIds.has(r.id));
+      // 合并：已保存的任务 + 未保存的常规任务（仅用于显示）
+      const displayTasks=[...savedTasks,...unsavedRoutines.map(r=>({id:'routine_'+r.id,text:r.text,done:false,date:selDate,routineId:r.id,_unsaved:true}))];
+      const done=displayTasks.filter(t=>t.done).length;
+      const prog=displayTasks.length?Math.round(done/displayTasks.length*100):0;
       // 格式化日期显示
       const selDateObj=new Date(selDate);
       const dateLabel=`${selDateObj.getMonth()+1}月${selDateObj.getDate()}日 周${dayLabel(selDateObj)}`;
@@ -1952,7 +1968,13 @@ const MODULE_TYPES={
       const dpMonthKey=`${dpViewDate.getFullYear()}-${String(dpViewDate.getMonth()+1).padStart(2,'0')}`;
       const dpMonthDays=monthDates(dpViewDate);
       const dpTasksByDate={};
-      (d.tasks||[]).forEach(t=>{if(t.date)dpTasksByDate[t.date]=(dpTasksByDate[t.date]||0)+1;});
+      const dpDoneByDate={};
+      (d.tasks||[]).forEach(t=>{
+        if(t.date){
+          dpTasksByDate[t.date]=(dpTasksByDate[t.date]||0)+1;
+          if(t.done)dpDoneByDate[t.date]=(dpDoneByDate[t.date]||0)+1;
+        }
+      });
       const dpMiniCal=`
         <div style="border:1px solid var(--card-border);border-radius:10px;padding:8px;margin-bottom:8px;background:var(--card)">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
@@ -1965,15 +1987,19 @@ const MODULE_TYPES={
             ${dpMonthDays.map(day=>{
               const key=dateKey(day),inMonth=key.slice(0,7)===dpMonthKey;
               const taskCount=dpTasksByDate[key]||0;
+              const doneCount=dpDoneByDate[key]||0;
               const isSel=key===selDate;
               const isToday2=key===todayStr();
+              const isAllDone=taskCount>0&&doneCount===taskCount;
+              const isPartial=doneCount>0&&doneCount<taskCount;
+              const statusColor=isAllDone?'#22a06b':isPartial?'#f5b42f':'var(--primary)';
               return `<div class="dp-cal-day" data-date="${key}" style="padding:3px 2px;border-radius:4px;cursor:pointer;${isSel?'background:var(--primary);color:#fff':(inMonth?'':'opacity:.3')}${isToday2&&!isSel?';border:1px solid var(--primary)':''}">
                 <div>${day.getDate()}</div>
-                ${taskCount?`<div style="font-size:8px;${isSel?'color:#fff':'color:var(--primary)'}">${taskCount}项</div>`:'<div style="font-size:8px;color:transparent">·</div>'}
+                ${taskCount?`<div style="font-size:8px;${isSel?'color:#fff':'color:'+statusColor};font-weight:600">${doneCount}/${taskCount}</div>`:'<div style="font-size:8px;color:transparent">·</div>'}
               </div>`;
             }).join('')}
           </div>
-          <div class="small-text" style="text-align:center;margin-top:4px;font-size:10px;color:var(--text-sec)">点击日期可查看当天计划</div>
+          <div class="small-text" style="text-align:center;margin-top:4px;font-size:10px;color:var(--text-sec)">点击日期可查看当天计划 · 绿色=全部完成 橙色=部分完成</div>
         </div>`;
       return`
         <div class="week-head" style="border:1px solid var(--card-border);border-radius:12px;margin-bottom:8px">
@@ -1994,13 +2020,13 @@ const MODULE_TYPES={
           <button class="btn btn-primary btn-sm dp-add">添加</button>
         </div>
         <div class="flex-between">
-          <span class="small-text">${done}/${todayTasks.length} 已完成</span>
+          <span class="small-text">${done}/${displayTasks.length} 已完成</span>
           <span class="small-text">${prog}%</span>
         </div>
         <div class="progress-bar"><div class="progress-fill" style="width:${prog}%"></div></div>
         <div class="record-list">
-          ${todayTasks.length?todayTasks.map(t=>`
-            <div class="todo-item ${t.done?'done':''}" data-id="${t.id}">
+          ${displayTasks.length?displayTasks.map(t=>`
+            <div class="todo-item ${t.done?'done':''}" data-id="${t.id}" data-routine-id="${t.routineId||''}" data-unsaved="${t._unsaved?'1':''}">
               <button class="todo-circle dp-toggle" type="button" aria-label="${t.done?'标记未完成':'标记完成'}">${t.done?'✓':''}</button>
               <span class="todo-text">${esc(t.text)}</span>
               <button class="record-del dp-del">✕</button>
@@ -2098,11 +2124,30 @@ const MODULE_TYPES={
       });
       body.querySelectorAll('.todo-item').forEach(item=>{
         const id=item.dataset.id;
+        const routineId=item.dataset.routineId||'';
+        const isUnsaved=item.dataset.unsaved==='1';
         item.querySelector('.dp-toggle').addEventListener('click',()=>{
-          const t=mod.data.tasks.find(x=>x.id===id);if(t){t.done=!t.done;save();rerender(mod);}
+          if(isUnsaved){
+            // 未保存的常规任务：首次交互时保存到 tasks
+            const r=mod.data.routineTasks.find(x=>x.id===routineId);
+            if(r){
+              mod.data.tasks.push({id:genId(),text:r.text,done:true,date:mod.data.selectedDate,routineId:r.id});
+            }
+          }else{
+            const t=mod.data.tasks.find(x=>x.id===id);if(t){t.done=!t.done;save();rerender(mod);return;}
+          }
+          save();rerender(mod);
         });
         item.querySelector('.dp-del').addEventListener('click',()=>{
-          mod.data.tasks=mod.data.tasks.filter(x=>x.id!==id);save();rerender(mod);
+          if(isUnsaved){
+            // 删除未保存的常规任务：从模板中移除该常规项
+            if(routineId){
+              mod.data.routineTasks=mod.data.routineTasks.filter(x=>x.id!==routineId);
+            }
+          }else{
+            mod.data.tasks=mod.data.tasks.filter(x=>x.id!==id);
+          }
+          save();rerender(mod);
         });
       });
       body.querySelectorAll('.dp-routine-text').forEach(inp=>{
@@ -2111,7 +2156,8 @@ const MODULE_TYPES={
           const item=mod.data.routineTasks.find(x=>x.id===id);
           if(item){
             item.text=inp.value.trim()||item.text;
-            (mod.data.tasks||[]).filter(t=>t.routineId===id&&t.date===todayStr()).forEach(t=>t.text=item.text);
+            // 更新所有已保存的同 routineId 任务的文本
+            (mod.data.tasks||[]).filter(t=>t.routineId===id).forEach(t=>t.text=item.text);
             save();rerender(mod);
           }
         });
@@ -3025,12 +3071,13 @@ const MODULE_TYPES={
   /* ---- 阅读 ---- */
   'reading':{
     title:'阅读',icon:'reading',desc:'追踪阅读进度与笔记',
-    defaultData:{current:[],notes:'',books:[],daily:{},wishlist:[]},
+    defaultData:{current:[],notes:'',books:[],daily:{},wishlist:[],monthOffset:0,selectedDate:''},
     render(d){
       if(!Array.isArray(d.current)){
         d.current=d.current&&d.current.title?[{id:genId(),...d.current,startDate:todayStr()}]:[];
       }
       d.current=d.current||[];d.books=d.books||[];d.daily=d.daily||{};d.wishlist=d.wishlist||[];
+      d.monthOffset=d.monthOffset||0;d.selectedDate=d.selectedDate||todayStr();
       d.current.forEach(b=>{b.id=b.id||genId();b.startDate=b.startDate||todayStr();});
       const weekKeys=weekDates().map(dateKey);
       const weekMinutes=weekKeys.reduce((sum,key)=>sum+(+((d.daily[key]||{}).minutes)||0),0);
@@ -3038,6 +3085,18 @@ const MODULE_TYPES={
       const finishedCount=d.books.length;
       const wishlistCount=d.wishlist.length;
       const currentTitles=d.current.map(b=>b.title).filter(Boolean);
+      // 月度看板：显示每天的阅读时长
+      const ctx=monthContext(d.monthOffset);
+      const monthKeys=ctx.monthDays.map(dateKey).filter(k=>k.slice(0,7)===ctx.monthKey);
+      const activeDays=monthKeys.filter(k=>+(d.daily[k]?.minutes||0)>0).length;
+      const monthMin=monthKeys.reduce((sum,k)=>sum+(+(d.daily[k]?.minutes||0)),0);
+      const monthBoard=renderMonthBoard('阅读看板',d.monthOffset,(day,key)=>{
+        const rec=d.daily[key]||{};
+        if(rec.minutes>0){
+          return `<span class="month-dot"></span>${rec.minutes}分钟${rec.title?`<br>${esc(rec.title).slice(0,10)}`:''}${rec.note?`<br>${esc(rec.note).slice(0,12)}`:''}`;
+        }
+        return '';
+      },`<div class="small-text" style="margin:8px 0;text-align:center">本月阅读 ${activeDays} 天 · ${monthMin} 分钟 · 日均 ${activeDays?Math.round(monthMin/activeDays):0} 分钟</div>`);
       const readingWeek=weekDates().map(day=>{
         const key=dateKey(day), rec=d.daily[key]||{};
         return `<div class="day-card ${key===todayStr()?'today':''}" data-date="${key}">
@@ -3074,6 +3133,7 @@ const MODULE_TYPES={
         </div>`;
       }).join('');
       return`
+        ${monthBoard}
         <div class="quick-chips">
           <span class="tag">已读完 ${finishedCount} 本</span>
           <span class="tag">正在看 ${readingCount} 本</span>
@@ -3083,6 +3143,9 @@ const MODULE_TYPES={
         ${renderWeekShell('阅读日历',readingWeek)}
         <button class="btn btn-primary btn-sm btn-block rd-week-save">保存本周阅读</button>
         <button class="btn btn-ghost btn-sm rd-week-undo" style="display:none;width:100%;margin-top:4px">↩ 撤回本周保存</button>
+        <div class="form-row" style="margin-top:6px">
+          <div class="form-group" style="max-width:180px"><label>选中日期（点击月历可切换）</label><input type="date" class="rd-date" value="${esc(d.selectedDate)}"></div>
+        </div>
         <div class="section-label">正在阅读 (${readingCount})</div>
         <div class="record-list">${currentBooksHtml||'<div class="empty-state">暂无正在阅读的书</div>'}</div>
         <div class="section-label">添加新书到正在阅读</div>
@@ -3131,6 +3194,7 @@ const MODULE_TYPES={
       if(!Array.isArray(mod.data.current)){
         mod.data.current=mod.data.current&&mod.data.current.title?[{id:genId(),...mod.data.current,startDate:todayStr()}]:[];
       }
+      bindMonthBoard(body,mod,save,'.rd-date');
       const weekSave=body.querySelector('.rd-week-save');
       if(weekSave)weekSave.addEventListener('click',()=>{
         mod.data.daily=mod.data.daily||{};
@@ -3245,7 +3309,14 @@ const MODULE_TYPES={
         <div class="section-label">查单词</div>
         <div class="form-row"><div class="form-group"><input type="text" class="en-lookup-input" placeholder="输入英文单词查询..." style="font-size:14px"></div><button class="btn btn-primary btn-sm en-lookup-btn">查询</button></div>
         <div class="form-group" style="margin-top:6px"><label style="font-size:12px">📷 上传/拖拽/粘贴（Ctrl+V）含英文单词的图片，自动识别文本</label><div class="en-ocr-drop" style="border:2px dashed var(--input-border);border-radius:10px;padding:12px;text-align:center;cursor:pointer;transition:all .2s;font-size:12px;color:var(--text-sec)" tabindex="0"><input type="file" class="en-ocr-file" accept="image/*" style="display:none"><div>📷 点击 / 拖拽 / 粘贴图片到此处</div><div style="font-size:11px;margin-top:4px">支持 PNG/JPG，Ctrl+V 直接粘贴截图</div></div></div>
-        <div class="en-lookup-result" style="display:none;margin-top:10px;border:1.2px solid var(--card-border);border-radius:12px;padding:12px;background:#fff"></div>`;
+        <div class="en-lookup-result" style="display:none;margin-top:10px;border:1.2px solid var(--card-border);border-radius:12px;padding:12px;background:#fff"></div>
+        <div class="section-label">中英互译</div>
+        <div class="form-row" style="align-items:flex-end">
+          <div class="form-group" style="flex:1"><input type="text" class="en-translate-input" placeholder="输入中文或英文，自动检测方向..." style="font-size:14px"></div>
+          <button class="btn btn-ghost btn-sm en-translate-dir" style="white-space:nowrap;padding:6px 10px" title="点击切换方向">中→英</button>
+          <button class="btn btn-primary btn-sm en-translate-btn">翻译</button>
+        </div>
+        <div class="en-translate-result" style="display:none;margin-top:8px;border:1.2px solid var(--card-border);border-radius:12px;padding:12px;background:var(--card)"></div>`;
     },
     bind(body,mod,save){
       bindMonthBoard(body,mod,save,'.en-date');
@@ -3385,6 +3456,75 @@ const MODULE_TYPES={
       lookupInput?.addEventListener('paste',pasteHandler);
       // 让整个英语模块区域都支持粘贴图片
       body.addEventListener('paste',pasteHandler);
+      // 中英互译
+      let translateDir='zh-en'; // 默认中→英
+      const trInput=body.querySelector('.en-translate-input');
+      const trBtn=body.querySelector('.en-translate-btn');
+      const trDirBtn=body.querySelector('.en-translate-dir');
+      const trResult=body.querySelector('.en-translate-result');
+      const doTranslate=async()=>{
+        const text=trInput?.value.trim();
+        if(!text){alert('请输入要翻译的内容');return;}
+        if(!trResult)return;
+        trResult.style.display='block';
+        trResult.innerHTML='<div class="small-text" style="color:var(--primary)">正在翻译...</div>';
+        const from=translateDir==='zh-en'?'zh':'en';
+        const to=translateDir==='zh-en'?'en':'zh';
+        const r=await translateBidirectional(text,from,to);
+        if(!r.main){
+          trResult.innerHTML='<div style="color:var(--text-sec)">翻译失败，请稍后重试。</div>';
+          return;
+        }
+        let html='<div style="display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap">';
+        html+=`<div style="font-size:16px;font-weight:700;color:var(--primary);flex:1;min-width:200px">${esc(r.main)}</div>`;
+        // 朗读按钮（英→中时朗读原文，中→英时朗读译文）
+        const speakText2=translateDir==='zh-en'?r.main:text;
+        if(translateDir==='zh-en'){
+          html+=`<span class="en-speak-word" data-word="${esc(speakText2)}" style="cursor:pointer;padding:4px" title="朗读"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg></span>`;
+        }
+        html+='</div>';
+        // 备选翻译
+        if(r.alts&&r.alts.length){
+          html+=`<div style="margin-top:8px"><span style="font-size:12px;font-weight:600;color:var(--text-sec)">其他译法：</span><div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px">${r.alts.map(a=>`<span class="tag" style="font-size:12px;padding:3px 8px">${esc(a)}</span>`).join('')}</div></div>`;
+        }
+        // 原文回显
+        html+=`<div style="margin-top:8px;padding-top:6px;border-top:1px dashed var(--card-border);font-size:12px;color:var(--text-sec)">原文：${esc(text)}</div>`;
+        // 中→英时：如果是单词，提供加入生词本和查词典按钮
+        if(translateDir==='zh-en'&&r.main){
+          const enWord=r.main.split(/[\s,.;!?]+/)[0];
+          if(enWord&&enWord.length>1&&enWord.length<30){
+            html+=`<div style="margin-top:8px;display:flex;gap:6px"><button class="btn btn-primary btn-sm en-tr-add-word" data-word="${esc(enWord)}" data-meaning="${esc(text)}">📝 加入生词本</button><button class="btn btn-ghost btn-sm en-tr-lookup" data-word="${esc(enWord)}">📖 查词典</button></div>`;
+          }
+        }
+        trResult.innerHTML=html;
+        // 绑定朗读
+        trResult.querySelector('.en-speak-word')?.addEventListener('click',()=>{
+          if(mod.data.soundEnabled)speakText(trResult.querySelector('.en-speak-word').dataset.word);
+        });
+        // 绑定加入生词本
+        trResult.querySelector('.en-tr-add-word')?.addEventListener('click',()=>{
+          const w=trResult.querySelector('.en-tr-add-word').dataset.word;
+          const m=trResult.querySelector('.en-tr-add-word').dataset.meaning;
+          if(!mod.data.words.some(x=>x.word.toLowerCase()===w.toLowerCase())){
+            mod.data.words.push({id:genId(),word:w,meaning:m,status:'unknown'});
+            save();rerender(mod);
+          }else{
+            alert('该单词已在生词本中');
+          }
+        });
+        // 绑定查词典
+        trResult.querySelector('.en-tr-lookup')?.addEventListener('click',()=>{
+          const w=trResult.querySelector('.en-tr-lookup').dataset.word;
+          if(lookupInput){lookupInput.value=w;doLookup();}
+        });
+      };
+      trBtn?.addEventListener('click',doTranslate);
+      trInput?.addEventListener('keydown',e=>{if(e.key==='Enter')doTranslate();});
+      trDirBtn?.addEventListener('click',()=>{
+        translateDir=translateDir==='zh-en'?'en-zh':'zh-en';
+        trDirBtn.textContent=translateDir==='zh-en'?'中→英':'英→中';
+        trInput.placeholder=translateDir==='zh-en'?'输入中文翻译成英文...':'输入英文翻译成中文...';
+      });
     }
   },
 
@@ -5184,6 +5324,23 @@ function migrateWorkbenchData(){
       daily.data.routineTasks.forEach(r=>{if(!r.id)r.id=genId();});
     }
     ensureRoutineTasks(daily.data);
+    // V34 一次性清理：移除旧的自动保存的常规任务数据
+    // 之前版本中常规任务会被自动保存到 tasks 数组（done:false），
+    // 导致长期报告的计划完成率计算不准确
+    if(!daily.data.routineCleanV34){
+      const beforeCount=(daily.data.tasks||[]).length;
+      daily.data.tasks=(daily.data.tasks||[]).filter(t=>{
+        // 保留：没有 routineId 的自定义任务 + routineId 且 done:true 的任务
+        // 移除：routineId 且 done:false 的旧自动保存任务
+        if(t.routineId&&!t.done)return false;
+        return true;
+      });
+      daily.data.routineCleanV34=true;
+      const afterCount=daily.data.tasks.length;
+      if(beforeCount!==afterCount){
+        console.log(`[V34清理] 移除了 ${beforeCount-afterCount} 条旧的自动保存常规任务`);
+      }
+    }
   }
   const goals=DB.data.modules.find(m=>m.type==='goals');
   if(goals){
@@ -5346,6 +5503,12 @@ function migrateWorkbenchData(){
       changelog.data.logs.push({
         id:genId(),date:todayStr(),version:'V8.3',
         changes:'V8.3 系统性优化（对应缓存版本 v33）：\n• 跨模块实时刷新：补填周一到周四行动后，行动总览每周汇总和复盘总结自动更新\n• 面板跳转增强：英语/睡眠/运动/复盘面板点击月历某天，自动跳转到下方打卡日历并高亮对应日期\n• 英语写作Native地道表达升级：不止修正错误，还提供母语者更自然的句式改写（缩写/短语动词/地道搭配/语气优化）\n• 每日复盘回溯增强：月历看板显示每天复盘摘要，点击任意日期可查看完整复盘内容\n• 隐私保护声明：明确所有数据仅存储在本地浏览器，不外泄任何个人信息\n• 爆款话题抓取修复：新增多个可靠API源，优化前端直抓回退策略\n• 长期报告数据校准：修正英语完成率统计（不再将无记录日计入总量）、复盘天数统计（含仅填改进项的记录）\n• 长期报告新增数据明细表：可展开查看周期内每天的计划/睡眠/运动/冥想/英语/阅读/复盘数据来源\n• 长期报告新增日期范围显示：明确标注当前统计周期起止日期和有记录天数\n• 每日计划日期回溯：显示当天日期，支持迷你日历导航回到任意历史日期的计划，可返回今天'
+      });
+    }
+    if(!changelog.data.logs.some(l=>l.version==='V8.4')){
+      changelog.data.logs.push({
+        id:genId(),date:todayStr(),version:'V8.4',
+        changes:'V8.4 数据修复与功能增强（对应缓存版本 v34）：\n• 修复长期报告聚合数据不准确：根因是 ensureRoutineTasks 每次加载时自动将常规任务保存到 tasks 数组（done:false），导致计划完成率虚高。现已修复为仅保留模板，不自动保存\n• 一次性数据清理：V34加载时自动移除旧的自动保存的常规任务（routineId且done:false），确保报告数据准确\n• 阅读板块新增月度看板：显示每天阅读时长、书名摘要，支持月份导航，与运动/冥想板块一致\n• 英语学习新增中英互译功能：支持中→英/英→中双向翻译，显示备选译法，可一键加入生词本或查词典\n• 每日计划常规任务优化：所有日期均显示常规任务模板，仅在用户点击时保存，避免无操作日期产生无效数据'
       });
     }
   }
