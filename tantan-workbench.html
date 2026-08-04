@@ -162,6 +162,8 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
 .todo-circle{width:24px;height:24px;border-radius:50%;border:2px solid #b7b7bd;background:#fff;color:#fff;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;font-weight:800;line-height:1;flex:0 0 auto;transition:all .18s}
 .todo-item.done .todo-circle{background:#f5b42f;border-color:#f5b42f;color:#fff}
 .todo-circle:hover{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-light)}
+.todo-item .dp-del{flex-shrink:0;font-size:13px;color:#bbb;cursor:pointer;padding:2px 4px;border:none;background:transparent;line-height:1;opacity:.5;transition:all .15s}
+.todo-item .dp-del:hover{color:#ff5252;opacity:1}
 /* ========== 星级评分 ========== */
 .stars{display:flex;gap:2px;font-size:18px;cursor:pointer}
 .star{color:var(--text-light);transition:color .15s;user-select:none}
@@ -496,8 +498,8 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
       <div><strong>关于本站</strong></div>
       <div>tantan的个人成长空间</div>
       <div>状态：<strong>迭代中</strong></div>
-      <div id="siteVersion">V8.1</div>
-      <div style="font-size:11px;color:var(--text-light);margin-top:4px">小改动用小数点后一位（V8.1），大改动用V8.x、V9.x</div>
+      <div id="siteVersion">V8.3</div>
+      <div style="font-size:11px;color:var(--text-light);margin-top:4px">小改动用小数点后一位（V8.2），大改动用V8.x、V9.x</div>
       <div style="margin-top:6px"><button class="btn btn-ghost btn-sm" id="moreChangelogBtn" style="padding:0;font-size:12px">更新日志</button></div>
     </div>
   </aside>
@@ -542,14 +544,28 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
     </div>
     <div class="modal-section">
       <h3>数据管理</h3>
+      <div style="background:#fffbe6;border:1px solid #f0d860;border-radius:10px;padding:10px 14px;margin-bottom:10px;font-size:13px;color:#8a7420;line-height:1.6">
+        ⚠️ <strong>重要提醒：</strong>每次更新版本前，请先点击「导出数据」保存备份！<br>
+        更新后如果记录消失，点击「导入数据」选择备份文件，选择「智能合并」即可恢复所有记录。
+      </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-ghost" id="exportBtn">导出数据</button>
-        <button class="btn btn-ghost" id="importBtn">导入数据</button>
-        <button class="btn btn-ghost" id="recoverBtn">恢复旧数据</button>
+        <button class="btn btn-primary" id="exportBtn">📥 导出数据（备份）</button>
+        <button class="btn btn-ghost" id="importBtn">📤 导入数据（恢复）</button>
+        <button class="btn btn-ghost" id="recoverBtn">🔄 恢复旧数据</button>
         <button class="btn btn-danger btn-sm" id="clearBtn">清空所有数据</button>
       </div>
-      <div class="small-text" style="margin-top:6px">更新前会自动备份；如果更新后内容没显示，可点“恢复旧数据”。</div>
+      <div class="small-text" style="margin-top:6px">导入时默认使用「智能合并」模式，保留新版本功能的同时恢复旧记录。更新前会自动备份到浏览器本地。</div>
       <input type="file" id="importFile" accept=".json" style="display:none">
+    </div>
+    <div class="modal-section" style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:12px 16px">
+      <h3 style="color:#15803d">🔒 隐私保护声明</h3>
+      <div style="font-size:13px;color:var(--text);line-height:1.8">
+        <div style="margin-bottom:6px"><strong>✓ 本地优先存储：</strong>你的所有记录（计划、睡眠、运动、英语、复盘等）仅保存在浏览器本地（localStorage），不会自动上传到任何服务器。</div>
+        <div style="margin-bottom:6px"><strong>✓ 同步可选加密：</strong>仅在你主动配置云端同步时，数据才会在你的服务器和设备间传输。同步使用你设置的密钥标识，请妥善保管。</div>
+        <div style="margin-bottom:6px"><strong>✓ 不收集个人信息：</strong>本应用不包含任何分析追踪代码（无 Google Analytics、无埋点统计），不会收集你的使用行为或个人数据。</div>
+        <div style="margin-bottom:6px"><strong>✓ 外部API说明：</strong>仅查单词（dictionaryapi.dev）和爆款话题抓取功能会调用公共API，且只发送查询关键词，不含任何个人记录数据。</div>
+        <div><strong>✓ 完全离线可用：</strong>不使用同步功能时，所有核心功能完全离线运行，数据不离开你的设备。</div>
+      </div>
     </div>
     <div class="modal-section">
       <h3>云端同步</h3>
@@ -571,6 +587,9 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
           <button class="btn btn-ghost btn-sm" id="syncPushBtn">立即上传</button>
           <button class="btn btn-ghost btn-sm" id="syncPullBtn">立即拉取</button>
           <button class="btn btn-ghost btn-sm" id="syncAutoToggleBtn">自动同步：关</button>
+        </div>
+        <div class="small-text" style="margin-top:8px;color:var(--text-sec);line-height:1.6">
+          🔒 <strong>隐私说明：</strong>你的所有数据仅存储在浏览器本地（localStorage）和你配置的同步服务器之间传输，不会发送到任何第三方。查单词和翻译功能会调用公共词典/翻译API（只发送查询的单词，不含个人数据）。同步数据使用你设置的密钥加密标识，请妥善保管密钥。
         </div>
         <div id="syncStatus" class="small-text" style="color:var(--text-sec)">未连接</div>
         <div class="small-text" style="color:var(--text-light);line-height:1.6">
@@ -599,8 +618,8 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
 /* ============================================================
    应用版本与自动更新检测
 ============================================================ */
-const APP_VERSION = 'v28';
-const APP_BUILD_TIME = '2026-07-30';
+const APP_VERSION = 'v33';
+const APP_BUILD_TIME = '2026-08-04';
 
 /**
  * 检查是否有新版本可用
@@ -653,7 +672,7 @@ let moreOpen=false;
    工具函数
 ============================================================ */
 function genId(){return Date.now().toString(36)+Math.random().toString(36).substr(2,5)}
-function esc(s){if(!s)return'';const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function esc(s){if(!s)return'';const d=document.createElement('div');d.textContent=s;return d.innerHTML.replace(/"/g,'&quot;')}
 function todayStr(){const d=new Date();return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
 function nowStr(){return new Date().toISOString().slice(0,16)}
 function confirmButton(btn,text='已保存'){
@@ -669,7 +688,11 @@ function saveAndRerenderWithConfirm(btn,mod,save,delay=450){
   _undoSnapshot(mod);
   confirmButton(btn);
   save();
-  setTimeout(()=>rerender(mod),delay);
+  setTimeout(()=>{
+    rerender(mod);
+    // 跨模块刷新：行动总览和长期报告随数据变化实时更新
+    rerenderRelatedModules(mod.type);
+  },delay);
 }
 // 全局撤销系统
 const _undoStack={};
@@ -870,6 +893,29 @@ function bindMonthBoard(body,mod,save,dateInputSelector){
       const inp=body.querySelector(dateInputSelector);
       if(inp)inp.value=day.dataset.date;
       save();rerender(mod);
+      // 点击月历某天 → 跳转到下方打卡日历（week-panel）并滚动到对应日期卡片
+      setTimeout(()=>{
+        // 优先滚动到打卡日历区域
+        const weekPanel=body.querySelector('.week-panel');
+        if(weekPanel){
+          weekPanel.scrollIntoView({behavior:'smooth',block:'start'});
+          // 高亮对应日期卡片
+          const dayCard=body.querySelector(`.day-card[data-date="${day.dataset.date}"]`);
+          if(dayCard){
+            dayCard.style.transition='background .3s ease';
+            dayCard.style.background='var(--primary-light)';
+            dayCard.style.boxShadow='0 0 0 2px var(--primary)';
+            setTimeout(()=>{
+              dayCard.style.background='';
+              dayCard.style.boxShadow='';
+            },2500);
+          }
+        }else{
+          // 回退：滚动到日期选择器
+          const target=body.querySelector(dateInputSelector);
+          if(target)target.scrollIntoView({behavior:'smooth',block:'center'});
+        }
+      },150);
     });
   });
 }
@@ -885,7 +931,7 @@ function englishCompletion(rec={}){
 }
 function visibleSleepNote(note=''){
   const text=String(note||'').trim();
-  return ['由1-6月手写睡眠记录导入，可继续编辑','由7月手写睡眠记录导入，起床时间可继续补填'].includes(text)?'':text;
+  return ['由1-6月手写睡眠记录导入，可继续编辑','由1-6月手写睡眠记录导入（2026）','由7月手写睡眠记录导入，起床时间可继续补填','由7月手写睡眠记录导入，起床时间默认07:00'].includes(text)?'':text;
 }
 function markdownLite(text=''){
   const lines=String(text||'').split('\n');
@@ -902,138 +948,337 @@ function englishWritingFeedback(text='',packWords=[]){
   const used=packWords.filter(w=>new RegExp(`\\b${w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}\\b`,'i').test(raw));
   const sentences=raw.split(/(?<=[.!?])\s+/).filter(Boolean);
   const errors=[];
+  const beVerbs='go|do|make|take|write|read|eat|drink|play|work|study|sleep|run|walk|talk|think|want|like|need|know|get|put|come|see|say|buy|use|try|ask|tell|find|give|keep|leave|start|stop|help|watch|live|stay|sit|stand|look|listen|feel|hope|wish|plan|learn|teach|bring|send|show|call|meet|pay|hold|set|let|begin|spend|check|create|build|choose|offer|wait|change|follow|expect|explain|miss|move|share|add|believe|happen|notice|remember|support|allow|continue|decide|describe|develop|discuss|enjoy|finish|improve|include|produce|prove|reach|remain|return|suggest|train|treat|update|vary|verify|warn|welcome';
+  const specialIng={'go':'going','do':'doing','make':'making','take':'taking','write':'writing','read':'reading','lie':'lying','die':'dying','tie':'tying','get':'getting','put':'putting','sit':'sitting','begin':'beginning','plan':'planning','stop':'stopping','run':'running','swim':'swimming','cut':'cutting','hit':'hitting'};
+  // be 动词后应跳过的词：已带 -ed 的过去分词/形容词，或本身即可作形容词的词（如 It is live / The date is set）
+  const beSkipAdj=/^(set|put|let|live|ready|good|great|fine|ok|okay|able|sure|certain|aware|afraid|alive|alone|asleep|awake|worth|tired|interested|bored|excited|surprised|confused|worried|pleased|delighted|annoyed|irritated|frustrated|relaxed|exhausted|fascinated|disappointed|satisfied|married|divorced|finished|done|gone)$/i;
 
-  // 逐句检查
+  // ========== 逐句检查 ==========
   sentences.forEach((s,i)=>{
     const trimmed=s.trim();
     if(!trimmed)return;
     const lineNum=i+1;
+
     // 1. 首字母大写
     if(/^[a-z]/.test(trimmed)){
-      errors.push({line:lineNum,pos:trimmed.split(' ').slice(0,3).join(' ')+'...',error:`句首字母小写："${trimmed.charAt(0)}"`,explain:trimmed.charAt(0).toUpperCase()+trimmed.slice(1),rule:'英文句子首字母必须大写。'});
+      errors.push({line:lineNum,orig:trimmed.charAt(0),error:`句首字母小写`,fix:trimmed.charAt(0).toUpperCase(),rule:'英文句子首字母必须大写。'});
     }
-    // 2. I 大写
-    if(/\bi\b/g.test(trimmed)){
-      errors.push({line:lineNum,pos:'"i"',error:'第一人称 I 未大写',explain:'改为 "I"',rule:'英文中第一人称单数 I 永远大写。'});
+    // 2. i → I
+    if(/\bi\b/.test(trimmed)){
+      errors.push({line:lineNum,orig:'i',error:'第一人称 I 未大写',fix:'I',rule:'英文中第一人称单数 I 永远大写。'});
     }
     // 3. 句末标点
     if(!/[.!?]$/.test(trimmed)){
-      errors.push({line:lineNum,pos:trimmed.slice(-20),error:'句末缺少标点符号',explain:trimmed+'.',rule:'英文句子必须以 . ! ? 结尾。'});
+      errors.push({line:lineNum,orig:trimmed.slice(-10),error:'句末缺少标点符号',fix:trimmed+'.',rule:'英文句子必须以 . ! ? 结尾。'});
     }
-    // 4. 主谓一致
+    // 4. 主谓一致 he/she/it + are/have/were
     const svMatch=trimmed.match(/\b(he|she|it)\s+(are|have|were)\b/i);
     if(svMatch){
       const fixMap={are:'is',have:'has',were:'was'};
-      errors.push({line:lineNum,pos:`"${svMatch[0]}"`,error:`主谓不一致：${svMatch[1]} 应配 ${fixMap[svMatch[2].toLowerCase()]}`,explain:`${svMatch[1]} ${fixMap[svMatch[2].toLowerCase()]}`,rule:'第三人称单数 (he/she/it) 后动词用单数形式：is / has / was。'});
+      errors.push({line:lineNum,orig:svMatch[0],error:`主谓不一致`,fix:`${svMatch[1]} ${fixMap[svMatch[2].toLowerCase()]}`,rule:'第三人称单数 (he/she/it) 后动词用单数形式：is / has / was。'});
     }
-    // 5. "if/whether + 形容词" — 缺少主语和谓语
-    const ifAdj=trimmed.match(/\b(if|whether)\s+(\w+)\s+(for|to)\s+me\b/i);
-    if(ifAdj){
-      errors.push({line:lineNum,pos:`"${ifAdj[0]}"`,error:'缺少主语和谓语',explain:`${ifAdj[1]} it is ${ifAdj[2]} ${ifAdj[3]} me`,rule:'if/whether 引导的从句必须是完整句子，不能只有形容词。例如：if it is good for me ✓，if good for me ✗。'});
+    // 5. be + 动词原形 → be + -ing（跳过已是形容词/过去分词的情况，如 I am tired / It is live / The date is set）
+    const beV=trimmed.match(new RegExp('\\b(am|is|are|was|were)\\s+('+beVerbs+')\\b','i'));
+    if(beV){
+      const vLow=beV[2].toLowerCase();
+      const skipAdj=/ed$/i.test(vLow)||beSkipAdj.test(vLow);
+      if(!skipAdj){
+        const ing=specialIng[vLow]||beV[2]+'ing';
+        errors.push({line:lineNum,orig:beV[0],error:'be动词后动词形式有误',fix:`${beV[1]} ${ing}`,rule:'be 动词后跟动词原形时，应改为现在分词（-ing）。例如：I am going ✓，I am go ✗。'});
+      }
     }
-    // 6. "test the website/app" — 搭配不自然
-    const testMatch=trimmed.match(/\btest\s+(the\s+)?(website|app|software|tool|platform|system)\b/i);
-    if(testMatch){
-      errors.push({line:lineNum,pos:`"${testMatch[0]}"`,error:testMatch[2]+'搭配不太自然',explain:`try ${testMatch[1]||''}${testMatch[2]}`,'rule':'test 通常指技术测试（找bug），try 指试用体验。表达"试用"时更推荐 try / try out。"'});
-    }
-    // 7. "hope it can run" — 意思模糊
-    const runMatch=trimmed.match(/\b(hope|wish)\s+.*?\b(run)\b/i);
-    if(runMatch){
-      errors.push({line:lineNum,pos:`"${runMatch[0]}"`,error:'意思模糊："run" 含义不明确',explain:runMatch[0].replace('run','work properly'),rule:'run 在技术语境中指"运行程序"，表达"希望它好用/正常运作"建议用 work properly / function well。'});
-    }
-    // 8. be + 动词原形
-    const beV=trimmed.match(/\b(am|is|are|was|were)\s+(go|do|make|take|write|read|eat|drink|play|work|study|sleep|run|walk|talk|think|want|like|need|know|get|put|come|see|say|buy|use|try|ask|tell|find|give|keep|leave|start|stop|help|watch|live|stay|sit|stand|look|listen|feel|hope|wish|plan|learn|teach|bring|send|show|call|meet|pay|hold|set|let|begin|spend|check|create|build|choose|offer|try|wait|change|follow|expect|explain|miss|move|share|add|believe|happen|notice|remember|support|allow|continue|decide|describe|develop|discuss|enjoy|finish|improve|include|produce|prove|reach|remain|return|suggest|train|treat|update|vary|verify|warn|welcome)\b/i);
-    // 限制检查范围，避免误报
-    if(beV&&!/\b(am|is|are|was|were)\s+(going|doing|making|taking|writing|reading|eating|drinking|playing|working|studying|sleeping|running|walking|talking|thinking|wanting|liking|needing|knowing|getting|putting|coming|seeing|saying|buying|using|trying|asking|telling|finding|giving|keeping|leaving|starting|stopping|helping|watching|living|staying|sitting|standing|looking|listening|feeling|hoping|wishing|planning|learning|teaching|bringing|sending|showing|calling|meeting|paying|holding|setting|letting|beginning|spending|checking|creating|building|choosing|offering|trying|waiting|changing|following|expecting|explaining|missing|moving|sharing|adding|believing|happening|noticing|remembering|supporting|allowing|continuing|deciding|describing|developing|discussing|enjoying|finishing|improving|including|producing|proving|reaching|remaining|returning|suggesting|training|treating|updating|varying|verifying|warning|welcoming)\b/i.test(trimmed)){
-      errors.push({line:lineNum,pos:`"${beV[0]}"`,error:'be动词后动词形式有误',explain:`${beV[1]} ${beV[2]}ing`,rule:'be 动词后跟动词原形时，应改为现在分词（-ing）。例如：I am going ✓，I am go ✗。'});
-    }
-    // 9. 缺少冠词 — 常见可数名词单数前缺少 a/an/the
-    const missingArticle=trimmed.match(/(?<!\b(a|an|the|my|your|his|her|its|our|their|this|that|each|every|some|any|no|one)\s)(?<!\w)(idea|plan|problem|question|mistake|decision|solution|result|reason|goal|project|meeting|party|event|story|report|article|letter|email|message|note|list|file|picture|photo|video|song|game|book|movie|show|class|lesson|course|program|system|method|way|place|city|country|friend|student|teacher|doctor|child|baby|parent|brother|sister|husband|wife|man|woman|boy|girl|day|week|month|year|hour|minute|second|room|door|window|table|chair|phone|car|dog|cat|tree|flower|bird|fish|house|school|hospital|store|shop|restaurant|office|company|team|group|family)(?!\w)/gi);
-    if(missingArticle&&missingArticle.length<=2){
-      missingArticle.forEach(w=>{
-        if(!trimmed.match(new RegExp(`\\b(a|an|the|my|your|his|her|our|their|this|that|each|every|some|any|no)\\s+${w}\\b`,'i'))){
-          const article=/^[aeiou]/i.test(w)?'an':'a';
-          errors.push({line:lineNum,pos:`"${w}"`,error:`可数名词单数缺少冠词`,explain:`${article} ${w}`,rule:`可数名词单数前通常需要冠词 (a/an/the) 或限定词。例如：a problem ✓，problem ✗。`});
+    // 6. use → used (过去时态：描述今天发生的事应用过去时)
+    const useMatch=trimmed.match(/\b(I|we|they|you)\s+(use|make|go|do|take|see|buy|try|start|finish|create|build|write|read|learn|study|play|eat|drink|run|walk|talk|think|find|give|keep|leave|stop|help|watch|live|stay|sit|stand|look|feel|hope|wish|plan|bring|send|show|call|meet|pay|hold|set|spend|check|choose|offer|wait|change|follow|expect|explain|miss|move|share|add|happen|notice|remember|support|allow|continue|decide|describe|develop|discuss|enjoy|improve|include|produce|prove|reach|remain|return|suggest|train|treat|update|warn|welcome)\b/i);
+    if(useMatch&&!/\b(yesterday|last|ago|already|just|today)\b/i.test(trimmed)){
+      // 如果本句中有 today / this morning 等表示过去的时间词，动词应该用过去时（按句检查，避免全局误判）
+      if(/\b(today|this\s+(morning|afternoon|evening))\b/i.test(trimmed)&&!/will|going\s+to|am|is|are|was|were|have|has|had\b/i.test(useMatch[0])){
+        const pastMap={'go':'went','do':'did','make':'made','take':'took','see':'saw','buy':'bought','try':'tried','start':'started','finish':'finished','create':'created','build':'built','write':'wrote','read':'read','learn':'learned','study':'studied','play':'played','eat':'ate','drink':'drank','run':'ran','walk':'walked','talk':'talked','think':'thought','find':'found','give':'gave','keep':'kept','leave':'left','stop':'stopped','help':'helped','watch':'watched','live':'lived','stay':'stayed','sit':'sat','stand':'stood','look':'looked','feel':'felt','hope':'hoped','wish':'wished','plan':'planned','bring':'brought','send':'sent','show':'showed','call':'called','meet':'met','pay':'paid','hold':'held','set':'set','spend':'spent','check':'checked','choose':'chose','offer':'offered','wait':'waited','change':'changed','follow':'followed','expect':'expected','explain':'explained','miss':'missed','move':'moved','share':'shared','add':'added','happen':'happened','notice':'noticed','remember':'remembered','support':'supported','allow':'allowed','continue':'continued','decide':'decided','describe':'described','develop':'developed','discuss':'discussed','enjoy':'enjoyed','improve':'improved','include':'included','produce':'produced','prove':'proved','reach':'reached','remain':'remained','return':'returned','suggest':'suggested','train':'trained','treat':'treated','update':'updated','warn':'warned','welcome':'welcomed','use':'used'};
+        const past=pastMap[useMatch[2].toLowerCase()];
+        if(past&&past!==useMatch[2]){
+          errors.push({line:lineNum,orig:useMatch[0],error:`时态错误：描述今天已发生的事应用过去时`,fix:`${useMatch[1]} ${past}`,rule:`描述今天已经发生的事情，动词应该用过去时。${useMatch[2]} → ${past}`});
         }
-      });
+      }
     }
-    // 10. 常见介词搭配错误
+    // 7. "use X make" → "use X to make" (缺少 to)
+    const useToMake=trimmed.match(/\b(use|used)\s+(\w+)\s+(make|build|create|do|write)\b/i);
+    if(useToMake){
+      errors.push({line:lineNum,orig:useToMake[0],error:'缺少不定式标记 to',fix:`${useToMake[1]} ${useToMake[2]} to ${useToMake[3]}`,rule:'表示"用某物来做某事"时，动词之间需要 to 连接：use X to make Y。'});
+    }
+    // 8. 常见缩写大写：ai → AI, ui → UI, api → API, url → URL, html → HTML
+    const abbrMatch=trimmed.match(/\b(ai|ui|api|url|html|css|js|http|ios|app)\b/i);
+    if(abbrMatch&&!/app/i.test(abbrMatch[1])){
+      const abbrMap={'ai':'AI','ui':'UI','api':'API','url':'URL','html':'HTML','css':'CSS','js':'JS','http':'HTTP','ios':'iOS'};
+      const correct=abbrMap[abbrMatch[1].toLowerCase()];
+      if(correct&&correct!==abbrMatch[0]){
+        errors.push({line:lineNum,orig:abbrMatch[0],error:'缩写未大写',fix:correct,rule:`${abbrMatch[0]} 是缩写词，应大写为 ${correct}。`});
+      }
+    }
+    // 9. 逗号后无空格
+    const commaMatch=trimmed.match(/,[^\s]/);
+    if(commaMatch){
+      errors.push({line:lineNum,orig:commaMatch[0],error:'逗号后缺少空格',fix:', ',rule:'英文标点后需要加一个空格，例如：word, word ✓。'});
+    }
+    // 10. 介词搭配错误
     const prepChecks=[
-      {re:/\bdepend\s+of\b/gi,pos:'depend of',error:'介词搭配错误',explain:'depend on',rule:'depend 后面跟介词 on，不是 of。'},
-      {re:/\b(discuss|mention|describe)\s+about\b/gi,pos:(m)=>`${m[1]} about`,error:'多余介词',explain:(m)=>`${m[1]}`,rule:'discuss / mention / describe 后直接跟宾语，不需要 about。'},
-      {re:/\b(explain|answer)\s+to\s+(\w+)\b/gi,pos:(m)=>`${m[1]} to ${m[2]}`,error:'多余介词',explain:(m)=>`${m[1]} ${m[2]}`,rule:'explain / answer 后直接跟宾语，不需要 to。'},
-      {re:/\blook\s+forward\s+for\b/gi,pos:'look forward for',error:'介词搭配错误',explain:'look forward to',rule:'look forward 后面跟 to，不是 for。'},
-      {re:/\bmarried\s+with\b/gi,pos:'married with',error:'介词搭配错误',explain:'married to',rule:'表示"和某人结婚"用 married to，不是 with。'},
-      {re:/\blisten\s+(\w+)\b(?!\s+to)/gi,pos:(m)=>`${m[0]}`,error:'缺少介词 to',explain:(m)=>`${m[1]} to ${m[2]}`,rule:'listen 后跟宾语时需要加 to。'},
+      {re:/\bdepend\s+of\b/gi,error:'介词搭配错误',fix:'depend on',rule:'depend 后面跟介词 on，不是 of。'},
+      {re:/\b(discuss|mention|describe)\s+about\b/gi,error:'多余介词',fix:'$1',rule:'discuss / mention / describe 后直接跟宾语，不需要 about。'},
+      {re:/\banswer\s+to\s+(me|him|her|us|them)\b/gi,error:'多余介词',fix:'answer $1',rule:'answer 后直接跟宾语代词，不需要 to。'},
+      {re:/\blook\s+forward\s+for\b/gi,error:'介词搭配错误',fix:'look forward to',rule:'look forward 后面跟 to，不是 for。'},
+      {re:/\bmarried\s+with\b/gi,error:'介词搭配错误',fix:'married to',rule:'表示"和某人结婚"用 married to，不是 with。'},
+      {re:/\blisten\s+(?!to\b)\w+/gi,error:'介词搭配错误',fix:'listen to',rule:'listen 后面跟介词 to，如 listen to music。'},
     ];
-    prepChecks.forEach(({re,pos,error,explain,rule})=>{
+    prepChecks.forEach(({re,error,fix,rule})=>{
       const m=trimmed.match(re);
       if(m){
-        const posText=typeof pos==='function'?pos(m):pos;
-        const fixText=typeof explain==='function'?explain(m):explain;
-        errors.push({line:lineNum,pos:posText,error,explain:fixText,rule});
+        const fixText=fix.replace(/\$1/g,m[1]||'');
+        errors.push({line:lineNum,orig:m[0],error,fix:fixText,rule});
       }
     });
-    // 11. 双重否定
-    const neg1=trimmed.match(/\b(don't|doesn't|didn't|won't|can't|couldn't|wouldn't|shouldn't|isn't|aren't|wasn't|weren't|haven't|hasn't|hadn't|never|no|nothing|nobody|nowhere|neither|nor)\b/gi);
-    const neg2=trimmed.match(/\b(no|nobody|nothing|nowhere|never|neither|nor|none|hardly|scarcely|barely)\b/gi);
-    if(neg1&&neg2&&neg1.length>0&&neg2.length>0){
-      errors.push({line:lineNum,pos:`${neg1[neg1.length-1]} ... ${neg2[0]}`,error:'可能使用了双重否定',explain:'去掉其中一个否定词',rule:'双重否定在标准英语中通常不推荐，除非是刻意强调。'});
+    // 11. a/an 搭配（注意以 u/E 等字母开头但发辅音 /j/ 的词需用 a：university, user, european 等）
+    const anCheck=trimmed.match(/\ba\s+([aeiouAEIOU]\w*)\b/);
+    if(anCheck&&!/^a\s+(one|use|useful|university|european|uniform|unicorn|unique|unit|user|union|universe|utility|urban)\b/i.test(anCheck[0])){
+      errors.push({line:lineNum,orig:`a ${anCheck[1]}`,error:'冠词搭配错误',fix:`an ${anCheck[1]}`,rule:`${anCheck[1]} 以元音音素开头，应用 an。`});
+    }
+    const aCheck=trimmed.match(/\ban\s+([^aeiouAEIOU\s]\w*)\b/);
+    if(aCheck&&!/^an\s+(hour|honor|honest)\b/i.test(aCheck[0])){
+      errors.push({line:lineNum,orig:`an ${aCheck[1]}`,error:'冠词搭配错误',fix:`a ${aCheck[1]}`,rule:`${aCheck[1]} 以辅音音素开头，应用 a。`});
+    }
+    // 12. "very + 形容词" 过度使用提示（非错误，仅建议）
+    // (跳过，保持轻量)
+    // 13. hope it can → hope it will (更自然)
+    const hopeCan=trimmed.match(/\b(hope|wish)\s+(it|this|that)\s+can\b/i);
+    if(hopeCan){
+      errors.push({line:lineNum,orig:hopeCan[0],error:'表达不够自然',fix:hopeCan[0].replace(/\bcan\b/i,'will'),rule:'hope it can finish 偏中式英语，更自然的表达是 hope it will finish / hope to finish it。'});
     }
   });
 
-  // 构建反馈 — 表格格式
-  let praise='';
+  // ========== 构建反馈 ==========
+  // 1. 鼓励
   const praiseParts=['你已经主动用英文表达当天感受，这是非常棒的输出练习！'];
   if(used.length) praiseParts.push(`今天学到的单词你用到了 ${used.join('、')}，学以致用，很好！`);
   if(sentences.length>=3) praiseParts.push('而且你写了多句话，表达完整，值得鼓励！');
-  praise=praiseParts.join(' ');
+  const praise=praiseParts.join(' ');
 
+  // 2. 生成修正版（逐句处理，更精准）
+  const pastMap={'use':'used','go':'went','do':'did','make':'made','take':'took','see':'saw','buy':'bought','try':'tried','start':'started','finish':'finished','create':'created','build':'built','write':'wrote','read':'read','learn':'learned','study':'studied','play':'played','eat':'ate','drink':'drank','run':'ran','walk':'walked','talk':'talked','think':'thought','find':'found','give':'gave','keep':'kept','leave':'left','stop':'stopped','help':'helped','watch':'watched','live':'lived','stay':'stayed','sit':'sat','stand':'stood','look':'looked','feel':'felt','hope':'hoped','wish':'wished','plan':'planned','bring':'brought','send':'sent','show':'showed','call':'called','meet':'met','pay':'paid','hold':'held','set':'set','spend':'spent','check':'checked','choose':'chose','offer':'offered','wait':'waited','change':'changed','follow':'followed','expect':'expected','explain':'explained','miss':'missed','move':'moved','share':'shared','add':'added','happen':'happened','notice':'noticed','remember':'remembered','support':'supported','allow':'allowed','continue':'continued','decide':'decided','describe':'described','develop':'developed','discuss':'discussed','enjoy':'enjoyed','improve':'improved','include':'included','produce':'produced','prove':'proved','reach':'reached','remain':'remained','return':'returned','suggest':'suggested','train':'trained','treat':'treated','update':'updated','warn':'warned','welcome':'welcomed'};
+  let correctedSentences = sentences.map(s => {
+    let sent = s.trim();
+    if (!sent) return s;
+    
+    // a. i → I（全句）
+    sent = sent.replace(/\bi\b/g, 'I');
+    
+    // b. be + 动词原形 → be + -ing（跳过已带 -ing、以 -ed 结尾的过去分词、或本身是形容词的词，如 I am tired / It is live / The date is set）
+    sent = sent.replace(new RegExp('\\b(am|is|are|was|were)\\s+('+beVerbs+')\\b','gi'), (m, be, verb) => {
+      // 如果动词已经有 -ing 后缀，不改
+      if (/ing$/.test(verb)) return m;
+      // 以 -ed 结尾（过去分词/形容词）或常见形容词，不改
+      if (/ed$/i.test(verb) || beSkipAdj.test(verb)) return m;
+      const ing = specialIng[verb.toLowerCase()] || verb + 'ing';
+      return `${be} ${ing}`;
+    });
+    
+    // c. 主谓一致 he/she/it + are/have/were
+    sent = sent.replace(/\b(he|she|it)\s+(are|have|were)\b/gi, (m, pron, verb) => {
+      const fixMap = {are:'is', have:'has', were:'was'};
+      return `${pron} ${fixMap[verb.toLowerCase()]}`;
+    });
+    
+    // d. use X make → use X to make
+    sent = sent.replace(/\b(use|used)\s+(\w+)\s+(make|build|create|do|write)\b/gi, '$1 $2 to $3');
+    
+    // e. 过去时态修正（按句检查时间标记：仅当本句含 today/this morning 等时才转过去时，避免全局误判）
+    const hasTimeMarker=/\b(today|this\s+(morning|afternoon|evening))\b/i.test(sent);
+    if (hasTimeMarker) {
+      // 只替换主句动词：I/you/we/they + 动词原形（排除 to/will/am/is/are/was/were/have/has/had/going to 后面的动词）
+      sent = sent.replace(new RegExp('\\b(I|you|we|they)\\s+(' + Object.keys(pastMap).join('|') + ')\\b(?!\\s+(?:to|that|so|because|and|but|or))', 'gi'), (m, pron, verb) => {
+        // 检查前面是否有助动词
+        const idx = sent.indexOf(m);
+        const before = sent.slice(0, idx);
+        if (/\b(will|am|is|are|was|were|have|has|had|going\s+to|want\s+to|need\s+to|try\s+to|like\s+to|hope\s+to|used\s+to|did|do|does|can|could|should|would|may|might|must)\s*$/i.test(before)) return m;
+        const past = pastMap[verb.toLowerCase()];
+        return past ? `${pron} ${past}` : m;
+      });
+    }
+    
+    // f. 缩写大写（仅匹配小写独立词，避免误改已正确大写或其他大小写形态）
+    sent = sent.replace(/\bai\b/g, 'AI').replace(/\bui\b/g, 'UI').replace(/\bapi\b/g, 'API').replace(/\burl\b/g, 'URL').replace(/\bhtml\b/g, 'HTML').replace(/\bcss\b/g, 'CSS').replace(/\bjs\b/g, 'JS').replace(/\bios\b/g, 'iOS');
+    
+    // g. hope it can → hope it will
+    sent = sent.replace(/\b(hope|wish)\s+(it|this|that)\s+can\b/gi, '$1 $2 will');
+    
+    // h. 介词搭配
+    sent = sent.replace(/\bdepend\s+of\b/gi, 'depend on');
+    sent = sent.replace(/\b(discuss|mention|describe)\s+about\b/gi, '$1');
+    sent = sent.replace(/\banswer\s+to\s+(me|him|her|us|them)\b/gi, 'answer $1');
+    sent = sent.replace(/\blook\s+forward\s+for\b/gi, 'look forward to');
+    sent = sent.replace(/\bmarried\s+with\b/gi, 'married to');
+    
+    // i. a/an 修正（u/E 等字母开头但发辅音 /j/ 的词需用 a：university, user, european 等）
+    sent = sent.replace(/\ba\s+([aeiouAEIOU]\w*)\b/gi, (m, w) => /^a\s+(one|use|useful|university|european|uniform|unicorn|unique|unit|user|union|universe|utility|urban)/i.test(m) ? m : `an ${w}`);
+    sent = sent.replace(/\ban\s+([^aeiouAEIOU\s]\w*)\b/gi, (m, w) => /^an\s+(hour|honor|honest)/i.test(m) ? m : `a ${w}`);
+    
+    // j. 逗号后加空格
+    sent = sent.replace(/,([^\s])/g, ', $1');
+    
+    // k. 清理多余空格
+    sent = sent.replace(/\s+/g, ' ').trim();
+    
+    // l. 首字母大写
+    sent = sent.charAt(0).toUpperCase() + sent.slice(1);
+    
+    // m. 句末标点
+    if (!/[.!?]$/.test(sent)) sent += '.';
+    
+    return sent;
+  });
+  let corrected = correctedSentences.join(' ');
+
+  // 3. 生成 Native 地道表达版本（在修正版基础上进行地道改写）
+  let nativeVersion = corrected;
+  let nativeNotes=[]; // 记录改了什么，方便用户学习
+
+  // a. 缩写形式（更口语化、更地道）
+  const contractions=[
+    [/\bI am\b/g,"I'm"],[/\bI will\b/g,"I'll"],[/\bI have\b/g,"I've"],
+    [/\bI would\b/g,"I'd"],[/\bI had\b/g,"I'd"],[/\bdo not\b/g,"don't"],
+    [/\bcannot\b/g,"can't"],[/\bwill not\b/g,"won't"],[/\bis not\b/g,"isn't"],
+    [/\bare not\b/g,"aren't"],[/\bdid not\b/g,"didn't"],[/\bwas not\b/g,"wasn't"],
+    [/\bwere not\b/g,"weren't"],[/\bhas not\b/g,"hasn't"],[/\bhave not\b/g,"haven't"],
+    [/\bcould not\b/g,"couldn't"],[/\bwould not\b/g,"wouldn't"],[/\bshould not\b/g,"shouldn't"],
+    [/\bit is\b/gi,"it's"],[/\bthat is\b/gi,"that's"],[/\bthere is\b/gi,"there's"],
+    [/\bthey are\b/gi,"they're"],[/\bwe are\b/gi,"we're"],[/\byou are\b/gi,"you're"],
+    [/\bwhat is\b/gi,"what's"],[/\bwho is\b/gi,"who's"],[/\bhow is\b/gi,"how's"],
+    [/\blet us\b/gi,"let's"],[/\bI am going to\b/gi,"I'm going to"],
+  ];
+  contractions.forEach(([re,rep])=>{if(re.test(nativeVersion)){nativeVersion=nativeVersion.replace(re,rep);}});
+
+  // b. 更地道的词汇替换（避免 very + 形容词的中式表达）
+  const vocabUpgrades=[
+    [/\bvery good\b/gi,'great',],[/\bvery happy\b/gi,'thrilled'],
+    [/\bvery big\b/gi,'huge'],[/\bvery small\b/gi,'tiny'],
+    [/\bvery important\b/gi,'crucial'],[/\bvery tired\b/gi,'exhausted'],
+    [/\bvery interesting\b/gi,'fascinating'],[/\bvery difficult\b/gi,'challenging'],
+    [/\bvery easy\b/gi,'effortless'],[/\bvery beautiful\b/gi,'gorgeous'],
+    [/\bvery angry\b/gi,'furious'],[/\bvery sad\b/gi,'devastated'],
+    [/\bvery fast\b/gi,'rapid'],[/\bvery slow\b/gi,'sluggish'],
+    [/\bvery smart\b/gi,'brilliant'],[/\bvery cold\b/gi,'freezing'],
+    [/\bvery hot\b/gi,'scorching'],[/\bvery bad\b/gi,'terrible'],
+    [/\bvery nice\b/gi,'wonderful'],[/\bvery clear\b/gi,'obvious'],
+  ];
+  vocabUpgrades.forEach(([re,rep])=>{if(re.test(nativeVersion)){nativeVersion=nativeVersion.replace(re,rep);nativeNotes.push(`"${rep}" 替代了更自然的表达`);}});
+
+  // c. 短语动词替换（母语者更常用短语动词而非正式动词）
+  const phrasalVerbs=[
+    [/\butilize\b/gi,'use'],[/\bcommence\b/gi,'start'],[/\bterminate\b/gi,'end'],
+    [/\bdiscover\b/gi,'find out'],[/\breturn\b/gi,'go back'],[/\benter\b/gi,'go in'],
+    [/\bexit\b/gi,'go out'],[/\bcontinue\b/gi,'keep going'],[/\bpostpone\b/gi,'put off'],
+    [/\bcancel\b/gi,'call off'],[/\bresolve\b/gi,'figure out'],[/\bexamine\b/gi,'look into'],
+    [/\bconstruct\b/gi,'build'],[/\bpurchase\b/gi,'buy'],[/\bconsume\b/gi,'have'],
+    [/\bobtain\b/gi,'get'],[/\brequire\b/gi,'need'],[/\bassist\b/gi,'help'],
+    [/\bendeavor\b/gi,'try'],[/\bdemonstrate\b/gi,'show'],
+  ];
+  phrasalVerbs.forEach(([re,rep])=>{if(re.test(nativeVersion)){nativeVersion=nativeVersion.replace(re,rep);nativeNotes.push(`用短语动词 "${rep}" 替代了正式用语`);}});
+
+  // d. 更自然的句式改写
+  const sentenceRewrites=[
+    [/\bI think that\b/gi,'I think',],[/\bI want to\b/gi,"I'd like to"],
+    [/\bin order to\b/gi,'to'],[/\ba lot of\b/gi,'plenty of'],
+    [/\bI hope to (finish|complete) (it|this|that)\b/gi,'I hope to get it done'],
+    [/\bI hope I can (finish|complete|do)\b/gi,"I'm hoping to $1"],
+    [/\bbecause of this\b/gi,'because of that'],
+    [/\bI started my morning routine\b/gi,'I kicked off my morning routine'],
+    [/\bI feel very\b/gi,'I feel really'],
+    [/\bI am writing to\b/gi,"I'm writing to"],
+    [/\bI would like to\b/gi,"I'd like to"],
+    [/\bIt is a good idea to\b/gi,"It's a good idea to"],
+    [/\bI have been\b/gi,"I've been"],
+    [/\bI have to\b/gi,"I have to"],
+    [/\bI need to\b/gi,"I need to"],
+    [/\bI am going to\b/gi,"I'm going to"],
+    [/\bThank you for\b/gi,'Thanks for'],
+    [/\bI am sorry\b/gi,"I'm sorry"],
+    [/\bI do not know\b/gi,"I don't know"],
+    [/\bI do not think\b/gi,"I don't think"],
+    [/\bat the same time\b/gi,'meanwhile'],
+    [/\bin my opinion\b/gi,"personally"],
+    [/\bfor example\b/gi,'for instance'],
+    [/\bin addition\b/gi,'plus'],
+    [/\bas a result\b/gi,'so'],
+    [/\bon the other hand\b/gi,'that said'],
+  ];
+  sentenceRewrites.forEach(([re,rep])=>{if(re.test(nativeVersion)){nativeVersion=nativeVersion.replace(re,rep);nativeNotes.push(`句式改写为更地道的表达`);}});
+
+  // e. 语气和连贯性优化：添加自然的过渡词
+  // 如果有多句且没有连接词，在第二句前加自然的过渡
+  const nativeSents=nativeVersion.split(/(?<=[.!?])\s+/).filter(Boolean);
+  if(nativeSents.length>1){
+    nativeSents.forEach((s,i)=>{
+      if(i>0&&!/^(However|Moreover|Therefore|Meanwhile|Also|Besides|Then|So|But|And|Actually|Honestly|Anyway|Plus|That said|Personally|For instance)/i.test(s)){
+        // 根据上下文添加自然的过渡（简单启发式）
+        if(/(good|great|happy|love|enjoy|like|wonderful|perfect)/i.test(nativeSents[i-1])&&/(but|however|problem|difficult|hard|issue|challenge|worry)/i.test(s)){
+          nativeSents[i]='That said, '+s.charAt(0).toLowerCase()+s.slice(1);
+          nativeNotes.push('添加了 "That said" 使转折更自然');
+        }
+      }
+    });
+    nativeVersion=nativeSents.join(' ');
+  }
+
+  // f. 清理
+  nativeVersion = nativeVersion.replace(/\s+/g, ' ').trim();
+  nativeVersion = nativeVersion.split(/(?<=[.!?])\s+/).map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join(' ');
+  if (!/[.!?]$/.test(nativeVersion)) nativeVersion += '.';
+
+  // 4. 构建错误分析表格
   let errorBlock='';
   if(errors.length){
-    errorBlock='\n\n🔍 逐句检查：\n<table class="en-feedback-table"><thead><tr><th>问题位置</th><th>具体错误</th><th>解释</th></tr></thead><tbody>';
-    errors.forEach((e,i)=>{
-      errorBlock+=`<tr><td>${esc(e.pos||e.line)}</td><td>${esc(e.error)}</td><td><strong>修正：</strong>${esc(e.explain)}<br><small>${esc(e.rule)}</small></td></tr>`;
+    errorBlock=`\n\n<div style="margin-top:10px"></div>\n<strong style="font-size:14px;color:var(--text)">🔍 逐句纠错分析：</strong>\n<table class="en-feedback-table"><thead><tr><th style="width:20%">原句片段</th><th style="width:20%">问题</th><th style="width:60%">✓ 正确表达 & 规则</th></tr></thead><tbody>`;
+    errors.forEach((e)=>{
+      errorBlock+=`<tr><td style="color:#d64545">${esc(e.orig)}</td><td>${esc(e.error)}</td><td><strong style="color:#22a06b">${esc(e.fix)}</strong><br><small style="color:var(--text-sec)">${esc(e.rule)}</small></td></tr>`;
     });
     errorBlock+='</tbody></table>';
+  }else{
+    errorBlock='\n\n<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:8px 12px;margin-top:8px;font-size:13px;color:#15803d">✅ 语法检查通过，没有发现明显错误！</div>';
   }
 
-  let suggestionBlock='';
-  if(!errors.length){
-    suggestionBlock='\n\n💡 提升建议：你的表达整体流畅自然，下次可以尝试：\n• 使用更丰富的连接词（however, moreover, therefore）\n• 增加具体细节（时间、地点、感受）\n• 尝试使用复合句结构';
-  }
+  // 5. 提升建议（始终显示）
+  const suggestionBlock='\n\n<strong style="font-size:14px;color:var(--text)">💡 提升建议：</strong>\n<div style="margin-top:4px">• 使用更丰富的连接词（however, moreover, therefore, meanwhile）<br>• 增加具体细节（时间、地点、感受）让表达更生动<br>• 尝试复合句结构：It was ... because ... / Not only ... but also ...</div>';
 
-  // 修正后的参考版本
-  let corrected=raw
-    .replace(/\bi\b/g,'I')
-    .replace(/\s+/g,' ')
-    .trim();
-  if(!/[.!?]$/.test(corrected))corrected+='.';
-  corrected=corrected.replace(/\bdepend\s+of\b/gi,'depend on');
-  corrected=corrected.replace(/\b(discuss|mention|describe)\s+about\b/gi,(m,p1)=>p1);
-  corrected=corrected.replace(/\b(explain|answer)\s+to\s+(\w+)\b/gi,(m,p1,p2)=>p1+' '+p2);
-  corrected=corrected.replace(/\blook\s+forward\s+for\b/gi,'look forward to');
-  corrected=corrected.replace(/\bmarried\s+with\b/gi,'married to');
-  corrected=corrected.replace(/\b(he|she|it)\s+are\b/gi,(m)=>m.toLowerCase().replace('are','is'));
-  corrected=corrected.replace(/\b(he|she|it)\s+have\b/gi,(m)=>m.toLowerCase().replace('have','has'));
-  corrected=corrected.charAt(0).toUpperCase()+corrected.slice(1);
+  // 6. 修正版
+  const correctedBlock=`\n\n<strong style="font-size:14px;color:var(--text)">📝 修正版（已应用所有纠错）：</strong>\n<div style="background:var(--primary-light);border:1px solid var(--primary);border-radius:10px;padding:10px 14px;margin-top:6px;font-size:14px;color:var(--text);line-height:1.8">${esc(corrected)}</div>`;
 
-  return `${praise}${errorBlock}${suggestionBlock}\n\n📝 参考润色版本：\n${corrected}\n\n📚 写作小贴士：下次可以按「感受 → 原因 → 下一步」的结构来写，让你的表达更有层次感。试试用 because / so that / although 等连接词串联句子。`;
+  // 7. Native 版本（仅在不同于修正版时显示）
+  const nativeChanged=nativeVersion.toLowerCase()!==corrected.toLowerCase();
+  const nativeNotesHtml=nativeNotes.length?`<div style="font-size:12px;color:var(--text-sec);margin-top:6px;padding:6px 10px;background:#fffef0;border-radius:6px">📌 本次改写要点：${[...new Set(nativeNotes)].slice(0,5).map(n=>`<span style="display:inline-block;margin:2px 4px;padding:2px 8px;background:#fff5d6;border-radius:10px">${esc(n)}</span>`).join('')}</div>`:'';
+  const nativeBlock=nativeChanged?`\n\n<strong style="font-size:14px;color:var(--text)">🌟 Native 地道表达（母语者改写版）：</strong>\n<div style="background:#fffbe6;border:1px solid #f0d860;border-radius:10px;padding:10px 14px;margin-top:6px;font-size:14px;color:var(--text);line-height:1.8">${esc(nativeVersion)}</div>${nativeNotesHtml}<div style="font-size:12px;color:var(--text-sec);margin-top:4px">💡 这不只是修正错误，而是用英语母语者更自然的方式重新表达。注意缩写形式、短语动词和地道搭配的用法。</div>`:'';
+
+  // 8. 写作小贴士
+  const tipsBlock='\n\n📚 <strong style="font-size:14px;color:var(--text)">写作小贴士：</strong> <span style="font-size:13px">下次可以按「感受 → 原因 → 下一步」的结构来写，让你的表达更有层次感。试试用 because / so that / although 等连接词串联句子。</span>';
+
+  return `<div style="font-size:14px;color:var(--text);font-weight:600">${praise}</div>${errorBlock}${suggestionBlock}${correctedBlock}${nativeBlock}${tipsBlock}`;
 }
 function weeklyReflectionText(summary){
   const rate=summary.planTotal?Math.round(summary.planDone/summary.planTotal*100):0;
   const earlyRate=summary.sleep?Math.round(summary.earlySleep/summary.sleep*100):0;
   const good=[];
   const improve=[];
-  if(rate>=70)good.push(`计划完成率达到 ${rate}%`);
-  else improve.push(`计划完成率为 ${rate}%，可以减少当天计划数量，先保证核心事项完成`);
-  if(summary.sleep&&earlyRate>=60)good.push(`早睡率 ${earlyRate}%，睡眠节奏比较稳定`);
-  else if(summary.sleep)improve.push(`早睡率 ${earlyRate}%，建议固定一个睡前收尾动作，降低晚睡概率`);
-  if(summary.reading>0)good.push(`本周阅读 ${summary.reading} 分钟`);
+  if(rate>=70)good.push(`计划完成率达到 <strong style="color:var(--primary)">${rate}%</strong>`);
+  else improve.push(`计划完成率为 <strong style="color:#d64545">${rate}%</strong>，可以减少当天计划数量，先保证核心事项完成`);
+  if(summary.sleep&&earlyRate>=60)good.push(`早睡率 <strong style="color:var(--primary)">${earlyRate}%</strong>，睡眠节奏比较稳定`);
+  else if(summary.sleep)improve.push(`早睡率 <strong style="color:#d64545">${earlyRate}%</strong>，建议固定一个睡前收尾动作，降低晚睡概率`);
+  if(summary.reading>0)good.push(`本周阅读 <strong style="color:var(--primary)">${summary.reading} 分钟</strong>`);
   else improve.push('阅读记录较少，可以先设置每天 10 分钟低门槛阅读');
-  if(summary.english>0)good.push(`英语学习累计 ${summary.english} 分钟`);
+  if(summary.english>0)good.push(`英语学习累计 <strong style="color:var(--primary)">${summary.english} 分钟</strong>`);
   if(summary.review<3)improve.push('复盘天数偏少，建议至少在周三和周日各做一次短复盘');
-  return `本周复盘总结\n\n做得好的：${good.length?good.join('；'):'已经开始记录和看见自己的状态，这是持续进步的基础。'}。\n\n需要改进：${improve.length?improve.join('；'):'继续保持当前节奏，下周可以提高一个小目标。'}。\n\n下周建议：采用「保留一个优势习惯 + 优化一个薄弱习惯」的方式推进，不要同时改太多。`;
+  return `<div style="background:var(--input-bg);border-radius:12px;padding:14px 16px;margin-top:10px">
+    <div style="font-weight:700;font-size:14px;margin-bottom:10px;color:var(--text)">📊 本周复盘总结</div>
+    <div style="display:grid;gap:8px">
+      <div><span style="font-weight:700;color:#22a06b">✓ 做得好的：</span><span style="font-size:13px;line-height:1.8">${good.length?good.join('；')+'。':'已经开始记录和看见自己的状态，这是持续进步的基础。'}</span></div>
+      <div><span style="font-weight:700;color:#d64545">⚠ 需要改进：</span><span style="font-size:13px;line-height:1.8">${improve.length?improve.join('；')+'。':'继续保持当前节奏，下周可以提高一个小目标。'}</span></div>
+      <div style="border-top:1px solid var(--card-border);padding-top:8px;margin-top:4px"><span style="font-weight:700;color:var(--primary)">💡 下周建议：</span><span style="font-size:13px;line-height:1.8">采用「保留一个优势习惯 + 优化一个薄弱习惯」的方式推进，不要同时改太多。</span></div>
+    </div>
+  </div>`;
 }
 function periodKeys(kind='week'){
   const now=new Date();let start,end;
@@ -1053,8 +1298,13 @@ function reportStats(kind='week'){
   let goalDoneDefault=0,goalDoneHealth=0,goalDoneLearning=0,goalDoneLife=0,goalDoneOther=0;
   const goalBlocks=goals.blocks||[];
   const goalPlans=goals.plans||{};
+  // 数据明细：记录每天的数据来源，方便用户核对
+  const dailyDetail=[];
   keys.forEach(key=>{
+    let dayHasData=false;
+    const detail={date:key,plan:0,sleep:'',exercise:false,meditation:0,english:0,reading:0,review:false};
     const tasks=(plan.tasks||[]).filter(t=>t.date===key);planDone+=tasks.filter(t=>t.done).length;planTotal+=tasks.length;
+    if(tasks.length){detail.plan=tasks.length;dayHasData=true;}
     // 按目标板块分类统计每日计划完成情况
     if(goalBlocks.length){
       tasks.forEach(t=>{
@@ -1068,12 +1318,19 @@ function reportStats(kind='week'){
         });
       });
     }
-    const sl=findByDate(sleep.records||[],key);if(sl?.bedtime){sleepDays++;if(isEarlySleep(sl.bedtime))early++;}
+    const sl=findByDate(sleep.records||[],key);if(sl?.bedtime){sleepDays++;if(isEarlySleep(sl.bedtime))early++;detail.sleep=sl.bedtime;dayHasData=true;}
     const quick=exercise.quick?.[key];const ex=(exercise.records||[]).filter(r=>r.date===key);if((quick?.items||[]).length||ex.length)exDays++;
-    const md=findByDate(meditation.records||[],key);if(md?.minutes){medDays++;medMin+=(+md.minutes||0);}
-    const ec=englishCompletion(english.daily?.[key]||{});enDone+=ec.done;enTotal+=ec.total;
+    if((quick?.items||[]).length||ex.length){detail.exercise=true;dayHasData=true;}
+    const md=findByDate(meditation.records||[],key);if(md?.minutes){medDays++;medMin+=(+md.minutes||0);detail.meditation=+md.minutes||0;dayHasData=true;}
+    const enRec=english.daily?.[key];
+    const enHasData=enRec&&(enRec.words10||enRec.chunk1||enRec.pattern1||(+enRec.aiMinutes||0)>=10||(+enRec.shadowMinutes||0)>=5);
+    const ec=englishCompletion(enRec||{});enDone+=ec.done;
+    if(enHasData){enTotal+=ec.total;detail.english=ec.done+'/'+ec.total;dayHasData=true;}
     const rd=reading.daily?.[key];if(rd)readMin+=(+rd.minutes||0);
-    if(findByDate(review.records||[],key)?.wellDone)reviewDays++;
+    if(rd&&(+rd.minutes||0)>0){detail.reading=+rd.minutes||0;dayHasData=true;}
+    const rv=findByDate(review.records||[],key);
+    if(rv&&(rv.wellDone||rv.improve)){reviewDays++;detail.review=true;dayHasData=true;}
+    if(dayHasData||tasks.length)dailyDetail.push(detail);
   });
   // 计算目标板块完成率
   const goalDefRate=goalPlansDefault?Math.round(goalDoneDefault/goalPlansDefault*100):0;
@@ -1092,7 +1349,10 @@ function reportStats(kind='week'){
       }
     });
   }
-  return {days:keys.length,planDone,planTotal,sleepDays,early,exDays,medMin,medDays,enDone,enTotal,readMin,reviewDays,
+  return {days:keys.length,periodStart:keys[0]||'',periodEnd:keys[keys.length-1]||'',
+    planDone,planTotal,sleepDays,early,exDays,medMin,medDays,enDone,enTotal,readMin,reviewDays,
+    hasData:planTotal>0||sleepDays>0||exDays>0||medDays>0||enTotal>0||readMin>0||reviewDays>0,
+    dailyDetail:dailyDetail,
     goalBlocks,goalDefRate,goalHealthRate,goalLearnRate,goalLifeRate,goalOtherRate,
     goalPlansDefault,goalPlansHealth,goalPlansLearning,goalPlansLife,goalPlansOther,
     goalDoneDefault,goalDoneHealth,goalDoneLearning,goalDoneLife,goalDoneOther,
@@ -1213,65 +1473,208 @@ function speakText(text){
 }
 if(window.speechSynthesis)window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();
 
+// 通过 MyMemory 翻译 API 获取英文例句的中文翻译（词典 API 不提供中文，作为兜底方案）
+async function translateExample(text){
+  try{
+    const url=`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|zh`;
+    const res=await fetch(url,{signal:AbortSignal.timeout(5000)});
+    const data=await res.json();
+    return data?.responseData?.translatedText||'';
+  }catch(e){return '';}
+}
+// 异步填充例句的中文翻译占位符
+function fillExTranslations(container){
+  container.querySelectorAll('.ex-zh[data-en]').forEach(async el=>{
+    const zh=await translateExample(el.dataset.en);
+    if(zh)el.textContent=zh;else el.style.display='none';
+  });
+}
 async function lookupWord(word,resultEl){
   if(!word||!resultEl)return;
   resultEl.style.display='block';
   resultEl.innerHTML='<div class="small-text">正在查询...</div>';
+  // 搜索词包获取中文释义
+  let packZh='',packExamples=[];
+  try{
+    const allPacks=[englishPackFor(''),englishPackFor('2026-01-15')].filter(p=>p&&p.words);
+    for(const pack of allPacks){
+      for(const w of pack.words){
+        if(w[0].toLowerCase()===word.toLowerCase()){
+          packZh=w[1]||'';
+          if(w[2]&&w[2].examples){
+            packExamples=w[2].examples.map(ex=>typeof ex==='string'?{en:ex,zh:''}:ex);
+          }
+          break;
+        }
+      }
+      if(packZh)break;
+    }
+  }catch(e){}
   try{
     const res=await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word.toLowerCase())}`,{signal:AbortSignal.timeout(10000)});
     if(!res.ok){
-      resultEl.innerHTML=`<div style="color:var(--text-sec)">未找到「${esc(word)}」的释义，可能是专有名词或拼写有误。</div>`;
+      // API 失败但词包有数据时，仍显示词包信息
+      if(packZh){
+        resultEl.innerHTML=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><strong style="font-size:18px;color:var(--primary)">${esc(word)}</strong><span style="color:var(--text-sec);font-size:13px">${esc(packZh)}</span></div><div style="font-size:13px;color:var(--text-sec)">在线词典暂无详细释义，已显示词包中的中文释义。</div>${packExamples.length?`<div style="margin-top:8px"><span style="font-size:12px;font-weight:700;color:var(--primary)">📝 例句：</span>${packExamples.map(ex=>{const en=typeof ex==='string'?ex:(ex.en||'');const zh=typeof ex==='string'?'':(ex.zh||'');return `<div style="margin-top:4px;font-size:12px;color:#666;font-style:italic;cursor:pointer;padding:2px 6px;border-radius:4px" onclick="speakText('${esc(en).replace(/'/g,"\\'")}')" title="点击朗读">💬 ${esc(en)}${zh?`<span class="ex-zh" style="display:block;color:var(--primary);font-size:11px;margin-left:18px;font-style:normal">${esc(zh)}</span>`:`<span class="ex-zh" data-en="${esc(en)}" style="display:block;color:var(--primary);font-size:11px;margin-left:18px;font-style:normal">翻译中...</span>`}</div>`;}).join('')}</div>`:''}<button class="btn btn-primary btn-sm en-lookup-add-word" style="margin-top:8px" data-word="${esc(word)}" data-meaning="${esc(packZh)}">📝 加入生词本</button>`;
+        bindAddWordBtn(resultEl);
+        fillExTranslations(resultEl);
+      }else{
+        resultEl.innerHTML=`<div style="color:var(--text-sec)">未找到「${esc(word)}」的释义，可能是专有名词或拼写有误。</div>`;
+      }
       return;
     }
     const data=await res.json();
     const entry=data[0];
-    let html=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><strong style="font-size:18px;color:var(--primary)">${esc(entry.word)}</strong>${entry.phonetic?`<span style="color:#666;font-size:13px">${esc(entry.phonetic)}</span>`:''}<span class="en-speak-word" data-word="${esc(entry.word)}" style="cursor:pointer" title="朗读"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg></span></div>`;
+    let html=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap"><strong style="font-size:18px;color:var(--primary)">${esc(entry.word)}</strong>${entry.phonetic?`<span style="color:#666;font-size:13px">${esc(entry.phonetic)}</span>`:''}${packZh?`<span style="background:var(--primary-light);color:var(--primary);font-size:12px;padding:2px 8px;border-radius:10px">${esc(packZh)}</span>`:''}<span class="en-speak-word" data-word="${esc(entry.word)}" style="cursor:pointer" title="朗读"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg></span></div>`;
+    // 加入生词本按钮
+    html+=`<button class="btn btn-primary btn-sm en-lookup-add-word" style="margin-bottom:8px;font-size:12px" data-word="${esc(entry.word)}" data-meaning="${esc(packZh||'')}">📝 加入生词本</button>`;
+    const allSynonyms=new Set();
+    const allExamples=[];
+    const allAntonyms=new Set();
     entry.meanings.forEach(m=>{
       html+=`<div style="margin-top:8px"><span class="tag" style="font-size:11px;background:var(--primary-light);color:var(--primary)">${esc(m.partOfSpeech)}</span>`;
-      m.definitions.slice(0,3).forEach((def,i)=>{
+      m.definitions.slice(0,4).forEach((def,i)=>{
         html+=`<div style="margin-top:4px;font-size:13px;color:var(--text)"><strong>${i+1}.</strong> ${esc(def.definition)}</div>`;
-        if(def.example)html+=`<div style="margin-top:2px;font-size:12px;color:#888;font-style:italic">${esc(def.example)}</div>`;
-        if(def.synonyms&&def.synonyms.length)html+=`<div style="margin-top:2px;font-size:11px;color:var(--text-light)">同义词：${def.synonyms.slice(0,5).map(s=>esc(s)).join('、')}</div>`;
+        if(def.example){
+          // 从词包中查找例句的中文翻译
+          let exZh='';
+          const packMatch=packExamples.find(ex=>(typeof ex==='string'?ex:ex.en)===def.example);
+          if(packMatch){exZh=typeof packMatch==='string'?'':(packMatch.zh||'');}
+          html+=`<div style="margin-top:2px;font-size:12px;color:#888;font-style:italic;cursor:pointer;padding:2px 6px;border-radius:4px" onclick="speakText('${esc(def.example).replace(/'/g,"\\'")}')" title="点击朗读">💬 ${esc(def.example)}${exZh?`<span class="ex-zh" style="display:block;color:var(--primary);font-size:11px;margin-left:18px;font-style:normal">${esc(exZh)}</span>`:`<span class="ex-zh" data-en="${esc(def.example)}" style="display:block;color:var(--primary);font-size:11px;margin-left:18px;font-style:normal">翻译中...</span>`}</div>`;
+          allExamples.push(def.example);
+        }
+        if(def.synonyms&&def.synonyms.length){def.synonyms.slice(0,5).forEach(s=>allSynonyms.add(s));}
+        if(def.antonyms&&def.antonyms.length){def.antonyms.slice(0,3).forEach(s=>allAntonyms.add(s));}
       });
       html+=`</div>`;
     });
+    // 同义词/近义词
+    if(allSynonyms.size){
+      html+=`<div style="margin-top:8px;padding-top:6px;border-top:1px dashed var(--card-border)"><span style="font-size:12px;font-weight:700;color:var(--primary)">📎 同义词/近义词：</span><div style="margin-top:4px">${[...allSynonyms].slice(0,10).map(s=>`<span class="tag" style="margin:2px;font-size:11px;cursor:pointer" onclick="document.querySelector('.en-lookup-input').value='${esc(s)}';document.querySelector('.en-lookup-btn').click()">${esc(s)}</span>`).join('')}</div></div>`;
+    }
+    // 反义词
+    if(allAntonyms.size){
+      html+=`<div style="margin-top:6px"><span style="font-size:12px;font-weight:700;color:#d64545">📎 反义词：</span><div style="margin-top:4px">${[...allAntonyms].slice(0,6).map(s=>`<span class="tag" style="margin:2px;font-size:11px;cursor:pointer" onclick="document.querySelector('.en-lookup-input').value='${esc(s)}';document.querySelector('.en-lookup-btn').click()">${esc(s)}</span>`).join('')}</div></div>`;
+    }
+    // 常见搭配（含中文释义）
+    const collocations=generateCollocations(entry.word,entry.meanings);
+    if(collocations.length){
+      html+=`<div style="margin-top:6px"><span style="font-size:12px;font-weight:700;color:var(--primary)">🔗 常见搭配：</span><div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px">${collocations.map(c=>`<span class="tag" style="margin:2px;font-size:11px;background:var(--primary-light);color:var(--primary);cursor:pointer;padding:3px 8px" onclick="document.querySelector('.en-lookup-input').value='${esc(c.en.split(' ').slice(-1)[0])}';document.querySelector('.en-lookup-btn').click()" title="${esc(c.zh)}">${esc(c.en)} <span style="color:var(--text-sec);font-size:10px">${esc(c.zh)}</span></span>`).join('')}</div></div>`;
+    }
+    // 词包例句（如果有）
+    if(packExamples.length){
+      html+=`<div style="margin-top:8px;padding-top:6px;border-top:1px dashed var(--card-border)"><span style="font-size:12px;font-weight:700;color:var(--primary)">📝 词包例句：</span>${packExamples.map(ex=>{const en=typeof ex==='string'?ex:(ex.en||'');const zh=typeof ex==='string'?'':(ex.zh||'');return `<div style="margin-top:4px;font-size:12px;color:#666;font-style:italic;cursor:pointer;padding:2px 6px;border-radius:4px" onclick="speakText('${esc(en).replace(/'/g,"\\'")}')" title="点击朗读">💬 ${esc(en)}${zh?`<span class="ex-zh" style="display:block;color:var(--primary);font-size:11px;margin-left:18px;font-style:normal">${esc(zh)}</span>`:`<span class="ex-zh" data-en="${esc(en)}" style="display:block;color:var(--primary);font-size:11px;margin-left:18px;font-style:normal">翻译中...</span>`}</div>`;}).join('')}</div>`;
+    }
+    // 更多例句
+    const uniqueExamples=[...new Set(allExamples)];
+    if(uniqueExamples.length>1){
+      html+=`<div style="margin-top:8px;padding-top:6px;border-top:1px dashed var(--card-border)"><span style="font-size:12px;font-weight:700;color:var(--primary)">📝 更多例句：</span>${uniqueExamples.slice(0,5).map(ex=>{let exZh2='';const pm2=packExamples.find(p=>(typeof p==='string'?p:p.en)===ex);if(pm2){exZh2=typeof pm2==='string'?'':(pm2.zh||'');}return `<div style="margin-top:4px;font-size:12px;color:#666;font-style:italic;cursor:pointer;padding:2px 6px;border-radius:4px" onclick="speakText('${esc(ex).replace(/'/g,"\\'")}')" title="点击朗读">💬 ${esc(ex)}${exZh2?`<span class="ex-zh" style="display:block;color:var(--primary);font-size:11px;margin-left:18px;font-style:normal">${esc(exZh2)}</span>`:`<span class="ex-zh" data-en="${esc(ex)}" style="display:block;color:var(--primary);font-size:11px;margin-left:18px;font-style:normal">翻译中...</span>`}</div>`;}).join('')}</div>`;
+    }
     resultEl.innerHTML=html;
+    fillExTranslations(resultEl);
     resultEl.querySelector('.en-speak-word')?.addEventListener('click',()=>speakText(entry.word));
+    bindAddWordBtn(resultEl);
   }catch(e){
     resultEl.innerHTML=`<div style="color:var(--text-sec)">查询失败：${esc(e.message)}</div>`;
   }
+}
+// 绑定"加入生词本"按钮
+function bindAddWordBtn(container){
+  container.querySelectorAll('.en-lookup-add-word').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const w=btn.dataset.word||'';
+      const m=btn.dataset.meaning||'';
+      const englishMod=DB.data.modules.find(m=>m.type==='english');
+      if(!englishMod){return;}
+      englishMod.data.words=englishMod.data.words||[];
+      if(englishMod.data.words.some(x=>x.word.toLowerCase()===w.toLowerCase())){
+        btn.textContent='✓ 已在生词本中';
+        btn.style.opacity='0.6';
+        return;
+      }
+      englishMod.data.words.push({id:genId(),word:w,meaning:m||'(待补充释义)',status:'unknown'});
+      DB.save();
+      btn.textContent='✓ 已加入生词本';
+      btn.style.opacity='0.6';
+    });
+  });
+}
+function generateCollocations(word,meanings){
+  const cols=[];
+  const w=word.toLowerCase();
+  const posList=(meanings||[]).map(m=>m.partOfSpeech);
+  const isNoun=posList.includes('noun');
+  const isVerb=posList.includes('verb');
+  const isAdj=posList.includes('adjective');
+  const isAdv=posList.includes('adverb');
+  // 名词搭配（含中文释义）
+  if(isNoun){
+    cols.push({en:`a ${w}`,zh:`一个${w}`});
+    cols.push({en:`the ${w}`,zh:`这个${w}`});
+    cols.push({en:`my ${w}`,zh:`我的${w}`});
+    cols.push({en:`make a ${w}`,zh:`做一个${w}`});
+    cols.push({en:`have a ${w}`,zh:`拥有一个${w}`});
+    cols.push({en:`get a ${w}`,zh:`得到一个${w}`});
+    cols.push({en:`${w} list`,zh:`${w}列表`});
+    cols.push({en:`${w} plan`,zh:`${w}计划`});
+  }
+  // 动词搭配（含中文释义）
+  if(isVerb){
+    cols.push({en:`${w} to do`,zh:`${w}做某事`});
+    cols.push({en:`try to ${w}`,zh:`尝试${w}`});
+    cols.push({en:`want to ${w}`,zh:`想要${w}`});
+    cols.push({en:`learn to ${w}`,zh:`学习${w}`});
+    cols.push({en:`how to ${w}`,zh:`如何${w}`});
+    cols.push({en:`${w} well`,zh:`擅长${w}`});
+  }
+  // 形容词搭配（含中文释义）
+  if(isAdj){
+    cols.push({en:`very ${w}`,zh:`非常${w}`});
+    cols.push({en:`quite ${w}`,zh:`相当${w}`});
+    cols.push({en:`feel ${w}`,zh:`感到${w}`});
+    cols.push({en:`look ${w}`,zh:`看起来${w}`});
+    cols.push({en:`too ${w}`,zh:`太${w}`});
+  }
+  // 副词搭配（含中文释义）
+  if(isAdv){
+    cols.push({en:`${w} good`,zh:`${w}好`});
+    cols.push({en:`${w} fast`,zh:`${w}快`});
+  }
+  // 去重并限制数量
+  const seen=new Set();
+  return cols.filter(c=>{if(seen.has(c.en))return false;seen.add(c.en);return c.en.length>2&&c.en.length<30;}).slice(0,8);
 }
 
 function englishPackFor(date){
   const packs=[
     {
       words:[
-        ['routine','日常安排',{phonetic:'/ruːˈtiːn/',collocations:['morning routine','daily routine','skincare routine'],examples:['My morning routine includes meditation.','A good routine helps me stay productive.']}],
-        ['commute','通勤',{phonetic:'/kəˈmjuːt/',collocations:['commute to work','long commute','daily commute'],examples:['My commute takes about forty minutes.','I listen to podcasts during my commute.']}],
-        ['grocery','食品杂货',{phonetic:'/ˈɡroʊsəri/',collocations:['grocery store','grocery shopping','grocery list'],examples:['I need to stop at the grocery store.','She made a grocery list for the week.']}],
-        ['appointment','预约',{phonetic:'/əˈpɔɪntmənt/',collocations:["make an appointment","doctor's appointment","schedule an appointment"],examples:['I have a dentist appointment at three.','You should make an appointment first.']}],
-        ['budget','预算',{phonetic:'/ˈbʌdʒɪt/',collocations:['monthly budget','tight budget','budget plan'],examples:['We need to stick to our monthly budget.','A tight budget teaches me to save money.']}],
-        ['laundry','洗衣',{phonetic:'/ˈlɔːndri/',collocations:['do the laundry','laundry room','laundry detergent'],examples:['I do the laundry every Sunday.','The laundry room is in the basement.']}],
-        ['deadline','截止日期',{phonetic:'/ˈdedlaɪn/',collocations:['meet the deadline','tight deadline','deadline for'],examples:['The deadline for this report is Friday.','We must meet the deadline on time.']}],
-        ['organize','整理',{phonetic:'/ˈɔːrɡənaɪz/',collocations:['organize files','organize time','organize an event'],examples:['I need to organize my desk today.','She knows how to organize a big event.']}],
-        ['focus','专注',{phonetic:'/ˈfoʊkəs/',collocations:['focus on','lose focus','stay focused'],examples:['It is hard to focus on work with noise.','I need to stay focused to finish early.']}],
-        ['reward','奖励',{phonetic:'/rɪˈwɔːrd/',collocations:['reward yourself','as a reward','big reward'],examples:['I will reward myself with a movie.','Hard work brings its own reward.']}]
+        ['routine','日常安排',{phonetic:'/ruːˈtiːn/',collocations:['morning routine','daily routine','skincare routine'],examples:[{en:'My morning routine includes meditation.',zh:'我的晨间习惯包括冥想。'},{en:'A good routine helps me stay productive.',zh:'良好的习惯帮助我保持高效。'}]}],
+        ['commute','通勤',{phonetic:'/kəˈmjuːt/',collocations:['commute to work','long commute','daily commute'],examples:[{en:'My commute takes about forty minutes.',zh:'我通勤大约需要四十分钟。'},{en:'I listen to podcasts during my commute.',zh:'通勤时我会听播客。'}]}],
+        ['grocery','食品杂货',{phonetic:'/ˈɡroʊsəri/',collocations:['grocery store','grocery shopping','grocery list'],examples:[{en:'I need to stop at the grocery store.',zh:'我需要去一趟杂货店。'},{en:'She made a grocery list for the week.',zh:'她列了这一周的采购清单。'}]}],
+        ['appointment','预约',{phonetic:'/əˈpɔɪntmənt/',collocations:["make an appointment","doctor's appointment","schedule an appointment"],examples:[{en:'I have a dentist appointment at three.',zh:'我三点有一个牙医预约。'},{en:'You should make an appointment first.',zh:'你应该先预约一下。'}]}],
+        ['budget','预算',{phonetic:'/ˈbʌdʒɪt/',collocations:['monthly budget','tight budget','budget plan'],examples:[{en:'We need to stick to our monthly budget.',zh:'我们需要坚持每月的预算。'},{en:'A tight budget teaches me to save money.',zh:'紧张的预算教会我存钱。'}]}],
+        ['laundry','洗衣',{phonetic:'/ˈlɔːndri/',collocations:['do the laundry','laundry room','laundry detergent'],examples:[{en:'I do the laundry every Sunday.',zh:'我每个星期天洗衣服。'},{en:'The laundry room is in the basement.',zh:'洗衣房在地下室。'}]}],
+        ['deadline','截止日期',{phonetic:'/ˈdedlaɪn/',collocations:['meet the deadline','tight deadline','deadline for'],examples:[{en:'The deadline for this report is Friday.',zh:'这份报告的截止日期是周五。'},{en:'We must meet the deadline on time.',zh:'我们必须按时赶上截止日期。'}]}],
+        ['organize','整理',{phonetic:'/ˈɔːrɡənaɪz/',collocations:['organize files','organize time','organize an event'],examples:[{en:'I need to organize my desk today.',zh:'我今天需要整理一下我的办公桌。'},{en:'She knows how to organize a big event.',zh:'她知道如何组织大型活动。'}]}],
+        ['focus','专注',{phonetic:'/ˈfoʊkəs/',collocations:['focus on','lose focus','stay focused'],examples:[{en:'It is hard to focus on work with noise.',zh:'有噪音时很难专注工作。'},{en:'I need to stay focused to finish early.',zh:'我需要保持专注以便早点完成。'}]}],
+        ['reward','奖励',{phonetic:'/rɪˈwɔːrd/',collocations:['reward yourself','as a reward','big reward'],examples:[{en:'I will reward myself with a movie.',zh:'我会用一场电影奖励自己。'},{en:'Hard work brings its own reward.',zh:'努力工作本身就是一种回报。'}]}]
       ],
       chunks:['make a quick plan','做一个快速计划','stay focused for twenty minutes','保持专注20分钟','wrap up the day','结束这一天'],
       text:'Today I start my morning routine early. My commute takes about thirty minutes, so I listen to English podcasts on the way. After work, I need to stop at the grocery store for vegetables. I have a dentist appointment at four, so I must plan my time well. This month I set a strict budget to save money. I also need to do the laundry when I get home. There is a project deadline tomorrow, so I need to focus and organize my tasks. When I finish everything, I will reward myself with a good book. A small routine helps me feel calm and clear.'
     },
     {
       words:[
-        ['energy','精力',{phonetic:'/ˈenərdʒi/',collocations:['full of energy','save energy','low energy'],examples:['I am full of energy this morning.','Drinking water helps me save energy.']}],
-        ['priority','优先事项',{phonetic:'/praɪˈɔːrəti/',collocations:['top priority','high priority','make something a priority'],examples:['Finishing this report is my top priority.','Health should be a high priority.']}],
-        ['stretch','拉伸',{phonetic:'/stretʃ/',collocations:['stretch muscles','stretch before exercise','stretch out'],examples:['I stretch for five minutes every morning.','Remember to stretch before running.']}],
-        ['hydrate','补水',{phonetic:'/ˈhaɪdreɪt/',collocations:['hydrate your body','stay hydrated','hydrate well'],examples:['Drink water to hydrate your body.','Athletes need to stay hydrated.']}],
-        ['journal','写日记',{phonetic:'/ˈdʒɜːrnl/',collocations:['keep a journal','write in a journal','daily journal'],examples:['I keep a journal to record my thoughts.','She writes in a journal every night.']}],
-        ['review','复盘',{phonetic:'/rɪˈvjuː/',collocations:['review notes','performance review','book review'],examples:['I review my notes before the exam.','The manager gave me a performance review.']}],
-        ['improve','改进',{phonetic:'/ɪmˈpruːv/',collocations:['improve skills','improve health','improve efficiency'],examples:['I want to improve my speaking skills.','Small steps can improve your health.']}],
-        ['habit','习惯',{phonetic:'/ˈhæbɪt/',collocations:['good habit','break a habit','form a habit'],examples:['Reading before bed is a good habit.','It takes time to form a habit.']}],
-        ['balance','平衡',{phonetic:'/ˈbæləns/',collocations:['work-life balance','balance time','lose balance'],examples:['I need a better work-life balance.','She knows how to balance time well.']}],
-        ['consistent','持续的',{phonetic:'/kənˈsɪstənt/',collocations:['consistent effort','consistent results','be consistent with'],examples:['Consistent effort leads to success.','Your work should be consistent with the rules.']}]
+        ['energy','精力',{phonetic:'/ˈenərdʒi/',collocations:['full of energy','save energy','low energy'],examples:[{en:'I am full of energy this morning.',zh:'我今天早上精力充沛。'},{en:'Drinking water helps me save energy.',zh:'喝水有助于我保存精力。'}]}],
+        ['priority','优先事项',{phonetic:'/praɪˈɔːrəti/',collocations:['top priority','high priority','make something a priority'],examples:[{en:'Finishing this report is my top priority.',zh:'完成这份报告是我的首要任务。'},{en:'Health should be a high priority.',zh:'健康应该被高度重视。'}]}],
+        ['stretch','拉伸',{phonetic:'/stretʃ/',collocations:['stretch muscles','stretch before exercise','stretch out'],examples:[{en:'I stretch for five minutes every morning.',zh:'我每天早上拉伸五分钟。'},{en:'Remember to stretch before running.',zh:'跑步前记得拉伸。'}]}],
+        ['hydrate','补水',{phonetic:'/ˈhaɪdreɪt/',collocations:['hydrate your body','stay hydrated','hydrate well'],examples:[{en:'Drink water to hydrate your body.',zh:'喝水为身体补充水分。'},{en:'Athletes need to stay hydrated.',zh:'运动员需要保持水分充足。'}]}],
+        ['journal','写日记',{phonetic:'/ˈdʒɜːrnl/',collocations:['keep a journal','write in a journal','daily journal'],examples:[{en:'I keep a journal to record my thoughts.',zh:'我坚持写日记来记录自己的想法。'},{en:'She writes in a journal every night.',zh:'她每晚都写日记。'}]}],
+        ['review','复盘',{phonetic:'/rɪˈvjuː/',collocations:['review notes','performance review','book review'],examples:[{en:'I review my notes before the exam.',zh:'考试前我会复习笔记。'},{en:'The manager gave me a performance review.',zh:'经理给我做了一次绩效评估。'}]}],
+        ['improve','改进',{phonetic:'/ɪmˈpruːv/',collocations:['improve skills','improve health','improve efficiency'],examples:[{en:'I want to improve my speaking skills.',zh:'我想提高我的口语能力。'},{en:'Small steps can improve your health.',zh:'小小的改变能改善你的健康。'}]}],
+        ['habit','习惯',{phonetic:'/ˈhæbɪt/',collocations:['good habit','break a habit','form a habit'],examples:[{en:'Reading before bed is a good habit.',zh:'睡前阅读是个好习惯。'},{en:'It takes time to form a habit.',zh:'养成习惯需要时间。'}]}],
+        ['balance','平衡',{phonetic:'/ˈbæləns/',collocations:['work-life balance','balance time','lose balance'],examples:[{en:'I need a better work-life balance.',zh:'我需要更好的工作与生活平衡。'},{en:'She knows how to balance time well.',zh:'她很懂得如何平衡时间。'}]}],
+        ['consistent','持续的',{phonetic:'/kənˈsɪstənt/',collocations:['consistent effort','consistent results','be consistent with'],examples:[{en:'Consistent effort leads to success.',zh:'持续的努力会带来成功。'},{en:'Your work should be consistent with the rules.',zh:'你的工作应该与规则保持一致。'}]}]
       ],
       chunks:['keep a steady rhythm','保持稳定节奏','build a small habit','建立一个小习惯','notice my energy level','留意我的精力状态'],
       text:'This morning I notice my energy level and decide to work with a steady rhythm. I drink water to hydrate my body and stretch for five minutes. My top priority is to finish the report first. After lunch, I review my notes and think about how to improve my workflow. I want to build a good habit that is easy to repeat. Consistency is more useful than pressure. When I keep a consistent schedule, I find a better balance between work and rest. In the evening, I write in my journal about what went well. Small steps help me improve every day.'
@@ -1320,13 +1723,13 @@ const GOAL_PERIODS=[
   ['day','日目标','今天最重要的一步']
 ];
 const DEFAULT_COLLECTION_CATEGORIES=['生活','成长','金句','方法','其他'];
-const HISTORICAL_SLEEP_RECORDS_2025=[
-  ['2025-01-01','22:00'],['2025-01-02','22:30'],['2025-01-03','22:55'],['2025-01-04','22:30'],['2025-01-05','22:30'],['2025-01-06','22:41'],['2025-01-07','22:47'],['2025-01-08','22:47'],['2025-01-09','01:03'],['2025-01-10','00:16'],['2025-01-11','00:52'],['2025-01-12','22:16'],['2025-01-13','22:40'],['2025-01-14','22:59'],['2025-01-15','23:45'],['2025-01-16','22:58'],['2025-01-17','22:48'],['2025-01-18','23:30'],['2025-01-19','22:52'],['2025-01-20','23:57'],['2025-01-21','23:02'],['2025-01-22','01:45'],
-  ['2025-02-06','22:30'],['2025-02-07','23:16'],['2025-02-08','23:50'],['2025-02-09','23:54'],['2025-02-10','22:47'],['2025-02-11','23:17'],['2025-02-12','23:19'],['2025-02-13','23:18'],['2025-02-14','23:30'],['2025-02-15','22:25'],['2025-02-16','22:36'],['2025-02-17','22:38'],['2025-02-18','22:43'],['2025-02-19','22:40'],['2025-02-21','23:25'],['2025-02-22','23:20'],['2025-02-23','22:40'],['2025-02-24','23:18'],['2025-02-25','23:20'],['2025-02-26','22:25'],['2025-02-27','22:34'],['2025-02-28','23:15'],
-  ['2025-03-01','23:32'],['2025-03-02','22:58'],['2025-03-03','22:50'],['2025-03-04','00:00'],['2025-03-05','23:55'],['2025-03-07','00:30'],['2025-03-08','00:30'],['2025-03-09','22:48'],['2025-03-10','22:35'],['2025-03-11','00:30'],['2025-03-12','00:30'],['2025-03-13','23:30'],['2025-03-14','00:30'],['2025-03-15','23:15'],['2025-03-16','23:50'],['2025-03-17','23:55'],['2025-03-20','23:15'],['2025-03-21','22:46'],['2025-03-25','00:30'],['2025-03-26','23:15'],['2025-03-27','23:51'],['2025-03-28','23:55'],['2025-03-30','22:40'],['2025-03-31','22:20'],
-  ['2025-04-01','23:25'],['2025-04-02','23:02'],['2025-04-03','22:31'],['2025-04-04','22:45'],['2025-04-05','23:30'],['2025-04-06','00:35'],['2025-04-07','23:00'],['2025-04-08','00:20'],['2025-04-09','00:30'],['2025-04-10','22:20'],['2025-04-11','22:54'],['2025-04-12','23:00'],['2025-04-13','22:55'],['2025-04-14','00:30'],['2025-04-15','00:15'],['2025-04-16','00:00'],['2025-04-17','00:40'],['2025-04-18','23:39'],['2025-04-20','22:20'],['2025-04-21','23:40'],['2025-04-22','22:55'],['2025-04-23','23:00'],['2025-04-24','22:55'],['2025-04-25','00:30'],['2025-04-26','00:15'],['2025-04-27','00:00'],['2025-04-28','00:40'],['2025-04-29','23:39'],
-  ['2025-05-01','22:30'],['2025-05-02','22:40'],['2025-05-03','23:26'],['2025-05-04','23:30'],['2025-05-05','23:00'],['2025-05-06','23:30'],['2025-05-07','23:00'],['2025-05-08','22:20'],['2025-05-09','21:58'],['2025-05-10','23:05'],['2025-05-11','22:48'],['2025-05-12','22:40'],['2025-05-13','22:37'],['2025-05-14','22:55'],['2025-05-16','23:58'],['2025-05-18','22:55'],['2025-05-19','23:12'],['2025-05-20','22:28'],['2025-05-21','22:13'],['2025-05-22','23:50'],['2025-05-23','23:00'],['2025-05-24','23:49'],['2025-05-25','22:15'],['2025-05-26','21:58'],['2025-05-27','22:40'],['2025-05-28','22:30'],['2025-05-29','23:57'],
-  ['2025-06-01','22:30'],['2025-06-02','22:25'],['2025-06-03','23:55'],['2025-06-04','00:55'],['2025-06-05','22:50'],['2025-06-06','22:45'],['2025-06-07','22:15'],['2025-06-08','22:30'],['2025-06-09','22:35'],['2025-06-10','22:35'],['2025-06-11','22:43'],['2025-06-12','22:55'],['2025-06-13','23:35'],['2025-06-14','22:30'],['2025-06-15','23:00'],['2025-06-16','22:40'],['2025-06-17','00:30'],['2025-06-18','23:30'],['2025-06-19','22:30'],['2025-06-20','23:30'],['2025-06-21','23:35'],['2025-06-22','22:32'],['2025-06-23','23:05'],['2025-06-24','23:55'],['2025-06-25','02:30'],['2025-06-26','22:40'],['2025-06-27','22:40'],['2025-06-28','22:35'],['2025-06-29','22:35'],['2025-06-30','23:12']
+const HISTORICAL_SLEEP_RECORDS_2026=[
+  ['2026-01-01','22:00'],['2026-01-02','22:30'],['2026-01-03','22:55'],['2026-01-04','22:30'],['2026-01-05','22:30'],['2026-01-06','22:41'],['2026-01-07','22:47'],['2026-01-08','22:47'],['2026-01-09','01:03'],['2026-01-10','00:16'],['2026-01-11','00:52'],['2026-01-12','22:16'],['2026-01-13','22:40'],['2026-01-14','22:59'],['2026-01-15','23:45'],['2026-01-16','22:58'],['2026-01-17','22:48'],['2026-01-18','23:30'],['2026-01-19','22:52'],['2026-01-20','23:57'],['2026-01-21','23:02'],['2026-01-22','01:45'],
+  ['2026-02-06','22:30'],['2026-02-07','23:16'],['2026-02-08','23:50'],['2026-02-09','23:54'],['2026-02-10','22:47'],['2026-02-11','23:17'],['2026-02-12','23:19'],['2026-02-13','23:18'],['2026-02-14','23:30'],['2026-02-15','22:25'],['2026-02-16','22:36'],['2026-02-17','22:38'],['2026-02-18','22:43'],['2026-02-19','22:40'],['2026-02-21','23:25'],['2026-02-22','23:20'],['2026-02-23','22:40'],['2026-02-24','23:18'],['2026-02-25','23:20'],['2026-02-26','22:25'],['2026-02-27','22:34'],['2026-02-28','23:15'],
+  ['2026-03-01','23:32'],['2026-03-02','22:58'],['2026-03-03','22:50'],['2026-03-04','00:00'],['2026-03-05','23:55'],['2026-03-07','00:30'],['2026-03-08','00:30'],['2026-03-09','22:48'],['2026-03-10','22:35'],['2026-03-11','00:30'],['2026-03-12','00:30'],['2026-03-13','23:30'],['2026-03-14','00:30'],['2026-03-15','23:15'],['2026-03-16','23:50'],['2026-03-17','23:55'],['2026-03-20','23:15'],['2026-03-21','22:46'],['2026-03-25','00:30'],['2026-03-26','23:15'],['2026-03-27','23:51'],['2026-03-28','23:55'],['2026-03-30','22:40'],['2026-03-31','22:20'],
+  ['2026-04-01','23:25'],['2026-04-02','23:02'],['2026-04-03','22:31'],['2026-04-04','22:45'],['2026-04-05','23:30'],['2026-04-06','00:35'],['2026-04-07','23:00'],['2026-04-08','00:20'],['2026-04-09','00:30'],['2026-04-10','22:20'],['2026-04-11','22:54'],['2026-04-12','23:00'],['2026-04-13','22:55'],['2026-04-14','00:30'],['2026-04-15','00:15'],['2026-04-16','00:00'],['2026-04-17','00:40'],['2026-04-18','23:39'],['2026-04-20','22:20'],['2026-04-21','23:40'],['2026-04-22','22:55'],['2026-04-23','23:00'],['2026-04-24','22:55'],['2026-04-25','00:30'],['2026-04-26','00:15'],['2026-04-27','00:00'],['2026-04-28','00:40'],['2026-04-29','23:39'],
+  ['2026-05-01','22:30'],['2026-05-02','22:40'],['2026-05-03','23:26'],['2026-05-04','23:30'],['2026-05-05','23:00'],['2026-05-06','23:30'],['2026-05-07','23:00'],['2026-05-08','22:20'],['2026-05-09','21:58'],['2026-05-10','23:05'],['2026-05-11','22:48'],['2026-05-12','22:40'],['2026-05-13','22:37'],['2026-05-14','22:55'],['2026-05-16','23:58'],['2026-05-18','22:55'],['2026-05-19','23:12'],['2026-05-20','22:28'],['2026-05-21','22:13'],['2026-05-22','23:50'],['2026-05-23','23:00'],['2026-05-24','23:49'],['2026-05-25','22:15'],['2026-05-26','21:58'],['2026-05-27','22:40'],['2026-05-28','22:30'],['2026-05-29','23:57'],
+  ['2026-06-01','22:30'],['2026-06-02','22:25'],['2026-06-03','23:55'],['2026-06-04','00:55'],['2026-06-05','22:50'],['2026-06-06','22:45'],['2026-06-07','22:15'],['2026-06-08','22:30'],['2026-06-09','22:35'],['2026-06-10','22:35'],['2026-06-11','22:43'],['2026-06-12','22:55'],['2026-06-13','23:35'],['2026-06-14','22:30'],['2026-06-15','23:00'],['2026-06-16','22:40'],['2026-06-17','00:30'],['2026-06-18','23:30'],['2026-06-19','22:30'],['2026-06-20','23:30'],['2026-06-21','23:35'],['2026-06-22','22:32'],['2026-06-23','23:05'],['2026-06-24','23:55'],['2026-06-25','02:30'],['2026-06-26','22:40'],['2026-06-27','22:40'],['2026-06-28','22:35'],['2026-06-29','22:35'],['2026-06-30','23:12']
 ];
 const JULY_SLEEP_RECORDS_2026=[
   ['2026-07-01','00:45'],['2026-07-02','22:45'],['2026-07-03','22:45'],['2026-07-04','22:15'],['2026-07-05','22:55'],['2026-07-06','22:55'],['2026-07-07','23:50'],['2026-07-08','23:38'],['2026-07-09','22:28'],['2026-07-10','22:57'],['2026-07-11','22:35'],
@@ -1347,24 +1750,28 @@ function ensureRoutineTasks(data){
     }
   });
 }
-function importHistoricalSleepRecords(sleepData){
+function importHistoricalSleepRecords2026(sleepData){
   sleepData.records=Array.isArray(sleepData.records)?sleepData.records:[];
   let added=0;
-  HISTORICAL_SLEEP_RECORDS_2025.forEach(([date,bedtime])=>{
+  HISTORICAL_SLEEP_RECORDS_2026.forEach(([date,bedtime])=>{
     const existing=findByDate(sleepData.records,date);
-    if(existing?.bedtime)return;
+    if(existing?.bedtime){
+      // 确保历史记录起床时间统一为 07:00
+      if(!existing.wakeTime)existing.wakeTime='07:00';
+      return;
+    }
     sleepData.records.push({
       id:genId(),
       date,
       bedtime,
       wakeTime:'07:00',
       quality:3,
-      notes:'由1-6月手写睡眠记录导入，可继续编辑'
+      notes:'由1-6月手写睡眠记录导入（2026）'
     });
     added++;
   });
   sleepData.records=dedupeByDate(sleepData.records);
-  sleepData.historyImport2025=true;
+  sleepData.historyImport2026=true;
   return added;
 }
 function importJulySleepRecords2026(sleepData){
@@ -1372,14 +1779,18 @@ function importJulySleepRecords2026(sleepData){
   let added=0;
   JULY_SLEEP_RECORDS_2026.forEach(([date,bedtime])=>{
     const existing=findByDate(sleepData.records,date);
-    if(existing?.bedtime)return;
+    if(existing?.bedtime){
+      // 如果已有记录但起床时间为空，补填为 07:00
+      if(!existing.wakeTime)existing.wakeTime='07:00';
+      return;
+    }
     sleepData.records.push({
       id:genId(),
       date,
       bedtime,
-      wakeTime:'',
+      wakeTime:'07:00',
       quality:3,
-      notes:'由7月手写睡眠记录导入，起床时间可继续补填'
+      notes:'由7月手写睡眠记录导入，起床时间默认07:00'
     });
     added++;
   });
@@ -1425,7 +1836,7 @@ const DB={
         {id:genId(),type:'inspiration',title:'灵感记录',visible:true,data:{}},
         {id:genId(),type:'collection',title:'收藏库',visible:true,data:{entries:[],filter:'all',categories:DEFAULT_COLLECTION_CATEGORIES.slice()}},
         {id:genId(),type:'changelog',title:'更新日志',visible:true,data:{
-          logs:[{id:genId(),date:todayStr(),version:'V8.1',changes:'V8.1 功能修复与优化：\n• 修复英语写作纠错反馈表格无法正常渲染的问题（HTML转义bug）\n• 修复睡眠7月记录看板显示问题，优化月视图自动定位逻辑\n• 行动总览补填改为 ○/✓ 圆圈勾选模式，更简洁直观\n• 为睡眠/运动/冥想/复盘/阅读/英语6个板块增加撤回按钮，误操作可一键恢复\n• 优化热点同步机制，增加多URL回退策略\n• 修复睡眠周保存时备注被清空的问题\n• 修复每日复盘评分0被误判为空的问题\n• 修复正则表达式冗余、XML解析错误处理等多处代码健壮性问题\n• 优化写作反馈表格CSS样式'},{id:genId(),date:todayStr(),version:'v1.0',changes:'初始版本发布：\n• 创建每日计划、睡眠记录、运动记录、每日复盘、阅读、英语学习、技能提升、爆款话题、灵感记录、迭代更新共10个模块\n• 支持6种主题配色自选\n• 支持在线编辑，数据自动保存\n• 响应式设计，支持iPhone访问编辑\n• 支持模块增删管理\n• 支持数据导入导出备份'}]
+          logs:[{id:genId(),date:todayStr(),version:'V8.2',changes:'V8.2 五大问题修复：\n• 修复睡眠记录日期错误（2025→2026），1-6月记录恢复正常显示，起床时间统一默认07:00\n• 修复月份视图每次加载跳回最新月份的问题，用户切换月份后不再被重置\n• 修复长期报告计算逻辑，确保本月/本季度/今年数据正确统计\n• 修复英语写作纠错：过去时态按句检查（不再全局误判）、be动词不误改形容词、缩写大小写敏感、a/an例外更完整、Native版本更保守\n• 查单词新增例句中文翻译（词包例句内置翻译+API例句自动翻译），常见搭配已含中文释义\n• 加入生词本按钮改为醒目样式\n• 修复热榜同步：工作流步骤ID修正、新增API连通性测试、占位数据识别、本地文件失败时自动回退直接抓取API'},{id:genId(),date:todayStr(),version:'V8.1',changes:'V8.1 功能修复与优化：\n• 修复英语写作纠错反馈表格无法正常渲染的问题（HTML转义bug）\n• 修复睡眠7月记录看板显示问题，优化月视图自动定位逻辑\n• 行动总览补填改为 ○/✓ 圆圈勾选模式，更简洁直观\n• 为睡眠/运动/冥想/复盘/阅读/英语6个板块增加撤回按钮，误操作可一键恢复\n• 优化热点同步机制，增加多URL回退策略\n• 修复睡眠周保存时备注被清空的问题\n• 修复每日复盘评分0被误判为空的问题\n• 修复正则表达式冗余、XML解析错误处理等多处代码健壮性问题\n• 优化写作反馈表格CSS样式'},{id:genId(),date:todayStr(),version:'v1.0',changes:'初始版本发布：\n• 创建每日计划、睡眠记录、运动记录、每日复盘、阅读、英语学习、技能提升、爆款话题、灵感记录、迭代更新共10个模块\n• 支持6种主题配色自选\n• 支持在线编辑，数据自动保存\n• 响应式设计，支持iPhone访问编辑\n• 支持模块增删管理\n• 支持数据导入导出备份'}]
         }},
       ]
     };
@@ -1522,18 +1933,64 @@ const MODULE_TYPES={
   /* ---- 每日计划 ---- */
   'daily-plan':{
     title:'每日计划',icon:'plan',desc:'管理今日待办任务',
-    defaultData:{tasks:[],currentDate:'',routineTasks:DEFAULT_ROUTINE_TASKS.map(text=>({id:genId(),text}))},
+    defaultData:{tasks:[],currentDate:'',selectedDate:'',calViewYear:0,calViewMonth:0,routineTasks:DEFAULT_ROUTINE_TASKS.map(text=>({id:genId(),text}))},
     render(d){
       d.tasks=d.tasks||[];
       ensureRoutineTasks(d);
-      const today=todayStr();
-      if(d.currentDate!==today){d.currentDate=today;}
-      const todayTasks=d.tasks.filter(t=>t.date===today);
+      d.selectedDate=d.selectedDate||todayStr();
+      const selDate=d.selectedDate;
+      const todayTasks=d.tasks.filter(t=>t.date===selDate);
+      const isToday=selDate===todayStr();
       const done=todayTasks.filter(t=>t.done).length;
       const prog=todayTasks.length?Math.round(done/todayTasks.length*100):0;
+      // 格式化日期显示
+      const selDateObj=new Date(selDate);
+      const dateLabel=`${selDateObj.getMonth()+1}月${selDateObj.getDate()}日 周${dayLabel(selDateObj)}`;
+      // 迷你日历：支持独立月份导航，默认跟随选中日期
+      const dpNow=new Date();
+      const dpViewDate=d.calViewYear&&d.calViewMonth?new Date(d.calViewYear,d.calViewMonth,1):new Date(selDateObj.getFullYear(),selDateObj.getMonth(),1);
+      const dpMonthKey=`${dpViewDate.getFullYear()}-${String(dpViewDate.getMonth()+1).padStart(2,'0')}`;
+      const dpMonthDays=monthDates(dpViewDate);
+      const dpTasksByDate={};
+      (d.tasks||[]).forEach(t=>{if(t.date)dpTasksByDate[t.date]=(dpTasksByDate[t.date]||0)+1;});
+      const dpMiniCal=`
+        <div style="border:1px solid var(--card-border);border-radius:10px;padding:8px;margin-bottom:8px;background:var(--card)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <button class="btn btn-ghost btn-sm dp-cal-prev" style="padding:1px 6px;font-size:11px">‹</button>
+            <strong style="font-size:12px">${dpViewDate.getFullYear()}年${dpViewDate.getMonth()+1}月 计划日历</strong>
+            <button class="btn btn-ghost btn-sm dp-cal-next" style="padding:1px 6px;font-size:11px">›</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;font-size:10px;text-align:center">
+            ${['日','一','二','三','四','五','六'].map(w=>`<div style="color:var(--text-sec);font-weight:600;padding:2px">${w}</div>`).join('')}
+            ${dpMonthDays.map(day=>{
+              const key=dateKey(day),inMonth=key.slice(0,7)===dpMonthKey;
+              const taskCount=dpTasksByDate[key]||0;
+              const isSel=key===selDate;
+              const isToday2=key===todayStr();
+              return `<div class="dp-cal-day" data-date="${key}" style="padding:3px 2px;border-radius:4px;cursor:pointer;${isSel?'background:var(--primary);color:#fff':(inMonth?'':'opacity:.3')}${isToday2&&!isSel?';border:1px solid var(--primary)':''}">
+                <div>${day.getDate()}</div>
+                ${taskCount?`<div style="font-size:8px;${isSel?'color:#fff':'color:var(--primary)'}">${taskCount}项</div>`:'<div style="font-size:8px;color:transparent">·</div>'}
+              </div>`;
+            }).join('')}
+          </div>
+          <div class="small-text" style="text-align:center;margin-top:4px;font-size:10px;color:var(--text-sec)">点击日期可查看当天计划</div>
+        </div>`;
       return`
+        <div class="week-head" style="border:1px solid var(--card-border);border-radius:12px;margin-bottom:8px">
+          <button class="btn btn-ghost btn-sm dp-prev-day" style="padding:2px 8px">‹ 前一天</button>
+          <strong>${isToday?'今日计划 · ':''}${dateLabel}</strong>
+          <div style="display:flex;gap:4px">
+            ${isToday?'':'<button class="btn btn-ghost btn-sm dp-today" style="padding:2px 8px">回到今天</button>'}
+            <button class="btn btn-ghost btn-sm dp-next-day" style="padding:2px 8px">后一天 ›</button>
+          </div>
+        </div>
+        ${dpMiniCal}
         <div class="form-row">
-          <input type="text" class="dp-input" placeholder="添加今日计划..." maxlength="100">
+          <div class="form-group" style="max-width:180px"><label>选择日期</label><input type="date" class="dp-date" value="${esc(selDate)}" max="${todayStr()}"></div>
+          <button class="btn btn-ghost btn-sm dp-load-date">载入日期</button>
+        </div>
+        <div class="form-row">
+          <input type="text" class="dp-input" placeholder="${isToday?'添加今日计划...':'添加'+selDate+'的计划...'}" maxlength="100">
           <button class="btn btn-primary btn-sm dp-add">添加</button>
         </div>
         <div class="flex-between">
@@ -1571,11 +2028,74 @@ const MODULE_TYPES={
       const addTask=()=>{
         const text=input.value.trim();if(!text)return;
         mod.data.tasks=mod.data.tasks||[];
-        mod.data.tasks.push({id:genId(),text,done:false,date:todayStr()});
+        mod.data.selectedDate=mod.data.selectedDate||todayStr();
+        mod.data.tasks.push({id:genId(),text,done:false,date:mod.data.selectedDate});
         save();rerender(mod);
       };
       addBtn.addEventListener('click',addTask);
       input.addEventListener('keydown',e=>{if(e.key==='Enter')addTask();});
+      body.querySelector('.dp-prev-day')?.addEventListener('click',()=>{
+        const d=new Date(mod.data.selectedDate||todayStr());
+        d.setDate(d.getDate()-1);
+        mod.data.selectedDate=dateKey(d);
+        mod.data.calViewYear=d.getFullYear();mod.data.calViewMonth=d.getMonth();
+        save();rerender(mod);
+      });
+      body.querySelector('.dp-next-day')?.addEventListener('click',()=>{
+        const d=new Date(mod.data.selectedDate||todayStr());
+        d.setDate(d.getDate()+1);
+        mod.data.selectedDate=dateKey(d);
+        mod.data.calViewYear=d.getFullYear();mod.data.calViewMonth=d.getMonth();
+        save();rerender(mod);
+      });
+      body.querySelector('.dp-today')?.addEventListener('click',()=>{
+        mod.data.selectedDate=todayStr();
+        mod.data.calViewYear=0;mod.data.calViewMonth=0;
+        save();rerender(mod);
+      });
+      // 迷你日历：点击日期跳转到对应天
+      body.querySelectorAll('.dp-cal-day').forEach(cell=>{
+        cell.addEventListener('click',()=>{
+          const date=cell.dataset.date;
+          if(date){
+            mod.data.selectedDate=date;
+            // 同步迷你日历月份到选中日期所在月
+            const d2=new Date(date);
+            mod.data.calViewYear=d2.getFullYear();
+            mod.data.calViewMonth=d2.getMonth();
+            save();rerender(mod);
+          }
+        });
+      });
+      // 迷你日历：上个月
+      body.querySelector('.dp-cal-prev')?.addEventListener('click',()=>{
+        const vd=mod.data.calViewYear&&mod.data.calViewMonth?new Date(mod.data.calViewYear,mod.data.calViewMonth,1):new Date(mod.data.selectedDate||todayStr());
+        vd.setMonth(vd.getMonth()-1);
+        mod.data.calViewYear=vd.getFullYear();
+        mod.data.calViewMonth=vd.getMonth();
+        save();rerender(mod);
+      });
+      // 迷你日历：下个月
+      body.querySelector('.dp-cal-next')?.addEventListener('click',()=>{
+        const vd=mod.data.calViewYear&&mod.data.calViewMonth?new Date(mod.data.calViewYear,mod.data.calViewMonth,1):new Date(mod.data.selectedDate||todayStr());
+        vd.setMonth(vd.getMonth()+1);
+        mod.data.calViewYear=vd.getFullYear();
+        mod.data.calViewMonth=vd.getMonth();
+        save();rerender(mod);
+      });
+      const dateInput=body.querySelector('.dp-date');
+      body.querySelector('.dp-load-date')?.addEventListener('click',()=>{
+        mod.data.selectedDate=dateInput.value||todayStr();
+        const d2=new Date(mod.data.selectedDate);
+        mod.data.calViewYear=d2.getFullYear();mod.data.calViewMonth=d2.getMonth();
+        save();rerender(mod);
+      });
+      dateInput?.addEventListener('change',()=>{
+        mod.data.selectedDate=dateInput.value||todayStr();
+        const d2=new Date(mod.data.selectedDate);
+        mod.data.calViewYear=d2.getFullYear();mod.data.calViewMonth=d2.getMonth();
+        save();rerender(mod);
+      });
       body.querySelectorAll('.todo-item').forEach(item=>{
         const id=item.dataset.id;
         item.querySelector('.dp-toggle').addEventListener('click',()=>{
@@ -1620,11 +2140,12 @@ const MODULE_TYPES={
   /* ---- 行动总览 ---- */
   'overview':{
     title:'行动总览',icon:'overview',desc:'按周回顾每天完成了什么',
-    defaultData:{weekOffset:0,customRows:[],customDone:{}},
+    defaultData:{weekOffset:0,customRows:[],customDone:{},hiddenDays:[]},
     render(d){
       d.weekOffset=d.weekOffset||0;
       d.customRows=Array.isArray(d.customRows)?d.customRows:[];
       d.customDone=d.customDone||{};
+      d.hiddenDays=Array.isArray(d.hiddenDays)?d.hiddenDays:[];
       const mods=DB.data.modules||[];
       const get=(type)=>mods.find(m=>m.type===type)?.data||{};
       const plan=get('daily-plan'), sleep=get('sleep'), exercise=get('exercise'), meditation=get('meditation'), reading=get('reading'), english=get('english'), review=get('review');
@@ -1650,23 +2171,33 @@ const MODULE_TYPES={
           ? tasks.some(t=>t.routineId===row.id||t.text===row.label)
           : tasks.some(t=>t.text===row.label);
       };
+      // 列显示控制：计算可见列（至少保留1列）
+      const allIndices=days.map((_,i)=>i);
+      const hiddenSet=new Set(d.hiddenDays||[]);
+      let visibleIndices=allIndices.filter(i=>!hiddenSet.has(i));
+      if(visibleIndices.length===0)visibleIndices=allIndices; // 全隐藏时恢复全部
+      const visibleDays=visibleIndices.map(i=>days[i]);
+      const visibleDayKeys=visibleIndices.map(i=>dayKeys[i]);
+      const gridCols=`minmax(170px,1.4fr) repeat(${visibleDays.length},minmax(70px,1fr))`;
+      const colToggle=`<div class="quick-chips" style="margin-bottom:6px;flex-wrap:wrap"><span class="small-text" style="margin-right:4px">📋 显示列：</span>${days.map((day,i)=>{const hidden=(d.hiddenDays||[]).includes(i);return `<span class="tag ov-col-toggle" data-day-idx="${i}" style="cursor:pointer;font-size:11px;${hidden?'opacity:.35;text-decoration:line-through':''}">周${dayLabel(day)} ${day.getMonth()+1}/${day.getDate()}</span>`;}).join('')}</div>`;
       const matrix=`
         <div class="habit-matrix-wrap">
+          ${colToggle}
           <div class="habit-matrix">
-            <div class="habit-row">
+            <div class="habit-row" style="grid-template-columns:${gridCols}">
               <div class="habit-cell habit-head habit-label">每日计划</div>
-              ${days.map(day=>`<div class="habit-cell habit-head">周${dayLabel(day)}<br>${day.getMonth()+1}/${day.getDate()}</div>`).join('')}
+              ${visibleDays.map(day=>`<div class="habit-cell habit-head">周${dayLabel(day)}<br>${day.getMonth()+1}/${day.getDate()}</div>`).join('')}
             </div>
             ${matrixRows.length?matrixRows.map(row=>`
-              <div class="habit-row">
+              <div class="habit-row" style="grid-template-columns:${gridCols}">
                 <div class="habit-cell habit-label">${esc(row.label)}${row.type==='custom'?`<button class="record-del ov-custom-del" data-id="${row.id}" title="删除自定义项" style="margin-left:6px">✕</button>`:''}</div>
-                ${dayKeys.map(key=>{
+                ${visibleDayKeys.map(key=>{
                   const done=hasDoneTask(row,key),planned=hasAnyTask(row,key);
                   if(row.type==='custom')return `<div class="habit-cell"><label class="chip" style="padding:3px 7px;margin:0"><input type="checkbox" class="ov-custom-check" data-id="${row.id}" data-date="${key}" ${done?'checked':''}>${done?'✓':'○'}</label></div>`;
                   return `<div class="habit-cell"><label class="chip" style="padding:3px 7px;margin:0"><input type="checkbox" class="ov-plan-check" data-type="${row.type}" data-id="${esc(row.id)}" data-label="${esc(row.label)}" data-date="${key}" ${done?'checked':''}>${done?'✓':planned?'○':'○'}</label></div>`;
                 }).join('')}
               </div>
-            `).join(''):'<div class="habit-row"><div class="habit-cell habit-label">暂无常规计划</div><div class="habit-cell" style="grid-column:span 7">先在“每日计划”里添加常规项，这里会自动生成看板。</div></div>'}
+            `).join(''):`<div class="habit-row" style="grid-template-columns:${gridCols}"><div class="habit-cell habit-label">暂无常规计划</div><div class="habit-cell" style="grid-column:span ${visibleDays.length}">先在“每日计划”里添加常规项，这里会自动生成看板。</div></div>`}
           </div>
         </div>`;
       const cards=days.map(day=>{
@@ -1704,7 +2235,7 @@ const MODULE_TYPES={
           items.push(`英语 ${enParts.length?enParts.join('、'):`${en}分钟`}`);
         }
         const rv=findByDate(review.records||[],key);
-        if(rv?.wellDone){items.push(`复盘：${rv.wellDone.slice(0,18)}${rv.wellDone.length>18?'...':''}`);summary.review++;}
+        if(rv&&(rv.wellDone||rv.improve)){items.push(`复盘：${(rv.wellDone||rv.improve).slice(0,18)}${(rv.wellDone||rv.improve).length>18?'...':''}`);summary.review++;}
         return `<div class="overview-day ${key===todayStr()?'today':''}">
           <strong>周${dayLabel(day)} ${day.getDate()}日</strong>
           ${items.length?items.map(i=>`<div class="overview-item">${esc(i)}</div>`).join(''):'<div class="small-text">暂无记录</div>'}
@@ -1737,13 +2268,24 @@ const MODULE_TYPES={
         </div>
         ${matrix}
         <div class="overview-detail-grid">${cards}</div>
-        <div class="report-text" style="margin-top:10px">${esc(reflection)}</div>
+        ${reflection}
         <div class="small-text" style="margin-top:8px">上方矩阵自动读取"每日计划"的常规事项，也支持自定义追踪项；点击 ○ 切换为 ✓ 表示完成，再次点击可取消。下方保留每天的具体记录。</div>
       `;
     },
     bind(body,mod,save){
       body.querySelector('.ov-prev')?.addEventListener('click',()=>{mod.data.weekOffset=(mod.data.weekOffset||0)-1;save();rerender(mod);});
       body.querySelector('.ov-next')?.addEventListener('click',()=>{mod.data.weekOffset=(mod.data.weekOffset||0)+1;save();rerender(mod);});
+      // 列显示/隐藏切换
+      body.querySelectorAll('.ov-col-toggle').forEach(chip=>{
+        chip.addEventListener('click',()=>{
+          const idx=+chip.dataset.dayIdx;
+          mod.data.hiddenDays=mod.data.hiddenDays||[];
+          const pos=mod.data.hiddenDays.indexOf(idx);
+          if(pos>=0)mod.data.hiddenDays.splice(pos,1);
+          else mod.data.hiddenDays.push(idx);
+          save();rerender(mod);
+        });
+      });
       const addCustom=()=>{
         const input=body.querySelector('.ov-custom-input');
         const label=input?.value.trim();
@@ -1761,7 +2303,7 @@ const MODULE_TYPES={
         mod.data.customDone=mod.data.customDone||{};
         mod.data.customDone[id]=mod.data.customDone[id]||{};
         mod.data.customDone[id][key]=chk.checked;
-        save();
+        save();rerender(mod);
       }));
       body.querySelectorAll('.ov-plan-check').forEach(chk=>chk.addEventListener('change',()=>{
         const planMod=DB.data.modules.find(m=>m.type==='daily-plan');
@@ -1781,8 +2323,7 @@ const MODULE_TYPES={
         task.text=label;
         task.done=chk.checked;
         DB.save();
-        const labelEl=chk.closest('label');
-        if(labelEl)labelEl.lastChild.textContent=chk.checked?'✓':'○';
+        rerender(mod);
       }));
       body.querySelectorAll('.ov-custom-del').forEach(btn=>btn.addEventListener('click',()=>{
         const id=btn.dataset.id;
@@ -1928,7 +2469,9 @@ const MODULE_TYPES={
       d.selectedDate=d.selectedDate||todayStr();
       const currentMonth=`${new Date().getFullYear()}-${String(new Date().getMonth()+1).padStart(2,'0')}`;
       if(d.monthOffset===undefined||d.monthOffset===null)d.monthOffset=0;
+      // 智能定位月份：如果有当前月记录就显示当前月，否则跳到最新记录所在月
       if(!d.monthViewTouched){
+        // 首次加载：智能定位到有记录的月份
         const hasCurrentMonth=d.records.some(r=>(r.date||'').slice(0,7)===currentMonth);
         if(!hasCurrentMonth){
           d.monthOffset=monthOffsetFromLatestSleepRecord(d.records);
@@ -1936,6 +2479,7 @@ const MODULE_TYPES={
           d.monthOffset=0;
         }
       }
+      // 用户手动切换月份后，不再自动跳转，尊重用户选择
       const sleepWeek=weekDates().map(day=>{
         const key=dateKey(day), r=findByDate(d.records,key)||{};
         return `<div class="day-card ${key===todayStr()?'today':''}" data-date="${key}">
@@ -1959,7 +2503,10 @@ const MODULE_TYPES={
           <div class="week-head" style="justify-content:space-between">
             <button class="btn btn-ghost btn-sm sl-month-prev" style="padding:2px 8px">‹ 上月</button>
             <strong>${monthLabel} 睡眠看板</strong>
-            <button class="btn btn-ghost btn-sm sl-month-next" style="padding:2px 8px">下月 ›</button>
+            <div style="display:flex;gap:4px">
+              <button class="btn btn-ghost btn-sm sl-month-edit" style="padding:2px 8px;font-size:12px">${d.monthEdit?'✓ 完成':'✎ 编辑'}</button>
+              <button class="btn btn-ghost btn-sm sl-month-next" style="padding:2px 8px">下月 ›</button>
+            </div>
           </div>
           <div class="month-grid">
             ${['日','一','二','三','四','五','六'].map(w=>`<div class="month-weekday">周${w}</div>`).join('')}
@@ -1967,12 +2514,21 @@ const MODULE_TYPES={
               const key=dateKey(day), r=findByDate(d.records,key)||{}, inMonth=key.slice(0,7)===monthKey;
               const early=isEarlySleep(r.bedtime);
               const dur=sleepDurationText(r.bedtime,r.wakeTime,false);
+              if(d.monthEdit&&inMonth){
+                return `<div class="month-day ${inMonth?'':'empty'} ${key===todayK?'today':''}" data-date="${key}" style="min-height:80px;padding:3px">
+                  <div class="month-day-num" style="font-size:11px">${day.getDate()}</div>
+                  <input type="time" class="sl-month-bed" value="${esc(r.bedtime||'')}" style="width:100%;font-size:10px;padding:1px 2px;border:1px solid var(--input-border);border-radius:3px;margin:1px 0" title="入睡">
+                  <input type="time" class="sl-month-wake" value="${esc(r.wakeTime||'')}" style="width:100%;font-size:10px;padding:1px 2px;border:1px solid var(--input-border);border-radius:3px;margin:1px 0" title="起床">
+                  <select class="sl-month-quality" style="width:100%;font-size:9px;padding:0;border:1px solid var(--input-border);border-radius:3px">${[1,2,3,4,5].map(n=>`<option value="${n}" ${(+r.quality||3)===n?'selected':''}>${n}★</option>`).join('')}</select>
+                </div>`;
+              }
               return `<div class="month-day ${inMonth?'':'empty'} ${key===todayK?'today':''}" data-date="${key}">
                 <div class="month-day-num">${day.getDate()}</div>
                 <div class="month-day-info">${r.bedtime?`<span class="${early?'early-sleep':'late-sleep'}">${esc(r.bedtime)}</span> → ${esc(r.wakeTime||'未填')}<br><span class="small-text">${esc(dur||'时长未填')}</span><br>${'★'.repeat(+r.quality||3)}${visibleSleepNote(r.notes)?`<br>${esc(visibleSleepNote(r.notes))}`:''}`:'<span class="small-text">-</span>'}</div>
               </div>`;
             }).join('')}
           </div>
+          ${d.monthEdit?'<button class="btn btn-primary btn-sm btn-block sl-month-save" style="margin-top:8px">保存本月修改</button>':''}
           ${(()=>{const mc=d.records.filter(r=>(r.date||'').slice(0,7)===monthKey);const ec=mc.filter(r=>isEarlySleep(r.bedtime)).length;const validMins=mc.filter(r=>r.bedtime&&r.wakeTime).map(r=>sleepMinutes(r.bedtime,r.wakeTime));const avgMin=validMins.length?Math.round(validMins.reduce((a,b)=>a+b,0)/validMins.length):0;const avgH=Math.floor(avgMin/60),avgM=avgMin%60;const avgText=validMins.length?`平均睡眠 ${avgH}小时${avgM}分钟`:'平均睡眠待补填';return mc.length?`<div class="small-text" style="margin-top:6px;text-align:center">本月记录 ${mc.length} 天 · 早睡 ${ec} 天 · 早睡率 ${Math.round(ec/mc.length*100)}% · ${avgText}</div>`:''})()}
         </div>`;
       const selectedRec=findByDate(d.records,d.selectedDate)||{};
@@ -2030,7 +2586,7 @@ const MODULE_TYPES={
     },
     bind(body,mod,save){
       const stars=body.querySelector('.sl-stars');
-      stars.querySelectorAll('.star').forEach(s=>{
+      stars?.querySelectorAll('.star').forEach(s=>{
         s.addEventListener('click',()=>{
           const n=+s.dataset.n;stars.dataset.val=n;
           stars.querySelectorAll('.star').forEach(x=>x.classList.toggle('active',+x.dataset.n<=n));
@@ -2038,10 +2594,53 @@ const MODULE_TYPES={
       });
       body.querySelector('.sl-month-prev')?.addEventListener('click',()=>{mod.data.monthViewTouched=true;mod.data.monthOffset=(mod.data.monthOffset||0)-1;save();rerender(mod);});
       body.querySelector('.sl-month-next')?.addEventListener('click',()=>{mod.data.monthViewTouched=true;mod.data.monthOffset=(mod.data.monthOffset||0)+1;save();rerender(mod);});
+      body.querySelector('.sl-month-edit')?.addEventListener('click',()=>{
+        mod.data.monthEdit=!mod.data.monthEdit;
+        save();rerender(mod);
+      });
+      body.querySelector('.sl-month-save')?.addEventListener('click',()=>{
+        _undoSnapshot(mod);
+        mod.data.records=mod.data.records||[];
+        body.querySelectorAll('.month-day[data-date]').forEach(day=>{
+          const bed=day.querySelector('.sl-month-bed')?.value||'';
+          const wake=day.querySelector('.sl-month-wake')?.value||'';
+          const quality=+(day.querySelector('.sl-month-quality')?.value||3);
+          if(bed||wake){
+            const existing=findByDate(mod.data.records,day.dataset.date);
+            mod.data.records=upsertByDate(mod.data.records,day.dataset.date,{
+              bedtime:bed,wakeTime:wake,quality,
+              notes:existing?.notes||''
+            });
+          }
+        });
+        mod.data.monthEdit=false;
+        mod.data.monthViewTouched=false;
+        mod.data.monthOffset=monthOffsetFromLatestSleepRecord(mod.data.records);
+        saveAndRerenderWithConfirm(body.querySelector('.sl-month-save'),mod,save);
+      });
       body.querySelectorAll('.month-day[data-date]').forEach(day=>{
-        day.addEventListener('click',()=>{
+        day.addEventListener('click',(e)=>{
+          // 编辑模式下不触发日期选中（避免点击输入框时跳转）
+          if(mod.data.monthEdit||e.target.tagName==='INPUT'||e.target.tagName==='SELECT')return;
           mod.data.selectedDate=day.dataset.date;
           save();rerender(mod);
+          // 滚动到下方打卡日历区域并高亮对应日期
+          setTimeout(()=>{
+            const weekPanel=body.querySelector('.week-panel');
+            if(weekPanel){
+              weekPanel.scrollIntoView({behavior:'smooth',block:'start'});
+              const dayCard=body.querySelector(`.day-card[data-date="${day.dataset.date}"]`);
+              if(dayCard){
+                dayCard.style.transition='background .3s ease';
+                dayCard.style.background='var(--primary-light)';
+                dayCard.style.boxShadow='0 0 0 2px var(--primary)';
+                setTimeout(()=>{dayCard.style.background='';dayCard.style.boxShadow='';},2500);
+              }
+            }else{
+              const dateInput=body.querySelector('.sl-date');
+              if(dateInput)dateInput.scrollIntoView({behavior:'smooth',block:'center'});
+            }
+          },150);
         });
       });
       const dateInput=body.querySelector('.sl-date');
@@ -2080,6 +2679,7 @@ const MODULE_TYPES={
       });
       updateDuration();
       body.querySelector('.sl-add').addEventListener('click',e=>{
+        _undoSnapshot(mod);
         mod.data.records=mod.data.records||[];
         const date=dateInput.value||todayStr();
         mod.data.selectedDate=date;
@@ -2089,10 +2689,14 @@ const MODULE_TYPES={
           quality:+stars.dataset.val,
           notes:body.querySelector('.sl-notes').value.trim()
         });
+        // 保存后重置月份视图，确保看板显示最新记录
+        mod.data.monthViewTouched=false;
+        mod.data.monthOffset=monthOffsetFromLatestSleepRecord(mod.data.records);
         saveAndRerenderWithConfirm(e.currentTarget,mod,save);
       });
       const weekSave=body.querySelector('.sl-week-save');
       if(weekSave)weekSave.addEventListener('click',()=>{
+        _undoSnapshot(mod);
         mod.data.records=mod.data.records||[];
         body.querySelectorAll('.day-card').forEach(card=>{
           const bedtime=card.querySelector('.sl-week-bed')?.value||'';
@@ -2103,6 +2707,9 @@ const MODULE_TYPES={
             mod.data.records=upsertByDate(mod.data.records,card.dataset.date,{bedtime,wakeTime,quality,notes:existing?.notes||''});
           }
         });
+        // 保存后重置月份视图，让看板自动定位到包含最新记录的月份
+        mod.data.monthViewTouched=false;
+        mod.data.monthOffset=monthOffsetFromLatestSleepRecord(mod.data.records);
         saveAndRerenderWithConfirm(weekSave,mod,save);
       });
       const slUndo=body.querySelector('.sl-week-undo');
@@ -2219,10 +2826,37 @@ const MODULE_TYPES={
   /* ---- 每日复盘 ---- */
   'review':{
     title:'每日复盘',icon:'review',desc:'反思总结与感恩',
-    defaultData:{records:[],fields:['经验总结']},
+    defaultData:{records:[],fields:['经验总结'],monthOffset:0},
     render(d){
       d.records=dedupeByDate(d.records||[]);d.fields=Array.isArray(d.fields)?d.fields:['经验总结'];
       d.selectedDate=d.selectedDate||todayStr();
+      d.monthOffset=d.monthOffset||0;
+      const rvCtx=monthContext(d.monthOffset);
+      const rvMonthKey=rvCtx.monthKey;
+      const reviewMonth=`
+        <div class="month-panel">
+          <div class="week-head" style="justify-content:space-between">
+            <button class="btn btn-ghost btn-sm rv-month-prev" style="padding:2px 8px">‹ 上月</button>
+            <strong>${rvCtx.monthLabel} 复盘看板</strong>
+            <button class="btn btn-ghost btn-sm rv-month-next" style="padding:2px 8px">下月 ›</button>
+          </div>
+          <div class="month-grid">
+            ${['日','一','二','三','四','五','六'].map(w=>`<div class="month-weekday">周${w}</div>`).join('')}
+            ${rvCtx.monthDays.map(day=>{
+              const key=dateKey(day), r=findByDate(d.records,key), inMonth=key.slice(0,7)===rvMonthKey;
+              const hasReview=r&&r.wellDone;
+              const reviewSummary=hasReview?[
+                r.wellDone?`✓${esc(r.wellDone.slice(0,16))}${r.wellDone.length>16?'...':''}`:'',
+                r.improve?`⚠${esc(r.improve.slice(0,14))}${r.improve.length>14?'...':''}`:'',
+              ].filter(Boolean).join(' '):'';
+              return `<div class="month-day ${inMonth?'':'empty'} ${key===todayStr()?'today':''} ${hasReview?'has-review':''}" data-date="${key}" style="cursor:pointer;${hasReview?'background:#f0fdf4;border-color:#bbf7d0':''}">
+                <div class="month-day-num">${day.getDate()}</div>
+                <div class="month-day-info">${hasReview?`<span style="color:#22a06b;font-size:10px;line-height:1.3">${reviewSummary}</span>${r.rating?`<br><span style="font-size:9px;color:#f5b42f">${'★'.repeat(r.rating)}</span>`:''}${r.gratitude?`<br><span style="font-size:9px;color:var(--primary)">🙏</span>`:''}`:'<span class="small-text">-</span>'}</div>
+              </div>`;
+            }).join('')}
+          </div>
+          ${(()=>{const mc=d.records.filter(r=>(r.date||'').slice(0,7)===rvMonthKey);return mc.length?`<div class="small-text" style="margin-top:6px;text-align:center">本月复盘 ${mc.length} 天 · 平均评分 ${mc.length?(mc.reduce((s,r)=>s+(r.rating||3),0)/mc.length).toFixed(1):0} 星 · <span style="color:var(--primary)">点击任意日期可查看完整复盘内容</span></div>`:''})()}
+        </div>`;
       const reviewWeek=weekDates().map(day=>{
         const key=dateKey(day), r=findByDate(d.records,key)||{};
         return `<div class="day-card ${key===todayStr()?'today':''}" data-date="${key}">
@@ -2236,6 +2870,7 @@ const MODULE_TYPES={
       const selectedRec=d.records.find(r=>r.date===d.selectedDate)||{};
       const recent=d.records.slice().reverse().slice(0,30);
       return`
+        ${reviewMonth}
         ${renderWeekShell('复盘日历',reviewWeek)}
         <button class="btn btn-primary btn-sm btn-block rv-week-save">保存本周复盘</button>
         <button class="btn btn-ghost btn-sm rv-week-undo" style="display:none;width:100%;margin-top:4px">↩ 撤回本周保存</button>
@@ -2283,10 +2918,35 @@ const MODULE_TYPES={
     },
     bind(body,mod,save){
       const stars=body.querySelector('.rv-stars');
-      stars.querySelectorAll('.star').forEach(s=>{
+      stars?.querySelectorAll('.star').forEach(s=>{
         s.addEventListener('click',()=>{
           const n=+s.dataset.n;stars.dataset.val=n;
           stars.querySelectorAll('.star').forEach(x=>x.classList.toggle('active',+x.dataset.n<=n));
+        });
+      });
+      body.querySelector('.rv-month-prev')?.addEventListener('click',()=>{mod.data.monthOffset=(mod.data.monthOffset||0)-1;save();rerender(mod);});
+      body.querySelector('.rv-month-next')?.addEventListener('click',()=>{mod.data.monthOffset=(mod.data.monthOffset||0)+1;save();rerender(mod);});
+      // 点击月历某天 → 载入该日期并滚动到打卡日历区域
+      body.querySelectorAll('.month-day[data-date]').forEach(day=>{
+        day.addEventListener('click',()=>{
+          mod.data.selectedDate=day.dataset.date;
+          save();rerender(mod);
+          setTimeout(()=>{
+            const weekPanel=body.querySelector('.week-panel');
+            if(weekPanel){
+              weekPanel.scrollIntoView({behavior:'smooth',block:'start'});
+              const dayCard=body.querySelector(`.day-card[data-date="${day.dataset.date}"]`);
+              if(dayCard){
+                dayCard.style.transition='background .3s ease';
+                dayCard.style.background='var(--primary-light)';
+                dayCard.style.boxShadow='0 0 0 2px var(--primary)';
+                setTimeout(()=>{dayCard.style.background='';dayCard.style.boxShadow='';},2500);
+              }
+            }else{
+              const dateInput=body.querySelector('.rv-date');
+              if(dateInput)dateInput.scrollIntoView({behavior:'smooth',block:'center'});
+            }
+          },150);
         });
       });
       body.querySelector('.rv-save').addEventListener('click',e=>{
@@ -2324,6 +2984,19 @@ const MODULE_TYPES={
           }
         });
         saveAndRerenderWithConfirm(weekSave,mod,save);
+      });
+      // 点击周历某天 → 载入该日期并滚动到日期选择区域
+      body.querySelectorAll('.day-card[data-date]').forEach(card=>{
+        card.addEventListener('click',(e)=>{
+          // 点击周卡内的输入框/文本域时不触发跳转，避免打断编辑
+          if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT')return;
+          mod.data.selectedDate=card.dataset.date;
+          save();rerender(mod);
+          setTimeout(()=>{
+            const dateInput=body.querySelector('.rv-date');
+            if(dateInput)dateInput.scrollIntoView({behavior:'smooth',block:'center'});
+          },100);
+        });
       });
       const rvUndo=body.querySelector('.rv-week-undo');
       if(rvUndo&&_undoStack[mod.id])rvUndo.style.display='';
@@ -2549,7 +3222,7 @@ const MODULE_TYPES={
     render(d){
       d.words=d.words||[];d.sentences=d.sentences||[];d.studyLog=dedupeByDate(d.studyLog||[]);d.daily=d.daily||{};d.writing=d.writing||{};d.selectedDate=d.selectedDate||todayStr();d.monthOffset=d.monthOffset||0;d.soundEnabled=d.soundEnabled!==false;
       const ctx=monthContext(d.monthOffset);const monthKeys=ctx.monthDays.map(dateKey).filter(k=>k.slice(0,7)===ctx.monthKey);
-      const doneSum=monthKeys.reduce((s,k)=>s+englishCompletion(d.daily[k]||{}).done,0), totalSum=monthKeys.length*5;
+      const doneSum=monthKeys.reduce((s,k)=>{const r=d.daily[k];if(!r)return s;const has=r.words10||r.chunk1||r.pattern1||(+r.aiMinutes||0)>=10||(+r.shadowMinutes||0)>=5;return s+(has?englishCompletion(r).done:0);},0), totalSum=monthKeys.reduce((s,k)=>{const r=d.daily[k];if(!r)return s;const has=r.words10||r.chunk1||r.pattern1||(+r.aiMinutes||0)>=10||(+r.shadowMinutes||0)>=5;return s+(has?5:0);},0);
       const monthBoard=renderMonthBoard('英语看板',d.monthOffset,(day,key)=>{const rec=d.daily[key]||{};const c=englishCompletion(rec);return c.done?`<span class="month-dot"></span>${c.done}/5<br>${c.rate}%${rec.note?`<br>${esc(rec.note).slice(0,18)}`:''}`:'';},`<div class="small-text" style="margin:8px 0;text-align:center">本月完成率 ${totalSum?Math.round(doneSum/totalSum*100):0}% · 完成 ${doneSum}/${totalSum} 项</div>`);
       const selectedDaily=d.daily[d.selectedDate]||{};const selectedLog=findByDate(d.studyLog,d.selectedDate)||{};const pack=englishPackFor(d.selectedDate);const writing=d.writing[d.selectedDate]||{};
       const englishWeek=weekDates().map(day=>{const key=dateKey(day), rec=d.daily[key]||{};return `<div class="day-card ${key===todayStr()?'today':''}" data-date="${key}"><div class="day-name">周${dayLabel(day)}</div><div class="day-num">${day.getDate()}</div><div class="quick-chips"><label class="chip"><input type="checkbox" class="en-day-words" ${rec.words10?'checked':''}>10个单词</label><label class="chip"><input type="checkbox" class="en-day-chunk" ${rec.chunk1?'checked':''}>1个词组</label><label class="chip"><input type="checkbox" class="en-day-pattern" ${rec.pattern1?'checked':''}>1个句型</label></div><div class="mini-field"><label>AI对话(分)</label><input type="number" class="en-day-ai" value="${rec.aiMinutes||0}" min="0"></div><div class="mini-field"><label>影子跟读(分)</label><input type="number" class="en-day-shadow" value="${rec.shadowMinutes||0}" min="0"></div><div class="mini-field"><label>备注</label><input type="text" class="en-day-note" value="${esc(rec.note||'')}" placeholder="主题/材料"></div></div>`;}).join('');
@@ -2561,7 +3234,7 @@ const MODULE_TYPES={
         <div class="quick-chips"><label class="chip"><input type="checkbox" class="en-selected-words" ${selectedDaily.words10?'checked':''}>10个单词</label><label class="chip"><input type="checkbox" class="en-selected-chunk" ${selectedDaily.chunk1?'checked':''}>1个词组</label><label class="chip"><input type="checkbox" class="en-selected-pattern" ${selectedDaily.pattern1?'checked':''}>1个句型</label><span class="tag">当日完成率 ${selC.rate}% (${selC.done}/5)</span></div>
         <div class="form-row"><div class="form-group"><label>AI对话(分)</label><input type="number" class="en-selected-ai" value="${selectedDaily.aiMinutes||0}" min="0"></div><div class="form-group"><label>影子跟读(分)</label><input type="number" class="en-selected-shadow" value="${selectedDaily.shadowMinutes||0}" min="0"></div><div class="form-group"><label>学习时长(分)</label><input type="number" class="en-min" value="${selectedLog.minutes||30}" min="1" max="600"></div></div>
         <div class="form-group"><label>备注</label><input type="text" class="en-selected-note" value="${esc(selectedDaily.note||'')}" placeholder="主题/材料"></div><button class="btn btn-primary btn-sm btn-block en-save-selected">保存选中日期英语打卡</button>
-        <div class="english-pack"><h4>选中日期英语包：10个生活词 + chunk + 短文</h4><div class="word-grid">${pack.words.map(([w,m,extra])=>{const e=extra||{};const cols=(e.collocations||[]).map(c=>`<span class="tag" style="margin:2px 2px 0 0;font-size:11px">${esc(c)}</span>`).join('');const exs=(e.examples||[]).map(ex=>`<div class="en-example" style="margin-top:3px;font-size:12px;color:#888;cursor:pointer" data-text="${esc(ex)}">${esc(ex)}</div>`).join('');const vocabItem=d.words.find(v=>v.word.toLowerCase()===w.toLowerCase());const statusLabels={known:'已认识',fuzzy:'模糊',unknown:'不认识'};const statusColors={known:'#22a06b',fuzzy:'#f5b42f',unknown:'#d64545'};const st=vocabItem?(vocabItem.status||'unknown'):null;const vocabBtn=vocabItem?`<span class="tag" style="margin-left:auto;font-size:11px;background:${statusColors[st]}20;color:${statusColors[st]};border-color:${statusColors[st]}40">${statusLabels[st]}</span>`:`<button class="btn btn-ghost btn-sm en-add-vocab" data-word="${esc(w)}" data-meaning="${esc(m)}" style="margin-left:auto;padding:3px 8px;font-size:11px">+生词本</button>`;return `<div class="word-card" style="position:relative"><div style="display:flex;align-items:center;flex-wrap:wrap"><span class="word">${w}</span><span class="en-speak-word" data-word="${esc(w)}" style="cursor:pointer;margin-left:4px" title="朗读"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;pointer-events:none"><path d="M3 9v6h4l5 5V4L7 9H3zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg></span>${e.phonetic?`<span style="margin-left:6px;color:#666;font-size:13px">${esc(e.phonetic)}</span>`:''}${vocabBtn}</div><div class="meaning">${m}</div>${cols?`<div style="margin-top:4px">${cols}</div>`:''}${exs}</div>`;}).join('')}</div><div style="margin-top:8px">${pack.chunks.map((c,i)=>i%2===0?`<span class="tag" style="margin:2px">${esc(c)} / ${esc(pack.chunks[i+1]||'')}</span>`:'').join('')}</div><div class="small-text" style="margin-top:8px;line-height:1.7">${esc(pack.text)}</div><button class="btn btn-ghost btn-sm en-speak-text" style="margin-top:6px">朗读短文</button><button class="btn btn-primary btn-sm btn-block en-import-pack" style="margin-top:8px">加入选中日期学习记录</button></div>
+        <div class="english-pack"><h4>选中日期英语包：10个生活词 + chunk + 短文</h4><div class="word-grid">${pack.words.map(([w,m,extra])=>{const e=extra||{};const cols=(e.collocations||[]).map(c=>`<span class="tag" style="margin:2px 2px 0 0;font-size:11px">${esc(c)}</span>`).join('');const exs=(e.examples||[]).map(ex=>{const en=typeof ex==='string'?ex:(ex.en||'');const zh=typeof ex==='string'?'':(ex.zh||'');return `<div class="en-example" style="margin-top:3px;font-size:12px;color:#888;cursor:pointer" data-text="${esc(en)}">${esc(en)}${zh?`<span style="display:block;color:var(--primary);font-size:11px;margin-left:6px">${esc(zh)}</span>`:''}</div>`;}).join('');const vocabItem=d.words.find(v=>v.word.toLowerCase()===w.toLowerCase());const statusLabels={known:'已认识',fuzzy:'模糊',unknown:'不认识'};const statusColors={known:'#22a06b',fuzzy:'#f5b42f',unknown:'#d64545'};const st=vocabItem?(vocabItem.status||'unknown'):null;const vocabBtn=vocabItem?`<span class="tag" style="margin-left:auto;font-size:11px;background:${statusColors[st]}20;color:${statusColors[st]};border-color:${statusColors[st]}40">${statusLabels[st]}</span>`:`<button class="btn btn-ghost btn-sm en-add-vocab" data-word="${esc(w)}" data-meaning="${esc(m)}" style="margin-left:auto;padding:3px 8px;font-size:11px">+生词本</button>`;return `<div class="word-card" style="position:relative"><div style="display:flex;align-items:center;flex-wrap:wrap"><span class="word">${w}</span><span class="en-speak-word" data-word="${esc(w)}" style="cursor:pointer;margin-left:4px" title="朗读"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;pointer-events:none"><path d="M3 9v6h4l5 5V4L7 9H3zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg></span>${e.phonetic?`<span style="margin-left:6px;color:#666;font-size:13px">${esc(e.phonetic)}</span>`:''}${vocabBtn}</div><div class="meaning">${m}</div>${cols?`<div style="margin-top:4px">${cols}</div>`:''}${exs}</div>`;}).join('')}</div><div style="margin-top:8px">${pack.chunks.map((c,i)=>i%2===0?`<span class="tag" style="margin:2px">${esc(c)} / ${esc(pack.chunks[i+1]||'')}</span>`:'').join('')}</div><div class="small-text" style="margin-top:8px;line-height:1.7">${esc(pack.text)}</div><button class="btn btn-ghost btn-sm en-speak-text" style="margin-top:6px">朗读短文</button><button class="btn btn-primary btn-sm btn-block en-import-pack" style="margin-top:8px">加入选中日期学习记录</button></div>
         <div class="section-label">英文写作练习</div>
         <div class="form-group"><label>用英文写几句今天的感想</label><textarea class="en-writing" placeholder="Try to write 2-5 sentences. You can use today's words." style="min-height:96px">${esc(writing.text||'')}</textarea></div>
         <button class="btn btn-primary btn-sm btn-block en-writing-save">保存写作并重新生成反馈</button>
@@ -2571,7 +3244,7 @@ const MODULE_TYPES={
         <div class="section-label">例句 (${d.sentences.length})</div><div class="form-row"><div class="form-group"><input type="text" class="en-sentence" placeholder="英文句子"></div><button class="btn btn-primary btn-sm en-add-sent">添加</button></div><div class="record-list" style="max-height:100px">${d.sentences.length?d.sentences.slice(-5).reverse().map(s=>`<div class="record-item"><div class="record-content">${esc(s.text)}</div><button class="record-del en-del-sent" data-id="${s.id}">✕</button></div>`).join(''):'<div class="empty-state">暂无例句</div>'}</div>
         <div class="section-label">查单词</div>
         <div class="form-row"><div class="form-group"><input type="text" class="en-lookup-input" placeholder="输入英文单词查询..." style="font-size:14px"></div><button class="btn btn-primary btn-sm en-lookup-btn">查询</button></div>
-        <div class="form-group" style="margin-top:6px"><label style="font-size:12px">📷 上传含英文单词的图片（点击识别后手动输入查询）</label><input type="file" class="en-ocr-file" accept="image/*" style="font-size:13px;padding:6px 0"></div>
+        <div class="form-group" style="margin-top:6px"><label style="font-size:12px">📷 上传/拖拽/粘贴（Ctrl+V）含英文单词的图片，自动识别文本</label><div class="en-ocr-drop" style="border:2px dashed var(--input-border);border-radius:10px;padding:12px;text-align:center;cursor:pointer;transition:all .2s;font-size:12px;color:var(--text-sec)" tabindex="0"><input type="file" class="en-ocr-file" accept="image/*" style="display:none"><div>📷 点击 / 拖拽 / 粘贴图片到此处</div><div style="font-size:11px;margin-top:4px">支持 PNG/JPG，Ctrl+V 直接粘贴截图</div></div></div>
         <div class="en-lookup-result" style="display:none;margin-top:10px;border:1.2px solid var(--card-border);border-radius:12px;padding:12px;background:#fff"></div>`;
     },
     bind(body,mod,save){
@@ -2639,18 +3312,79 @@ const MODULE_TYPES={
       const doLookup=()=>{const w=lookupInput?.value.trim();if(w)lookupWord(w,lookupResult);};
       body.querySelector('.en-lookup-btn')?.addEventListener('click',doLookup);
       lookupInput?.addEventListener('keydown',e=>{if(e.key==='Enter')doLookup();});
-      // 图片OCR：上传后显示图片，提示用户输入看到的单词
+      // 图片OCR：支持拖拽和点击上传，自动识别英文文本
+      const ocrDrop=body.querySelector('.en-ocr-drop');
       const ocrFile=body.querySelector('.en-ocr-file');
-      ocrFile?.addEventListener('change',e=>{
-        const file=e.target.files[0];if(!file)return;
-        const reader=new FileReader();
-        reader.onload=ev=>{
-          if(!lookupResult)return;
-          lookupResult.style.display='block';
-          lookupResult.innerHTML=`<div style="margin-bottom:8px"><img src="${ev.target.result}" style="max-width:100%;max-height:200px;border-radius:8px;border:1px solid var(--input-border)"></div><div style="font-size:13px;color:var(--text-sec)">图片已上传，请在上方输入框中输入图片中的单词进行查询。</div>`;
-        };
-        reader.readAsDataURL(file);
+      const doOCR=async(file)=>{
+        if(!file||!file.type.startsWith('image/'))return;
+        if(!lookupResult)return;
+        lookupResult.style.display='block';
+        lookupResult.innerHTML=`<div style="margin-bottom:8px"><img src="${URL.createObjectURL(file)}" style="max-width:100%;max-height:200px;border-radius:8px;border:1px solid var(--input-border)"></div><div style="font-size:13px;color:var(--primary)">正在识别图片中的英文文本...</div>`;
+        try{
+          // 动态加载 Tesseract.js
+          if(typeof Tesseract==='undefined'){
+            await new Promise((resolve,reject)=>{
+              const s=document.createElement('script');
+              s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+              s.onload=resolve;s.onerror=()=>reject(new Error('OCR库加载失败'));
+              document.head.appendChild(s);
+            });
+          }
+          const result=await Tesseract.recognize(file,'eng',{logger:m=>{
+            if(m.status==='recognizing text'){
+              lookupResult.querySelector('div:last-child').textContent=`识别中... ${Math.round(m.progress*100)}%`;
+            }
+          }});
+          const text=result.data.text.trim();
+          // 提取英文单词
+          const words=text.match(/[a-zA-Z]+/g)||[];
+          const uniqueWords=[...new Set(words.map(w=>w.toLowerCase()))].filter(w=>w.length>1);
+          if(uniqueWords.length===0){
+            lookupResult.innerHTML=`<div style="margin-bottom:8px"><img src="${URL.createObjectURL(file)}" style="max-width:100%;max-height:200px;border-radius:8px;border:1px solid var(--input-border)"></div><div style="font-size:13px;color:var(--text-sec)">未识别到英文单词，请手动输入查询。</div>`;
+            return;
+          }
+          let html=`<div style="margin-bottom:8px"><img src="${URL.createObjectURL(file)}" style="max-width:100%;max-height:200px;border-radius:8px;border:1px solid var(--input-border)"></div>`;
+          html+=`<div style="font-size:13px;font-weight:700;color:var(--primary);margin-bottom:6px">识别到 ${uniqueWords.length} 个单词，点击查询：</div>`;
+          html+=`<div style="display:flex;flex-wrap:wrap;gap:6px">${uniqueWords.slice(0,15).map(w=>`<span class="tag" style="margin:2px;cursor:pointer;font-size:12px;padding:4px 10px" onclick="document.querySelector('.en-lookup-input').value='${esc(w)}';document.querySelector('.en-lookup-btn').click()">${esc(w)}</span>`).join('')}</div>`;
+          // 自动查询第一个单词
+          if(uniqueWords[0]){
+            lookupInput.value=uniqueWords[0];
+            setTimeout(()=>doLookup(),300);
+          }
+          lookupResult.innerHTML=html;
+        }catch(err){
+          lookupResult.innerHTML=`<div style="margin-bottom:8px"><img src="${URL.createObjectURL(file)}" style="max-width:100%;max-height:200px;border-radius:8px;border:1px solid var(--input-border)"></div><div style="font-size:13px;color:var(--text-sec)">OCR识别失败：${esc(err.message)}。请手动输入单词查询。</div>`;
+        }
+      };
+      // 点击上传
+      ocrDrop?.addEventListener('click',()=>ocrFile?.click());
+      ocrFile?.addEventListener('change',e=>{if(e.target.files[0])doOCR(e.target.files[0]);});
+      // 拖拽上传
+      ocrDrop?.addEventListener('dragover',e=>{e.preventDefault();ocrDrop.style.borderColor='var(--primary)';ocrDrop.style.background='var(--primary-light)';});
+      ocrDrop?.addEventListener('dragleave',e=>{ocrDrop.style.borderColor='var(--input-border)';ocrDrop.style.background='';});
+      ocrDrop?.addEventListener('drop',e=>{
+        e.preventDefault();
+        ocrDrop.style.borderColor='var(--input-border)';ocrDrop.style.background='';
+        const file=e.dataTransfer.files[0];
+        if(file)doOCR(file);
       });
+      // 粘贴图片（Ctrl+V）：当焦点在查单词区域时支持粘贴图片
+      const pasteHandler=(e)=>{
+        const items=e.clipboardData?.items;
+        if(!items)return;
+        for(const item of items){
+          if(item.type.startsWith('image/')){
+            e.preventDefault();
+            const file=item.getAsFile();
+            if(file)doOCR(file);
+            return;
+          }
+        }
+      };
+      ocrDrop?.addEventListener('paste',pasteHandler);
+      lookupInput?.addEventListener('paste',pasteHandler);
+      // 让整个英语模块区域都支持粘贴图片
+      body.addEventListener('paste',pasteHandler);
     }
   },
 
@@ -2859,33 +3593,164 @@ const MODULE_TYPES={
       hotBase.addEventListener('change',persistHotConfig);
       hotSource.addEventListener('change',persistHotConfig);
       autoUrl?.addEventListener('change',persistHotConfig);
-      body.querySelector('.tr-sync-hot-file').addEventListener('click',async()=>{
+      body.querySelector('.tr-sync-hot-file')?.addEventListener('click',async()=>{
         persistHotConfig();
         const status=body.querySelector('.tr-hot-status');
-        status.textContent='正在同步自动化热点文件...';
+        if(status)status.textContent='正在同步热点数据...';
+        // 占位/示例数据识别（如尚未自动更新时的占位标题）
+        const isPlaceholderHot=list=>!list||!list.length?false:list.some(it=>/等待自动更新|等待更新|热搜数据等待|占位|示例数据|placeholder/i.test(`${it.title||''} ${it.hot||''} ${it.url||''}`));
         try{
-          // 尝试多个 URL 获取热点数据
-          const urls=[mod.data.autoImportUrl];
-          // 添加 GitHub Pages 原始文件 URL 作为备选
-          if(mod.data.autoImportUrl==='./hot-topics.json'){
-            urls.push('https://raw.githubusercontent.com/你的用户名/你的仓库名/main/hot-topics.json');
+          // 策略1：始终先尝试本地 ./hot-topics.json（带缓存破坏参数），再尝试用户配置的自动化文件地址
+          const urls=['./hot-topics.json'];
+          if(mod.data.autoImportUrl&&mod.data.autoImportUrl!=='./hot-topics.json')urls.push(mod.data.autoImportUrl);
+          // 策略2：从当前页面 URL 推导 GitHub raw URL
+          if(location.hostname&&location.hostname.includes('github')){
+            const pathParts=location.pathname.split('/').filter(Boolean);
+            if(pathParts.length>=2){
+              const repoOwner=pathParts[0],repoName=pathParts[1];
+              const branch='main';
+              urls.push(`https://raw.githubusercontent.com/${repoOwner}/${repoName}/${branch}/hot-topics.json`);
+            }
           }
           let list=null;
           let lastErr=null;
+          let placeholderHit=false;
           for(const url of urls){
             try{
               const fullUrl=`${url}${url.includes('?')?'&':'?'}t=${Date.now()}`;
-              status.textContent=`尝试：${url.replace(/^https?:\/\//,'').split('/')[0]||'本地文件'}...`;
-              list=await fetchHotPayload(fullUrl);
-              if(list&&list.length)break;
+              if(status)status.textContent=`尝试文件：${url.replace(/^https?:\/\//,'').slice(0,40)}...`;
+              const fetched=await fetchHotPayload(fullUrl);
+              if(fetched&&fetched.length){
+                if(isPlaceholderHot(fetched)){
+                  placeholderHit=true;
+                  console.warn('热点文件为占位/示例数据，将尝试直接抓取 API',url);
+                  continue;
+                }
+                list=fetched;
+                break;
+              }
             }catch(e){lastErr=e;continue;}
           }
-          if(!list||!list.length)throw lastErr||new Error('所有来源均无可用热点数据');
+          // 策略3：本地文件不可用 / 为空 / 同步失败时，直接从 DailyHot API 抓取（含CORS代理回退）
+          if(!list||!list.length){
+            if(status)status.textContent=placeholderHit?'本地文件为空，正在直接抓取各平台热榜...':'文件同步失败，尝试直接抓取各平台热榜...';
+            const apiBases=['https://dailyhot.cmcq.xyz','https://api-hot.imsyy.top','https://api-hot.cricnep.tech','https://hot.cricnep.tech'];
+            const altApis=[
+              {base:'https://api.vvhan.com/api/hotlist',type:'vvhan'},
+              {base:'https://api.oioweb.cn/api/common/HotList',type:'oioweb'},
+            ];
+            const corsProxies=[
+              (url)=>`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+              (url)=>`https://corsproxy.io/?url=${encodeURIComponent(url)}`,
+              (url)=>`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+            ];
+            const platforms=[['weibo','微博'],['zhihu','知乎'],['douyin','抖音'],['baidu','百度'],['xiaohongshu','小红书'],['bilibili','B站'],['toutiao','今日头条'],['36kr','AI科技'],['ithome','IT之家']];
+            list=[];
+            let platformSuccess=0;
+            for(const [key,name] of platforms){
+              let platformDone=false;
+              // 先尝试直连各 DailyHot API 源
+              for(const base of apiBases){
+                if(platformDone)break;
+                try{
+                  const res=await fetch(`${base}/${key}`,{signal:AbortSignal.timeout(8000),cache:'no-store'});
+                  if(!res.ok)continue;
+                  const json=await res.json();
+                  const items=Array.isArray(json)?json:(Array.isArray(json.data)?json.data:(Array.isArray(json.data?.list)?json.data.list:[]));
+                  if(items&&items.length){
+                    items.slice(0,10).forEach(item=>{
+                      list.push({title:item.title||item.name||item.word||'',url:item.url||item.link||item.mobileUrl||'',hot:item.hot||item.hotValue||item.desc||'',platform:key});
+                    });
+                    platformDone=true;platformSuccess++;
+                    break;
+                  }
+                }catch(e){continue;}
+              }
+              // 直连失败 → 尝试 CORS 代理
+              if(!platformDone){
+                for(const base of apiBases){
+                  if(platformDone)break;
+                  for(const proxy of corsProxies){
+                    if(platformDone)break;
+                    try{
+                      const targetUrl=`${base}/${key}`;
+                      const res=await fetch(proxy(targetUrl),{signal:AbortSignal.timeout(10000),cache:'no-store'});
+                      if(!res.ok)continue;
+                      const json=await res.json();
+                      const items=Array.isArray(json)?json:(Array.isArray(json.data)?json.data:(Array.isArray(json.data?.list)?json.data.list:[]));
+                      if(items&&items.length){
+                        items.slice(0,10).forEach(item=>{
+                          list.push({title:item.title||item.name||item.word||'',url:item.url||item.link||item.mobileUrl||'',hot:item.hot||item.hotValue||item.desc||'',platform:key});
+                        });
+                        platformDone=true;platformSuccess++;
+                        break;
+                      }
+                    }catch(e){continue;}
+                  }
+                }
+              }
+              // 仍失败 → 尝试备用 API（vvhan/oioweb）含 CORS 代理
+              if(!platformDone){
+                for(const alt of altApis){
+                  if(platformDone)break;
+                  const altKey={weibo:'weibo',zhihu:'zhihu',douyin:'douyin',baidu:'baidu',xiaohongshu:'xiaohongshu',bilibili:'bilibili',toutiao:'toutiao','36kr':'36kr',ithome:'ithome'}[key]||key;
+                  const tryUrls=[`${alt.base}/${altKey}`,`${alt.base}/${altKey}/hot`];
+                  for(const tryUrl of tryUrls){
+                    if(platformDone)break;
+                    // 直连
+                    try{
+                      const res=await fetch(tryUrl,{signal:AbortSignal.timeout(8000),cache:'no-store'});
+                      if(res.ok){
+                        const json=await res.json();
+                        const items=Array.isArray(json)?json:(Array.isArray(json.data)?json.data:(Array.isArray(json.data?.list)?json.data.list:[]));
+                        if(items&&items.length){
+                          items.slice(0,10).forEach(item=>{
+                            list.push({title:item.title||item.name||item.word||'',url:item.url||item.link||item.mobileUrl||'',hot:item.hot||item.hotValue||item.desc||'',platform:key});
+                          });
+                          platformDone=true;platformSuccess++;break;
+                        }
+                      }
+                    }catch(e){}
+                    // CORS 代理
+                    if(!platformDone){
+                      for(const proxy of corsProxies){
+                        if(platformDone)break;
+                        try{
+                          const res=await fetch(proxy(tryUrl),{signal:AbortSignal.timeout(10000),cache:'no-store'});
+                          if(!res.ok)continue;
+                          const json=await res.json();
+                          const items=Array.isArray(json)?json:(Array.isArray(json.data)?json.data:(Array.isArray(json.data?.list)?json.data.list:[]));
+                          if(items&&items.length){
+                            items.slice(0,10).forEach(item=>{
+                              list.push({title:item.title||item.name||item.word||'',url:item.url||item.link||item.mobileUrl||'',hot:item.hot||item.hotValue||item.desc||'',platform:key});
+                            });
+                            platformDone=true;platformSuccess++;break;
+                          }
+                        }catch(e){continue;}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            if(status&&list.length)status.textContent=`直抓完成：成功 ${platformSuccess}/${platforms.length} 个平台，共 ${list.length} 条`;
+          }
+          if(!list||!list.length){
+            // 所有来源均失败：给出友好提示，不抛错以免吓到用户
+            mod.data.hotResults=[];
+            mod.data.hotStatus=placeholderHit
+              ? '本地热点文件为占位数据，且直接抓取公共 API 也失败。可能原因：公共热榜 API 暂时不可用或当前网络受限。可稍后重试，或在「基础地址」中填入自部署 DailyHotApi 地址。'
+              : `同步失败：${lastErr?.message||lastErr||'所有来源均无可用热点数据'}。请检查网络或稍后重试。`;
+            save();rerender(mod);
+            return;
+          }
           mod.data.hotResults=list.slice(0,30);
-          mod.data.hotStatus=`已从自动化文件同步 ${mod.data.hotResults.length} 条热点`;
+          mod.data.hotStatus=placeholderHit
+            ? `本地文件为占位数据，已直接抓取 ${mod.data.hotResults.length} 条热点（来自公共 API）`
+            : `已同步 ${mod.data.hotResults.length} 条热点`;
           save();rerender(mod);
         }catch(err){
-          mod.data.hotStatus=`自动化文件同步失败：${err?.message||err}。可以让每日任务生成 hot-topics.json，或把文件地址改成可访问的 JSON/RSS。`;
+          mod.data.hotStatus=`同步失败：${err?.message||err}。请检查网络或稍后重试。`;
           save();rerender(mod);
         }
       });
@@ -2904,19 +3769,22 @@ const MODULE_TYPES={
         mod.data.hotStatus=added?`已批量加入 ${added} 条收藏`:'没有新增，当前热点已在收藏里';
         save();rerender(mod);
       });
-      body.querySelector('.tr-fetch-hot').addEventListener('click',async()=>{
+      body.querySelector('.tr-fetch-hot')?.addEventListener('click',async()=>{
         persistHotConfig();
         const status=body.querySelector('.tr-hot-status');
-        status.textContent='正在抓取热榜...';
+        if(status)status.textContent='正在抓取热榜...';
         const source=mod.data.hotSource;
         const sourceAliases=source==='xiaohongshu'?['xiaohongshu','xhs','rednote']:source==='ai-news'?['ai-news','36kr','ithome']: [source];
         const baseUrls=[
           mod.data.hotBase,
           'https://api-hot.imsyy.top',
           'https://api-hot.cricnep.tech',
-          'https://dailyhot.cmcq.xyz'
+          'https://hot.cricnep.tech',
+          'https://dailyhot.cmcq.xyz',
+          'https://api.vvhan.com/api/hotlist',
+          'https://api.oioweb.cn/api/common/HotList'
         ].filter((v,i,a)=>v&&a.indexOf(v)===i);
-        const corsProxies=['','https://api.allorigins.win/raw?url=','https://corsproxy.io/?url='];
+        const corsProxies=['','https://api.allorigins.win/raw?url=','https://corsproxy.io/?url=','https://api.codetabs.com/v1/proxy?quest='];
         let lastErr=null;
         for(const alias of sourceAliases){
           for(const base of baseUrls){
@@ -2924,7 +3792,7 @@ const MODULE_TYPES={
               try{
               const rawUrl=`${base}/${alias}`;
               const fetchUrl=proxy?`${proxy}${encodeURIComponent(rawUrl)}`:rawUrl;
-              status.textContent=`尝试：${base.replace(/^https?:\/\//,'').split('/')[0]}${proxy?' (代理)':''}...`;
+              if(status)status.textContent=`尝试：${base.replace(/^https?:\/\//,'').split('/')[0]}${proxy?' (代理)':''}...`;
               const res=await fetch(fetchUrl,{signal:AbortSignal.timeout(18000),cache:'no-store'});
               if(!res.ok)throw new Error(`HTTP ${res.status}`);
               const text=await res.text();
@@ -3042,73 +3910,179 @@ const MODULE_TYPES={
   /* ---- 长期报告 ---- */
   'report':{
     title:'长期报告',icon:'report',desc:'自动聚合周/月/季/年回顾',
-    defaultData:{period:'week',view:'cards'},
+    defaultData:{period:'week',view:'cards',showDetail:false},
     render(d){
-      d.period=d.period||'week';d.view=d.view||'cards';
+      d.period=d.period||'week';d.view=d.view||'cards';d.showDetail=d.showDetail||false;
       const stats=reportStats(d.period);
       const labels={week:'本周',month:'本月',quarter:'本季度',year:'今年'};
+      const periodLen=periodKeys(d.period).length;
       const planRate=stats.planTotal?Math.round(stats.planDone/stats.planTotal*100):0;
       const earlyRate=stats.sleepDays?Math.round(stats.early/stats.sleepDays*100):0;
       const enRate=stats.enTotal?Math.round(stats.enDone/stats.enTotal*100):0;
-      // 目标分析
-      let goalSummary='';
-      if(stats.goalBlocks&&stats.goalBlocks.length){
-        const goalParts=[];
-        if(stats.goalPlansHealth>0)goalParts.push(`健康方案：${stats.goalDoneHealth}/${stats.goalPlansHealth}(${stats.goalHealthRate}%)`);
-        if(stats.goalPlansLearning>0)goalParts.push(`学习方案：${stats.goalDoneLearning}/${stats.goalPlansLearning}(${stats.goalLearnRate}%)`);
-        if(stats.goalPlansLife>0)goalParts.push(`生活方案：${stats.goalDoneLife}/${stats.goalPlansLife}(${stats.goalLifeRate}%)`);
-        if(stats.goalPlansDefault>0)goalParts.push(`日常：${stats.goalDoneDefault}/${stats.goalPlansDefault}(${stats.goalDefRate}%)`);
-        if(stats.goalPlansOther>0)goalParts.push(`其他：${stats.goalDoneOther}/${stats.goalPlansOther}(${stats.goalOtherRate}%)`);
-        if(goalParts.length)goalSummary=goalParts.join('｜');
-        // 自动生成文字复盘
-        let advice='';
-        if(stats.goalLearnRate<30)advice+='学习方面完成率偏低，建议将大目标拆解为每日15分钟的小任务。';
-        if(stats.goalHealthRate<30)advice+='健康计划需要加强，可以从每天运动10分钟开始。';
-        if(stats.goalLifeRate<30)advice+='生活作息方面可以设置固定提醒，建立规律节奏。';
-        if(!advice&&stats.planRate>80)advice='各项指标完成度高，继续保持！';
-        if(!advice&&stats.planRate>50)advice='整体表现不错，还有提升空间，集中精力攻克薄弱项。';
-        if(!advice)advice='本周完成率偏低，下阶段建议聚焦1-2个核心目标。';
-        goalSummary+=`\n\n📌 目标复盘：${advice}`;
+      const reviewRate=periodLen?Math.round(stats.reviewDays/periodLen*100):0;
+      // 多周期对比数据
+      const allPeriods=['week','month','quarter','year'].map(p=>{
+        const s=reportStats(p);
+        return{label:labels[p],hasData:s.hasData,planRate:s.planTotal?Math.round(s.planDone/s.planTotal*100):0,earlyRate:s.sleepDays?Math.round(s.early/s.sleepDays*100):0,exDays:s.exDays,enRate:s.enTotal?Math.round(s.enDone/s.enTotal*100):0,readMin:s.readMin,reviewDays:s.reviewDays,sleepDays:s.sleepDays};
+      });
+      // 进度条组件
+      const bar=(label,val,max,unit,color)=>{
+        const pct=max?Math.min(100,Math.round(val/max*100)):0;
+        return`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:13px;font-weight:600">${label}</span><span style="font-size:12px;color:var(--text-sec)">${val}${unit}${max?` / ${max}${unit}`:''} · ${pct}%</span></div><div style="height:10px;background:var(--input-bg);border-radius:5px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${color};border-radius:5px;transition:width .4s ease"></div></div></div>`;
+      };
+      // 圆环进度组件
+      const ring=(label,pct,color)=>{
+        const r=32,circ=2*Math.PI*r,offset=circ*(1-pct/100);
+        return`<div style="text-align:center"><svg width="80" height="80" viewBox="0 0 80 80"><circle cx="40" cy="40" r="${r}" fill="none" stroke="var(--input-bg)" stroke-width="6"/><circle cx="40" cy="40" r="${r}" fill="none" stroke="${color}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${offset}" transform="rotate(-90 40 40)" style="transition:stroke-dashoffset .4s ease"/></svg><div style="margin-top:-56px;font-size:18px;font-weight:800;color:${color}">${pct}%</div><div style="margin-top:38px;font-size:12px;color:var(--text-sec)">${label}</div></div>`;
+      };
+      // 自动生成总结摘要（仅对有数据的指标生成结论）
+      const goodList=[],improveList=[],suggestions=[];
+      if(stats.planTotal>0){
+        if(planRate>=70)goodList.push(`计划完成率 ${planRate}%，执行力强`);
+        else if(planRate>0)improveList.push(`计划完成率仅 ${planRate}%，核心事项完成度需提升`);
       }
-      const text=`${labels[d.period]}回顾\n\n执行：计划完成 ${stats.planDone}/${stats.planTotal}，完成率 ${planRate}%。\n健康：睡眠记录 ${stats.sleepDays} 天，早睡 ${stats.early} 天，早睡率 ${earlyRate}%；运动 ${stats.exDays} 天；冥想 ${stats.medDays} 天 / ${stats.medMin} 分钟。\n学习：英语完成率 ${enRate}%；阅读 ${stats.readMin} 分钟。\n复盘：记录 ${stats.reviewDays} 天。${goalSummary?'\n\n目标板块完成情况：\n'+goalSummary:''}\n\n建议：保留完成率最高的习惯，挑一个低频项目做下阶段重点。`;
+      if(stats.sleepDays>0){
+        if(earlyRate>=60)goodList.push(`早睡率 ${earlyRate}%，作息比较规律`);
+        else if(earlyRate>0)improveList.push(`早睡率 ${earlyRate}%，需要改善入睡时间`);
+      }
+      if(stats.exDays>0){
+        if(stats.exDays>=3)goodList.push(`运动 ${stats.exDays} 天，保持良好运动习惯`);
+        else improveList.push(`运动仅 ${stats.exDays} 天，运动频率偏低`);
+      }
+      if(stats.readMin>0){
+        if(stats.readMin>=60)goodList.push(`阅读 ${stats.readMin} 分钟，持续学习输入`);
+        else improveList.push(`阅读仅 ${stats.readMin} 分钟，输入量不足`);
+      }
+      if(stats.enTotal>0){
+        if(enRate>=60)goodList.push(`英语完成率 ${enRate}%，学习进度良好`);
+        else if(enRate>0)improveList.push(`英语完成率 ${enRate}%，需加强每日练习`);
+      }
+      if(stats.reviewDays>0){
+        if(stats.reviewDays>=3)goodList.push(`复盘 ${stats.reviewDays} 天，保持反思习惯`);
+        else improveList.push(`复盘仅 ${stats.reviewDays} 天，反思频率偏低`);
+      }
+      if(stats.planTotal>0&&planRate<50)suggestions.push('将每日计划精简为 3-5 项核心任务，完成后再扩展');
+      if(stats.sleepDays>0&&earlyRate<50&&earlyRate>0)suggestions.push('设定固定的睡前 30 分钟收尾流程，降低晚睡概率');
+      if(stats.exDays===0||stats.exDays<3)suggestions.push('从每天快走 10 分钟开始，逐步建立运动习惯');
+      if(stats.readMin<60)suggestions.push('设置每天睡前 10 分钟阅读时间，搭配笔记输出');
+      if(stats.reviewDays<3)suggestions.push('每周三和周日各做一次 5 分钟短复盘');
+      if(!suggestions.length)suggestions.push('整体表现优秀！可以尝试设定更高目标，挑战自我');
+      // 目标板块进度条
+      let goalBars='';
+      if(stats.goalBlocks&&stats.goalBlocks.length){
+        if(stats.goalPlansHealth>0)goalBars+=bar('健康方案',stats.goalDoneHealth,stats.goalPlansHealth,'项','#22a06b');
+        if(stats.goalPlansLearning>0)goalBars+=bar('学习方案',stats.goalDoneLearning,stats.goalPlansLearning,'项','#6EA8FF');
+        if(stats.goalPlansLife>0)goalBars+=bar('生活方案',stats.goalDoneLife,stats.goalPlansLife,'项','#f5b42f');
+        if(stats.goalPlansDefault>0)goalBars+=bar('日常事项',stats.goalDoneDefault,stats.goalPlansDefault,'项','var(--primary)');
+      }
+      // 多周期对比表格（无数据的周期显示 -）
+      const fmtVal=(p,key)=>{
+        if(!p.hasData)return'<span style="color:var(--text-sec)">-</span>';
+        const v=p[key];
+        if(key==='planRate'||key==='earlyRate'||key==='enRate')return v?v+'%':'-';
+        return v;
+      };
+      const compareTable=`<div style="overflow-x:auto;margin-top:12px"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:var(--primary-light)"><th style="padding:8px;text-align:left;border-radius:8px 0 0 0">指标</th>${allPeriods.map(p=>`<th style="padding:8px;text-align:center">${p.label}</th>`).join('')}</tr></thead><tbody>
+        <tr style="border-bottom:1px solid var(--card-border)"><td style="padding:6px 8px;font-weight:600">计划完成率</td>${allPeriods.map(p=>`<td style="padding:6px 8px;text-align:center;${p.hasData&&p.planRate>=70?'color:#22a06b':p.hasData&&p.planRate>=40?'color:#f5b42f':p.hasData?'color:#d64545':''};font-weight:700">${fmtVal(p,'planRate')}</td>`).join('')}</tr>
+        <tr style="border-bottom:1px solid var(--card-border)"><td style="padding:6px 8px;font-weight:600">早睡率</td>${allPeriods.map(p=>`<td style="padding:6px 8px;text-align:center;font-weight:700">${fmtVal(p,'earlyRate')}</td>`).join('')}</tr>
+        <tr style="border-bottom:1px solid var(--card-border)"><td style="padding:6px 8px;font-weight:600">运动天数</td>${allPeriods.map(p=>`<td style="padding:6px 8px;text-align:center;font-weight:700">${fmtVal(p,'exDays')}</td>`).join('')}</tr>
+        <tr style="border-bottom:1px solid var(--card-border)"><td style="padding:6px 8px;font-weight:600">英语完成率</td>${allPeriods.map(p=>`<td style="padding:6px 8px;text-align:center;font-weight:700">${fmtVal(p,'enRate')}</td>`).join('')}</tr>
+        <tr style="border-bottom:1px solid var(--card-border)"><td style="padding:6px 8px;font-weight:600">阅读(分钟)</td>${allPeriods.map(p=>`<td style="padding:6px 8px;text-align:center;font-weight:700">${fmtVal(p,'readMin')}</td>`).join('')}</tr>
+        <tr><td style="padding:6px 8px;font-weight:600">复盘天数</td>${allPeriods.map(p=>`<td style="padding:6px 8px;text-align:center;font-weight:700">${fmtVal(p,'reviewDays')}</td>`).join('')}</tr>
+      </tbody></table></div>`;
+      // 无数据时的提示
+      const noDataMsg=`<div style="background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:32px 16px;margin-bottom:12px;text-align:center"><div style="font-size:36px;margin-bottom:8px">📭</div><div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px">${labels[d.period]}暂无记录数据</div><div style="font-size:13px;color:var(--text-sec)">开始在每日计划、睡眠、运动、复盘等板块记录数据后，这里会自动生成${labels[d.period]}的可视化报告和总结摘要。</div></div>`;
+      // 日期范围信息
+      const dateRangeInfo=`<div style="background:var(--primary-light);border:1px solid var(--primary);border-radius:10px;padding:8px 14px;margin-bottom:10px;font-size:12px"><strong style="color:var(--primary)">${labels[d.period]}数据范围</strong>：${stats.periodStart} 至 ${stats.periodEnd}（共 ${stats.days} 天），有记录 ${stats.dailyDetail?.length||0} 天</div>`;
+      // 数据明细表（可折叠）
+      const detailRows=(stats.dailyDetail||[]).slice().reverse().map(dd=>{
+        const dObj=new Date(dd.date);
+        const dStr=`${dObj.getMonth()+1}/${dObj.getDate()} 周${dayLabel(dObj)}`;
+        return `<tr style="border-bottom:1px solid var(--card-border)">
+          <td style="padding:4px 6px;font-size:11px;font-weight:600">${dStr}</td>
+          <td style="padding:4px 6px;text-align:center;font-size:11px">${dd.plan?dd.plan+'项':'-'}</td>
+          <td style="padding:4px 6px;text-align:center;font-size:11px">${dd.sleep||'-'}</td>
+          <td style="padding:4px 6px;text-align:center;font-size:11px">${dd.exercise?'✓':'-'}</td>
+          <td style="padding:4px 6px;text-align:center;font-size:11px">${dd.meditation?dd.meditation+'分':'-'}</td>
+          <td style="padding:4px 6px;text-align:center;font-size:11px">${dd.english!=='0'?dd.english:'-'}</td>
+          <td style="padding:4px 6px;text-align:center;font-size:11px">${dd.reading?dd.reading+'分':'-'}</td>
+          <td style="padding:4px 6px;text-align:center;font-size:11px">${dd.review?'✓':'-'}</td>
+        </tr>`;
+      }).join('');
+      const dataDetailSection=`
+        <div style="background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:16px;margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer" class="rp-detail-toggle">
+            <div style="font-weight:700;font-size:15px">🔍 数据明细（点击${d.showDetail?'收起':'展开'}）</div>
+            <span style="font-size:12px;color:var(--text-sec)">${stats.dailyDetail?.length||0} 天有记录</span>
+          </div>
+          ${d.showDetail?`<div style="overflow-x:auto;margin-top:10px"><table style="width:100%;border-collapse:collapse;font-size:11px"><thead><tr style="background:var(--primary-light)"><th style="padding:4px 6px;text-align:left">日期</th><th style="padding:4px 6px">计划</th><th style="padding:4px 6px">睡眠</th><th style="padding:4px 6px">运动</th><th style="padding:4px 6px">冥想</th><th style="padding:4px 6px">英语</th><th style="padding:4px 6px">阅读</th><th style="padding:4px 6px">复盘</th></tr></thead><tbody>${detailRows||'<tr><td colspan="8" style="padding:12px;text-align:center;color:var(--text-sec)">本周期暂无记录</td></tr>'}</tbody></table></div>`:''}
+        </div>`;
       return`<div class="report-panel">
         <div class="form-row">
           <div class="form-group" style="max-width:180px"><label>报告周期</label><select class="rp-period">${[['week','周报告'],['month','月度报告'],['quarter','季度报告'],['year','年报告']].map(([k,v])=>`<option value="${k}" ${d.period===k?'selected':''}>${v}</option>`).join('')}</select></div>
-          <div class="form-group" style="max-width:180px"><label>预览形式</label><select class="rp-view"><option value="cards" ${d.view==='cards'?'selected':''}>看板卡片</option><option value="text" ${d.view==='text'?'selected':''}>文字报告</option></select></div>
+          <div class="form-group" style="max-width:180px"><label>预览形式</label><select class="rp-view"><option value="cards" ${d.view==='cards'?'selected':''}>可视化看板</option><option value="text" ${d.view==='text'?'selected':''}>文字报告</option></select></div>
         </div>
-        ${d.view==='cards'?`<div class="report-grid">
-          <div class="report-card"><span class="small-text">计划完成率</span><strong>${planRate}%</strong><div class="small-text">${stats.planDone}/${stats.planTotal} 项</div></div>
-          <div class="report-card"><span class="small-text">早睡率</span><strong>${earlyRate}%</strong><div class="small-text">${stats.early}/${stats.sleepDays} 天</div></div>
-          <div class="report-card"><span class="small-text">运动</span><strong>${stats.exDays}天</strong><div class="small-text">按记录天数统计</div></div>
-          <div class="report-card"><span class="small-text">冥想</span><strong>${stats.medMin}分</strong><div class="small-text">${stats.medDays} 天</div></div>
-          <div class="report-card"><span class="small-text">英语完成率</span><strong>${enRate}%</strong><div class="small-text">${stats.enDone}/${stats.enTotal} 项</div></div>
-          <div class="report-card"><span class="small-text">阅读/复盘</span><strong>${stats.readMin}分</strong><div class="small-text">复盘 ${stats.reviewDays} 天</div></div>
-        </div>
-        ${goalSummary?`
-        <div class="report-card" style="grid-column:1/-1">
-          <span class="small-text">目标板块完成率</span>
-          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px">
-            ${stats.goalPlansHealth>0?`<div class="tag" style="font-size:12px;padding:4px 10px">健康 ${stats.goalHealthRate}%</div>`:''}
-            ${stats.goalPlansLearning>0?`<div class="tag" style="font-size:12px;padding:4px 10px">学习 ${stats.goalLearnRate}%</div>`:''}
-            ${stats.goalPlansLife>0?`<div class="tag" style="font-size:12px;padding:4px 10px">生活 ${stats.goalLifeRate}%</div>`:''}
-            ${stats.goalPlansDefault>0?`<div class="tag" style="font-size:12px;padding:4px 10px">日常 ${stats.goalDefRate}%</div>`:''}
-            ${stats.goalPlansOther>0?`<div class="tag" style="font-size:12px;padding:4px 10px">其他 ${stats.goalOtherRate}%</div>`:''}
+        ${dateRangeInfo}
+        ${!stats.hasData?noDataMsg:d.view==='cards'?`
+        <div style="background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:16px;margin-bottom:12px">
+          <div style="font-weight:700;font-size:15px;margin-bottom:12px">🎯 ${labels[d.period]}核心指标</div>
+          <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:space-around">
+            ${ring('计划完成',planRate,'var(--primary)')}
+            ${ring('早睡率',earlyRate,'#22a06b')}
+            ${ring('英语完成',enRate,'#6EA8FF')}
+            ${ring('复盘覆盖',reviewRate,'#f5b42f')}
           </div>
-          <div class="small-text" style="margin-top:6px;line-height:1.6">📌 目标复盘：${
-            stats.goalLearnRate<30?'学习方面完成率偏低，建议将大目标拆解为每日15分钟的小任务。':
-            stats.goalHealthRate<30?'健康计划需要加强，可以从每天运动10分钟开始。':
-            stats.goalLifeRate<30?'生活作息方面可以设置固定提醒，建立规律节奏。':
-            planRate>80?'各项指标完成度高，继续保持！':
-            planRate>50?'整体表现不错，还有提升空间，集中精力攻克薄弱项。':
-            '本周完成率偏低，下阶段建议聚焦1-2个核心目标。'
-          }</div>
-        </div>`:''}
-        `:`<div class="report-text">${esc(text)}</div>`}
+        </div>
+        <div style="background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:16px;margin-bottom:12px">
+          <div style="font-weight:700;font-size:15px;margin-bottom:12px">📊 详细进度</div>
+          ${bar('计划完成',stats.planDone,stats.planTotal,'项','var(--primary)')}
+          ${bar('早睡天数',stats.early,stats.sleepDays,'天','#22a06b')}
+          ${bar('运动天数',stats.exDays,periodLen,'天','#f5b42f')}
+          ${bar('冥想天数',stats.medDays,periodLen,'天','#9b6dff')}
+          ${bar('英语完成',stats.enDone,stats.enTotal,'项','#6EA8FF')}
+          ${bar('复盘天数',stats.reviewDays,periodLen,'天','#ff7a7a')}
+          ${goalBars?`<div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--card-border)"><div style="font-weight:700;font-size:13px;margin-bottom:6px">📌 目标板块完成率</div>${goalBars}</div>`:''}
+        </div>
+        <div style="background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:16px;margin-bottom:12px">
+          <div style="font-weight:700;font-size:15px;margin-bottom:10px">📋 ${labels[d.period]}总结摘要</div>
+          <div style="display:grid;gap:10px">
+            <div style="background:#22a06b10;border-left:3px solid #22a06b;border-radius:0 8px 8px 0;padding:8px 12px">
+              <div style="font-weight:700;color:#22a06b;font-size:13px;margin-bottom:4px">✓ 做得好的</div>
+              <div style="font-size:13px;line-height:1.8">${goodList.length?goodList.join('；')+'。':'已经开始记录和追踪，这是持续进步的基础。'}</div>
+            </div>
+            <div style="background:#d6454510;border-left:3px solid #d64545;border-radius:0 8px 8px 0;padding:8px 12px">
+              <div style="font-weight:700;color:#d64545;font-size:13px;margin-bottom:4px">⚠ 需要改进</div>
+              <div style="font-size:13px;line-height:1.8">${improveList.length?improveList.join('；')+'。':'各项指标均衡，继续保持当前节奏。'}</div>
+            </div>
+            <div style="background:var(--primary-light);border-left:3px solid var(--primary);border-radius:0 8px 8px 0;padding:8px 12px">
+              <div style="font-weight:700;color:var(--primary);font-size:13px;margin-bottom:4px">💡 优化建议</div>
+              <div style="font-size:13px;line-height:1.8">${suggestions.map((s,i)=>`${i+1}. ${s}`).join('<br>')}</div>
+            </div>
+          </div>
+        </div>
+        `:`<div class="report-text" style="white-space:pre-wrap;line-height:1.8">${stats.hasData?`${labels[d.period]}回顾
+
+【执行】计划完成 ${stats.planDone}/${stats.planTotal}，完成率 ${planRate}%。
+【健康】睡眠 ${stats.sleepDays} 天，早睡 ${stats.early} 天（${earlyRate}%）；运动 ${stats.exDays} 天；冥想 ${stats.medDays} 天/${stats.medMin} 分。
+【学习】英语完成率 ${enRate}%（${stats.enDone}/${stats.enTotal}）；阅读 ${stats.readMin} 分钟。
+【复盘】记录 ${stats.reviewDays} 天。
+
+做得好的：${goodList.length?goodList.join('；'):'已开始记录。'}
+需要改进：${improveList.length?improveList.join('；'):'保持当前节奏。'}
+优化建议：${suggestions.map((s,i)=>`${i+1}. ${s}`).join(' ')}`:`${labels[d.period]}暂无记录数据。
+
+请在每日计划、睡眠、运动、复盘等板块记录数据后查看报告。`}</div>`}
+        <div style="background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:16px;margin-bottom:12px">
+          <div style="font-weight:700;font-size:15px;margin-bottom:8px">📈 多周期对比</div>
+          ${compareTable}
+        </div>
+        ${dataDetailSection}
       </div>`;
     },
     bind(body,mod,save){
       body.querySelector('.rp-period')?.addEventListener('change',e=>{mod.data.period=e.target.value;save();rerender(mod);});
       body.querySelector('.rp-view')?.addEventListener('change',e=>{mod.data.view=e.target.value;save();rerender(mod);});
+      body.querySelector('.rp-detail-toggle')?.addEventListener('click',()=>{mod.data.showDetail=!mod.data.showDetail;save();rerender(mod);});
     }
   },
 
@@ -3118,10 +4092,17 @@ const MODULE_TYPES={
     defaultData:{logs:[]},
     render(d){
       d.logs=d.logs||[];
+      const latestLog=d.logs.length?d.logs[d.logs.length-1]:null;
       return`
-        <div style="font-size:12px;color:var(--text-light);margin-bottom:8px">版本号规则：小改动用小数点后两位（如 V7.11），大改动用 V7.x</div>
+        <div style="background:var(--primary-light);border:1px solid var(--primary);border-radius:10px;padding:10px 14px;margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div><strong style="font-size:16px;color:var(--primary)">当前版本：${esc(APP_VERSION)}</strong>${latestLog?` <span style="font-size:13px;color:var(--text-sec)">（功能版本 ${esc(latestLog.version)}）</span>`:''}</div>
+            <span style="font-size:12px;color:var(--text-sec)">${esc(APP_BUILD_TIME||'')}</span>
+          </div>
+          <div style="font-size:12px;color:var(--text-sec);margin-top:4px">缓存版本号用于自动更新检测，功能版本号记录每次更新的内容变化</div>
+        </div>
         <div class="form-row">
-          <div class="form-group" style="max-width:100px"><input type="text" class="cl-version" placeholder="V7.11" value="V7.11"></div>
+          <div class="form-group" style="max-width:100px"><input type="text" class="cl-version" placeholder="V8.3" value="V8.3"></div>
           <div class="form-group" style="max-width:140px"><input type="date" class="cl-date" value="${todayStr()}"></div>
         </div>
         <div class="form-group"><textarea class="cl-changes" placeholder="更新内容，每行一个要点..." style="min-height:80px"></textarea></div>
@@ -3148,7 +4129,7 @@ const MODULE_TYPES={
         mod.data.logs.push({
           id:genId(),
           date:body.querySelector('.cl-date').value||todayStr(),
-          version:version||'V7.11',
+          version:version||'V8.3',
           changes
         });
         save();rerender(mod);
@@ -3173,9 +4154,9 @@ const MODULE_TYPES={
     bind(body,mod,save){
       const ta=body.querySelector('.cu-content');
       const status=body.querySelector('#cu-status');
-      body.querySelector('.cu-save').addEventListener('click',()=>{
+      body.querySelector('.cu-save')?.addEventListener('click',()=>{
         mod.data.content=ta.value;save();
-        status.textContent='已保存 '+formatDateTime(nowStr());
+        if(status)status.textContent='已保存 '+formatDateTime(nowStr());
         setTimeout(()=>{if(status)status.textContent='';},2000);
       });
       // Auto-save on blur
@@ -3434,6 +4415,25 @@ function rerender(mod){
     body.innerHTML=def.render(mod.data||{});
     def.bind(body,mod,()=>DB.save());
   }catch(e){console.error('Rerender error:',e);}
+  // 数据模块变化时，自动刷新行动总览和长期报告（防递归）
+  const dataTypes=['daily-plan','sleep','exercise','meditation','english','reading','review'];
+  if(dataTypes.includes(mod.type)&&!_rerenderingRelated){
+    _rerenderingRelated=true;
+    try{rerenderRelatedModules(mod.type);}catch(e){}
+    _rerenderingRelated=false;
+  }
+}
+var _rerenderingRelated=false;
+
+// 跨模块刷新：当任意数据模块保存后，自动刷新行动总览和长期报告
+// 这样补填周一到周四的行动后，每周汇总面板和复盘总结会实时更新
+function rerenderRelatedModules(excludeType){
+  const relatedTypes=['overview','report'];
+  relatedTypes.forEach(type=>{
+    if(type===excludeType)return;
+    const mod=DB.data.modules.find(m=>m.type===type);
+    if(mod&&mod.visible)rerender(mod);
+  });
 }
 
 function renderSideNav(){
@@ -3714,28 +4714,201 @@ function exportData(){
   a.click();URL.revokeObjectURL(url);
 }
 
+// 智能合并导入：保留旧数据的所有记录，只补充新模块
+function smartMergeImport(oldData){
+  if(!oldData||!Array.isArray(oldData.modules))return false;
+  let merged=0;
+  oldData.modules.forEach(oldMod=>{
+    const curMod=DB.data.modules.find(m=>m.type===oldMod.type);
+    if(curMod&&curMod.data){
+      const od=oldMod.data||{};
+      // 合并数组类数据（records, tasks, entries, ideas, studyLog 等）
+      ['records','tasks','entries','ideas','studyLog','words','sentences','routineTasks','books','wishlist'].forEach(key=>{
+        if(Array.isArray(od[key])&&od[key].length){
+          const existing=curMod.data[key]||[];
+          const existingIds=new Set(existing.map(x=>x.id).filter(Boolean));
+          const existingDates=new Set(existing.map(x=>x.date).filter(Boolean));
+          // 只添加不存在的记录（按 id 或 date 去重）
+          od[key].forEach(item=>{
+            const itemId=item.id||item.date;
+            if(itemId){
+              if(!existingIds.has(itemId)&&!existingDates.has(itemId)){
+                existing.push(item);merged++;
+              }
+            }else{
+              existing.push(item);merged++;
+            }
+          });
+          curMod.data[key]=existing;
+        }
+      });
+      // 合并对象类数据（daily, quick, plans, writing 等）
+      ['daily','quick','writing'].forEach(key=>{
+        if(od[key]&&typeof od[key]==='object'){
+          curMod.data[key]=curMod.data[key]||{};
+          Object.entries(od[key]).forEach(([k,v])=>{
+            if(!curMod.data[key][k]){curMod.data[key][k]=v;merged++;}
+          });
+        }
+      });
+      // 合并 plans（目标规划）
+      if(od.plans&&typeof od.plans==='object'){
+        curMod.data.plans=curMod.data.plans||{};
+        Object.entries(od.plans).forEach(([period,blocks])=>{
+          if(blocks&&typeof blocks==='object'){
+            curMod.data.plans[period]=curMod.data.plans[period]||{};
+            Object.entries(blocks).forEach(([block,val])=>{
+              if(!curMod.data.plans[period][block]&&val){curMod.data.plans[period][block]=val;merged++;}
+            });
+          }
+        });
+      }
+      // 合并 blocks（目标板块列表）
+      if(Array.isArray(od.blocks)){
+        curMod.data.blocks=curMod.data.blocks||[];
+        od.blocks.forEach(b=>{if(!curMod.data.blocks.includes(b)){curMod.data.blocks.push(b);merged++;}});
+      }
+      // 保留旧的 selectedDate, monthOffset 等状态
+      ['selectedDate','monthOffset','calViewYear','calViewMonth','monthViewTouched'].forEach(key=>{
+        if(od[key]&&!curMod.data[key])curMod.data[key]=od[key];
+      });
+    }
+  });
+  // 保留主题和导航设置
+  if(oldData.theme&&!DB.data.theme)DB.data.theme=oldData.theme;
+  if(oldData.navCustom&&!DB.data.navCustom?.pinned?.length&&oldData.navCustom?.pinned?.length){
+    DB.data.navCustom=oldData.navCustom;
+  }
+  return merged>0;
+}
+
+// 数据迁移提示：检测到数据为空时，提示用户导入旧数据
+function showDataMigrationPrompt(){
+  // 检查是否已经显示过
+  try{
+    const dismissed=localStorage.getItem('tantan_migration_dismissed');
+    if(dismissed===APP_VERSION)return;
+  }catch(e){}
+  // 创建提示弹窗
+  const modal=document.createElement('div');
+  modal.className='modal-overlay active';
+  modal.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
+  modal.innerHTML=`
+    <div style="background:var(--card,#fff);border-radius:16px;padding:28px;max-width:440px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,0.2)">
+      <div style="text-align:center;margin-bottom:16px">
+        <div style="font-size:40px;margin-bottom:8px">📋</div>
+        <div style="font-size:18px;font-weight:700;color:var(--text,#333)">检测到数据为空</div>
+        <div style="font-size:13px;color:var(--text-sec,#888);margin-top:6px;line-height:1.6">
+          如果你是更新后打开的，之前的记录可能还在旧版本的备份中。<br>
+          你可以：<br>
+          <strong>1. 点击「尝试恢复」</strong> - 自动搜索浏览器中的备份数据<br>
+          <strong>2. 点击「导入文件」</strong> - 选择之前导出的 JSON 备份文件<br>
+          <strong>3. 点击「从头开始」</strong> - 作为新用户使用
+        </div>
+      </div>
+      <div style="display:grid;gap:8px">
+        <button id="_mig_recover" style="padding:10px 16px;border:1px solid var(--primary,#6c5ce7);background:var(--primary-light,#f0edff);color:var(--primary,#6c5ce7);border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">🔍 尝试恢复备份数据</button>
+        <button id="_mig_import" style="padding:10px 16px;border:1px solid var(--primary,#6c5ce7);background:var(--primary,#6c5ce7);color:#fff;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">📁 导入备份文件</button>
+        <button id="_mig_skip" style="padding:10px 16px;border:1px solid var(--card-border,#ddd);background:transparent;color:var(--text-sec,#888);border-radius:10px;font-size:14px;cursor:pointer">从头开始</button>
+      </div>
+      <div style="margin-top:12px;padding:10px;background:#fffbe6;border:1px solid #f0d860;border-radius:8px;font-size:12px;color:#8a7420;line-height:1.6">
+        💡 <strong>建议：</strong>每次更新前，先在「设置 → 导出数据」保存一份备份文件，更新后用「导入」恢复。
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  const close=()=>{document.body.removeChild(modal);};
+  modal.querySelector('#_mig_recover').addEventListener('click',()=>{
+    close();
+    const best=findBestStoredData();
+    if(best?.data&&dataScore(best.data)>dataScore(DB.data)){
+      backupStoredData('before_recover');
+      DB.data=best.data;
+      DB.data.theme=THEME_ALIASES[DB.data.theme]||DB.data.theme;
+      if(!THEMES[DB.data.theme])DB.data.theme='soft-lavender';
+      if(!DB.data.defaultViewMode)DB.data.defaultViewMode='grid';
+      if(!DB.data.navCustom)DB.data.navCustom={pinned:[],hidden:[]};
+      migrateWorkbenchData();
+      DB.save();
+      applyTheme(DB.data.theme);
+      renderDashboard();renderModuleMgmt();renderSideNav();renderViewControls();
+      alert('✅ 已恢复备份数据！你的之前的记录已找回。');
+    }else{
+      alert('未找到可恢复的备份数据。请尝试导入备份文件。');
+    }
+  });
+  modal.querySelector('#_mig_import').addEventListener('click',()=>{
+    close();
+    const input=document.createElement('input');
+    input.type='file';input.accept='.json,application/json';
+    input.addEventListener('change',e=>{
+      if(e.target.files[0]){
+        const file=e.target.files[0];
+        const reader=new FileReader();
+        reader.onload=ev=>{
+          try{
+            const oldData=JSON.parse(ev.target.result);
+            if(!oldData.modules)throw new Error('Invalid format');
+            // 使用智能合并：保留当前新版本的模块结构，填充旧数据
+            const merged=smartMergeImport(oldData);
+            backupStoredData('before_merge');
+            DB.save();
+            renderDashboard();renderModuleMgmt();renderSideNav();renderViewControls();
+            alert(merged?'✅ 导入成功！已合并你之前的记录，新功能也保留了。':'导入完成，但未发现需要合并的新数据。');
+          }catch(err){alert('导入失败：文件格式错误');}
+        };
+        reader.readAsText(file);
+      }
+    });
+    input.click();
+  });
+  modal.querySelector('#_mig_skip').addEventListener('click',()=>{
+    try{localStorage.setItem('tantan_migration_dismissed',APP_VERSION);}catch(e){}
+    close();
+  });
+}
+
 function importData(file){
   const reader=new FileReader();
   reader.onload=e=>{
     try{
       const data=JSON.parse(e.target.result);
       if(!data.modules)throw new Error('Invalid format');
-      if(confirm('导入将覆盖当前所有数据，确定继续吗？')){
-        DB.data=data;
-        DB.data.theme=THEME_ALIASES[DB.data.theme]||DB.data.theme;
-        if(!THEMES[DB.data.theme])DB.data.theme='soft-lavender';
-        if(!DB.data.viewMode)DB.data.viewMode='grid';
-        if(!DB.data.defaultViewMode)DB.data.defaultViewMode=DB.data.viewMode||'grid';
-        if(!DB.data.navCustom)DB.data.navCustom={pinned:[],hidden:[]};
+      const currentScore=dataScore(DB.data),importScore=dataScore(data);
+      // 提供两种导入方式：覆盖 or 智能合并
+      const choice=confirm(
+        `检测到导入数据包含 ${data.modules.length} 个模块（数据量评分 ${importScore}）。\n`+
+        `当前数据评分：${currentScore}。\n\n`+
+        `点击「确定」= 智能合并（推荐）：保留当前新版本的模块结构和新功能，同时填入旧数据的所有记录\n`+
+        `点击「取消」= 覆盖导入：完全替换为导入文件的数据`
+      );
+      if(choice){
+        // 智能合并
+        backupStoredData('before_merge');
+        smartMergeImport(data);
         migrateWorkbenchData();
         DB.save();
         applyTheme(DB.data.theme);
-        renderDashboard();
-        renderModuleMgmt();
-        renderSideNav();
-        renderViewControls();
+        renderDashboard();renderModuleMgmt();renderSideNav();renderViewControls();
         closeModal('settingsModal');
-        alert('导入成功！');
+        alert('✅ 智能合并成功！你的旧记录已恢复，新功能也保留了。');
+      }else{
+        // 覆盖导入
+        if(confirm('确定要完全覆盖当前数据吗？此操作不可撤销！\n建议先导出当前数据作为备份。')){
+          backupStoredData('before_overwrite');
+          DB.data=data;
+          DB.data.theme=THEME_ALIASES[DB.data.theme]||DB.data.theme;
+          if(!THEMES[DB.data.theme])DB.data.theme='soft-lavender';
+          if(!DB.data.viewMode)DB.data.viewMode='grid';
+          if(!DB.data.defaultViewMode)DB.data.defaultViewMode=DB.data.viewMode||'grid';
+          if(!DB.data.navCustom)DB.data.navCustom={pinned:[],hidden:[]};
+          migrateWorkbenchData();
+          DB.save();
+          applyTheme(DB.data.theme);
+          renderDashboard();renderModuleMgmt();renderSideNav();renderViewControls();
+          closeModal('settingsModal');
+          alert('导入成功！');
+        }
       }
     }catch(err){alert('导入失败：文件格式错误');}
   };
@@ -4046,10 +5219,23 @@ function migrateWorkbenchData(){
       mod.data=mod.data||{};
       mod.data.records=dedupeByDate(mod.data.records||[]);
       if(type==='sleep'){
-        importHistoricalSleepRecords(mod.data);
+        // V8.4: 以修正后的 2026 日期强制重新导入睡眠记录
+        if(!mod.data.sleepV84){
+          // 移除旧的错误 2025 日期记录
+          mod.data.records=(mod.data.records||[]).filter(r=>!r.date||!r.date.startsWith('2025-'));
+          mod.data.historyImport2026=false;
+          mod.data.julyImport2026=false;
+          // 仅在首次迁移时重置月份视图，避免每次加载都跳回最新月份
+          mod.data.monthViewTouched=false;
+          mod.data.monthOffset=monthOffsetFromLatestSleepRecord(mod.data.records);
+        }
+        importHistoricalSleepRecords2026(mod.data);
         importJulySleepRecords2026(mod.data);
-        if(mod.data.monthViewTouched===undefined)mod.data.monthViewTouched=false;
-        if(mod.data.monthOffset===undefined||mod.data.monthOffset===null)mod.data.monthOffset=monthOffsetFromLatestSleepRecord(mod.data.records);
+        mod.data.sleepV84=true;
+        // 确保所有已导入记录的起床时间默认为 07:00
+        (mod.data.records||[]).forEach(r=>{
+          if(r.bedtime&&!r.wakeTime)r.wakeTime='07:00';
+        });
       }
       mod.data.selectedDate=mod.data.selectedDate||todayStr();
       mod.data.monthOffset=mod.data.monthOffset||0;
@@ -4150,6 +5336,18 @@ function migrateWorkbenchData(){
         changes:'V8.0 大版本更新：\n• 设置弹窗增加返回按钮，移动端体验优化\n• 英语学习新增生词本：点击单词直接加入，支持标签（已认识/模糊/不认识）\n• 英语学习新增查单词：手动输入或图片识别，接入词典API显示发音/释义/例句\n• 修复睡眠颜色bug：23:00后入睡（含00:30/2:30等）统一标红\n• 新增平均睡眠时长统计\n• 补充7月睡眠记录（7/1-7/28）\n• 英语写作反馈修复：每次输入都能生成新反馈，不再卡在上一条\n• 收藏库编辑/完成状态切换优化\n• 行动总览支持补填历史计划，自定义追踪板块\n• 修复网格/双栏/列表布局显示一致问题\n• 各模块保存按钮统一加入已保存确认反馈\n• 热点自动化支持9个平台（微博/知乎/抖音/小红书/微信/百度/B站/头条/AI科技新闻）\n• 英语朗读优化：优先选择自然语音，调整语速音高'
       });
     }
+    if(!changelog.data.logs.some(l=>l.version==='V8.2')){
+      changelog.data.logs.push({
+        id:genId(),date:todayStr(),version:'V8.2',
+        changes:'V8.2 功能修复与优化：\n• 修复英语写作润色版本：不再复制错误原文，逐步应用所有修正规则生成正确版本\n• 查单词增强：新增常见搭配、反义词、更多例句，例句可点击朗读\n• 图片OCR增强：支持 Ctrl+V 粘贴截图识别，拖拽/点击/粘贴三种方式\n• 修复睡眠7月看板不显示：每次加载重置月份视图，保存后自动跳转到最新记录月份\n• 修复本周快速填写与睡眠看板关联：保存后看板自动刷新显示新填写的日期\n• 修复爆款话题同步：修复GitHub Actions语法错误，新增直接API抓取回退策略\n• 行动总览新增列隐藏功能：点击列标签可像Excel一样隐藏/显示日期列\n• 行动总览周复盘排版优化：改用卡片式HTML布局，区分做得好/需改进/建议\n• 长期报告全面升级：SVG圆环进度图、进度条、多周期对比表、自动总结摘要\n• 长期报告新增总结摘要：自动分析做得好的、需要改进的、优化建议'
+      });
+    }
+    if(!changelog.data.logs.some(l=>l.version==='V8.3')){
+      changelog.data.logs.push({
+        id:genId(),date:todayStr(),version:'V8.3',
+        changes:'V8.3 系统性优化（对应缓存版本 v33）：\n• 跨模块实时刷新：补填周一到周四行动后，行动总览每周汇总和复盘总结自动更新\n• 面板跳转增强：英语/睡眠/运动/复盘面板点击月历某天，自动跳转到下方打卡日历并高亮对应日期\n• 英语写作Native地道表达升级：不止修正错误，还提供母语者更自然的句式改写（缩写/短语动词/地道搭配/语气优化）\n• 每日复盘回溯增强：月历看板显示每天复盘摘要，点击任意日期可查看完整复盘内容\n• 隐私保护声明：明确所有数据仅存储在本地浏览器，不外泄任何个人信息\n• 爆款话题抓取修复：新增多个可靠API源，优化前端直抓回退策略\n• 长期报告数据校准：修正英语完成率统计（不再将无记录日计入总量）、复盘天数统计（含仅填改进项的记录）\n• 长期报告新增数据明细表：可展开查看周期内每天的计划/睡眠/运动/冥想/英语/阅读/复盘数据来源\n• 长期报告新增日期范围显示：明确标注当前统计周期起止日期和有记录天数\n• 每日计划日期回溯：显示当天日期，支持迷你日历导航回到任意历史日期的计划，可返回今天'
+      });
+    }
   }
   DB.save();
 }
@@ -4162,13 +5360,32 @@ function init(){
     const existing=localStorage.getItem('tantan_workbench_data')||localStorage.getItem('tantan_workbench_v1');
     if(existing)localStorage.setItem('tantan_workbench_backup',existing);
   }catch(e){}
+  // 检测是否为版本更新（之前有数据但现在可能丢失）
+  let _isVersionUpdate=false;
+  try{
+    const lastVersion=localStorage.getItem('tantan_last_app_version')||'';
+    const hasOldData=!!(localStorage.getItem('tantan_workbench_data')||localStorage.getItem('tantan_workbench_v1')||localStorage.getItem('tantan_workbench_backup_latest')||localStorage.getItem('tantan_workbench_backup'));
+    if(lastVersion&&lastVersion!==APP_VERSION&&hasOldData){
+      _isVersionUpdate=true;
+    }
+    localStorage.setItem('tantan_last_app_version',APP_VERSION);
+  }catch(e){}
   DB.load();
+  // 版本更新时自动备份当前数据
+  if(_isVersionUpdate){
+    try{backupStoredData('version_update_'+APP_VERSION);}catch(e){}
+  }
   DB.data.theme=THEME_ALIASES[DB.data.theme]||DB.data.theme;
   if(!THEMES[DB.data.theme])DB.data.theme='soft-lavender';
   if(!DB.data.defaultViewMode)DB.data.defaultViewMode='grid';
   if(!DB.data.navCustom)DB.data.navCustom={pinned:[],hidden:[]};
   DB.data.viewMode=DB.data.defaultViewMode||'grid';
   migrateWorkbenchData();
+  // 检测数据是否为空（可能是新设备/新浏览器），提示导入旧数据
+  const currentScore=dataScore(DB.data);
+  if(currentScore<10){
+    setTimeout(()=>showDataMigrationPrompt(),1500);
+  }
   // 迁移：添加收藏库模块
   if(!DB.data.modules.some(m=>m.type==='collection')){
     DB.data.modules.splice(DB.data.modules.findIndex(m=>m.type==='inspiration')+1,0,
@@ -4288,15 +5505,25 @@ function init(){
   const updateRefreshBtn = document.getElementById('updateRefreshBtn');
   const updateCloseBtn = document.getElementById('updateCloseBtn');
   if (updateRefreshBtn) {
-    updateRefreshBtn.addEventListener('click', () => {
-      // 强制清除缓存并刷新
-      if ('caches' in window) {
-        caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k)))).then(() => {
-          window.location.reload(true);
-        }).catch(() => window.location.reload(true));
-      } else {
-        window.location.reload(true);
+    updateRefreshBtn.addEventListener('click', async () => {
+      // 1. 注销 Service Worker，防止它继续拦截请求返回旧缓存
+      if ('serviceWorker' in navigator) {
+        try {
+          const regs = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(regs.map(r => r.unregister()));
+          console.log('Service Worker 已注销');
+        } catch (e) {}
       }
+      // 2. 清除所有 Cache Storage
+      if ('caches' in window) {
+        try {
+          const keys = await caches.keys();
+          await Promise.all(keys.map(k => caches.delete(k)));
+          console.log('缓存已清除');
+        } catch (e) {}
+      }
+      // 3. 带时间戳强制刷新，绕过浏览器缓存
+      window.location.href = window.location.pathname + '?v=' + Date.now();
     });
   }
   if (updateCloseBtn) {
