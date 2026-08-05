@@ -618,7 +618,7 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
 /* ============================================================
    应用版本与自动更新检测
 ============================================================ */
-const APP_VERSION = 'v34';
+const APP_VERSION = 'v36';
 const APP_BUILD_TIME = '2026-08-04';
 
 /**
@@ -1456,6 +1456,60 @@ async function fetchHotPayload(url){
   }
 }
 
+// 自动同步热点数据（页面加载时自动调用，4小时冷却）
+async function autoSyncHotTopics(mod,save){
+  if(!mod||mod.type!=='trending')return;
+  mod.data=mod.data||{};
+  const now=Date.now();
+  const lastSync=mod.data.lastAutoSync||0;
+  if(lastSync&&(now-lastSync<4*60*60*1000))return; // 4小时内不同步
+  mod.data.hotStatus='🔄 正在自动同步热点数据...';
+  save();
+  let list=null,syncSource='';
+  // 策略1：读取本地 hot-topics.json（GitHub Actions 每日更新）
+  try{
+    const fetched=await fetchHotPayload(`./hot-topics.json?t=${now}`);
+    if(fetched&&fetched.length){list=fetched;syncSource='本地文件';}
+  }catch(e){}
+  // 策略2：本地文件为空 → 直接抓取 DailyHot API（含 CORS 代理）
+  if(!list||!list.length){
+    const apiBases=['https://api-hot.imsyy.top','https://dailyhot.cmcq.xyz','https://api-hot.cricnep.tech','https://hot.cricnep.tech'];
+    const corsProxies=[(u)=>u,(u)=>`https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,(u)=>`https://corsproxy.io/?url=${encodeURIComponent(u)}`,(u)=>`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`];
+    const platforms=[['weibo','微博'],['zhihu','知乎'],['douyin','抖音'],['baidu','百度'],['bilibili','B站'],['toutiao','今日头条'],['36kr','AI科技'],['ithome','IT之家']];
+    list=[];let ok=0;
+    for(const [key,name] of platforms){
+      let done=false;
+      for(const base of apiBases){
+        if(done)break;
+        for(const proxy of corsProxies){
+          if(done)break;
+          try{
+            const res=await fetch(proxy(`${base}/${key}`),{signal:AbortSignal.timeout(10000),cache:'no-store'});
+            if(!res.ok)continue;
+            const json=await res.json();
+            const items=Array.isArray(json)?json:(Array.isArray(json.data)?json.data:(Array.isArray(json.data?.list)?json.data.list:[]));
+            if(items&&items.length){
+              items.slice(0,10).forEach(it=>list.push({title:it.title||it.name||it.word||'',url:it.url||it.link||it.mobileUrl||'',hot:it.hot||it.hotValue||it.desc||'',platform:key}));
+              done=true;ok++;
+            }
+          }catch(e){continue;}
+        }
+      }
+    }
+    if(ok>0)syncSource=`API直抓(${ok}个平台)`;
+  }
+  if(list&&list.length){
+    mod.data.hotResults=list.filter((v,i,a)=>a.findIndex(u=>u.title===v.title)===i).slice(0,30);
+    const t=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
+    mod.data.hotStatus=`✅ 自动同步：${mod.data.hotResults.length}条（${syncSource}）·${t}`;
+    mod.data.lastAutoSync=now;
+    save();return true;
+  }else{
+    mod.data.hotStatus=lastSync?`⚠️ 同步失败，显示上次数据（${new Date(lastSync).toLocaleString('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})}）`:'⚠️ 自动同步失败，可手动点击"同步文件"';
+    mod.data.lastAutoSync=now;save();return false;
+  }
+}
+
 function speakText(text){
   if(!window.speechSynthesis)return;
   window.speechSynthesis.cancel();
@@ -1479,7 +1533,9 @@ async function translateExample(text){
     const url=`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|zh`;
     const res=await fetch(url,{signal:AbortSignal.timeout(5000)});
     const data=await res.json();
-    return data?.responseData?.translatedText||'';
+    const raw=data?.responseData?.translatedText||'';
+    // 清除 XLIFF 标签（如 <x id="1"/>）
+    return raw.replace(/<x[^>]*\/>/g,'').replace(/<g[^>]*>(.*?)<\/g>/g,'$1').replace(/<ph[^>]*>.*?<\/ph>/g,'').replace(/<\/?[a-z][^>]*>/g,'').replace(/\s+/g,' ').trim();
   }catch(e){return '';}
 }
 // 中英互译：支持中→英和英→中
@@ -1488,11 +1544,11 @@ async function translateBidirectional(text,from='zh',to='en'){
     const url=`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${from}|${to}`;
     const res=await fetch(url,{signal:AbortSignal.timeout(8000)});
     const data=await res.json();
-    const main=data?.responseData?.translatedText||'';
+    const sanitizeT=t=>(t||'').replace(/<x[^>]*\/>/g,'').replace(/<g[^>]*>(.*?)<\/g>/g,'$1').replace(/<ph[^>]*>.*?<\/ph>/g,'').replace(/<\/?[a-z][^>]*>/g,'').replace(/\s+/g,' ').trim();
+    const main=sanitizeT(data?.responseData?.translatedText||'');
     // 收集备选翻译
     const matches=data?.matches||[];
-    const alts=matches.filter(m=>m.translation&&m.translation!==main)
-      .map(m=>m.translation)
+    const alts=matches.map(m=>sanitizeT(m.translation||'')).filter(t=>t&&t!==main)
       .filter((v,i,a)=>a.indexOf(v)===i)
       .slice(0,3);
     return {main,alts,raw:data};
@@ -1543,9 +1599,10 @@ async function lookupWord(word,resultEl){
     }
     const data=await res.json();
     const entry=data[0];
-    let html=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap"><strong style="font-size:18px;color:var(--primary)">${esc(entry.word)}</strong>${entry.phonetic?`<span style="color:#666;font-size:13px">${esc(entry.phonetic)}</span>`:''}${packZh?`<span style="background:var(--primary-light);color:var(--primary);font-size:12px;padding:2px 8px;border-radius:10px">${esc(packZh)}</span>`:''}<span class="en-speak-word" data-word="${esc(entry.word)}" style="cursor:pointer" title="朗读"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg></span></div>`;
+    let html=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap"><strong style="font-size:18px;color:var(--primary)">${esc(entry.word)}</strong>${entry.phonetic?`<span style="color:#666;font-size:13px">${esc(entry.phonetic)}</span>`:''}<span class="en-speak-word" data-word="${esc(entry.word)}" style="cursor:pointer" title="朗读"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg></span></div>`;
     // 加入生词本按钮
     html+=`<button class="btn btn-primary btn-sm en-lookup-add-word" style="margin-bottom:8px;font-size:12px" data-word="${esc(entry.word)}" data-meaning="${esc(packZh||'')}">📝 加入生词本</button>`;
+    // 英文释义部分（默认显示）
     const allSynonyms=new Set();
     const allExamples=[];
     const allAntonyms=new Set();
@@ -1554,11 +1611,7 @@ async function lookupWord(word,resultEl){
       m.definitions.slice(0,4).forEach((def,i)=>{
         html+=`<div style="margin-top:4px;font-size:13px;color:var(--text)"><strong>${i+1}.</strong> ${esc(def.definition)}</div>`;
         if(def.example){
-          // 从词包中查找例句的中文翻译
-          let exZh='';
-          const packMatch=packExamples.find(ex=>(typeof ex==='string'?ex:ex.en)===def.example);
-          if(packMatch){exZh=typeof packMatch==='string'?'':(packMatch.zh||'');}
-          html+=`<div style="margin-top:2px;font-size:12px;color:#888;font-style:italic;cursor:pointer;padding:2px 6px;border-radius:4px" onclick="speakText('${esc(def.example).replace(/'/g,"\\'")}')" title="点击朗读">💬 ${esc(def.example)}${exZh?`<span class="ex-zh" style="display:block;color:var(--primary);font-size:11px;margin-left:18px;font-style:normal">${esc(exZh)}</span>`:`<span class="ex-zh" data-en="${esc(def.example)}" style="display:block;color:var(--primary);font-size:11px;margin-left:18px;font-style:normal">翻译中...</span>`}</div>`;
+          html+=`<div style="margin-top:2px;font-size:12px;color:#888;font-style:italic;cursor:pointer;padding:2px 6px;border-radius:4px" onclick="speakText('${esc(def.example).replace(/'/g,"\\'")}')" title="点击朗读">💬 ${esc(def.example)}</div>`;
           allExamples.push(def.example);
         }
         if(def.synonyms&&def.synonyms.length){def.synonyms.slice(0,5).forEach(s=>allSynonyms.add(s));}
@@ -1574,24 +1627,62 @@ async function lookupWord(word,resultEl){
     if(allAntonyms.size){
       html+=`<div style="margin-top:6px"><span style="font-size:12px;font-weight:700;color:#d64545">📎 反义词：</span><div style="margin-top:4px">${[...allAntonyms].slice(0,6).map(s=>`<span class="tag" style="margin:2px;font-size:11px;cursor:pointer" onclick="document.querySelector('.en-lookup-input').value='${esc(s)}';document.querySelector('.en-lookup-btn').click()">${esc(s)}</span>`).join('')}</div></div>`;
     }
-    // 常见搭配（含中文释义）
+    // 常见搭配
     const collocations=generateCollocations(entry.word,entry.meanings);
     if(collocations.length){
       html+=`<div style="margin-top:6px"><span style="font-size:12px;font-weight:700;color:var(--primary)">🔗 常见搭配：</span><div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px">${collocations.map(c=>`<span class="tag" style="margin:2px;font-size:11px;background:var(--primary-light);color:var(--primary);cursor:pointer;padding:3px 8px" onclick="document.querySelector('.en-lookup-input').value='${esc(c.en.split(' ').slice(-1)[0])}';document.querySelector('.en-lookup-btn').click()" title="${esc(c.zh)}">${esc(c.en)} <span style="color:var(--text-sec);font-size:10px">${esc(c.zh)}</span></span>`).join('')}</div></div>`;
     }
-    // 词包例句（如果有）
-    if(packExamples.length){
-      html+=`<div style="margin-top:8px;padding-top:6px;border-top:1px dashed var(--card-border)"><span style="font-size:12px;font-weight:700;color:var(--primary)">📝 词包例句：</span>${packExamples.map(ex=>{const en=typeof ex==='string'?ex:(ex.en||'');const zh=typeof ex==='string'?'':(ex.zh||'');return `<div style="margin-top:4px;font-size:12px;color:#666;font-style:italic;cursor:pointer;padding:2px 6px;border-radius:4px" onclick="speakText('${esc(en).replace(/'/g,"\\'")}')" title="点击朗读">💬 ${esc(en)}${zh?`<span class="ex-zh" style="display:block;color:var(--primary);font-size:11px;margin-left:18px;font-style:normal">${esc(zh)}</span>`:`<span class="ex-zh" data-en="${esc(en)}" style="display:block;color:var(--primary);font-size:11px;margin-left:18px;font-style:normal">翻译中...</span>`}</div>`;}).join('')}</div>`;
-    }
     // 更多例句
     const uniqueExamples=[...new Set(allExamples)];
     if(uniqueExamples.length>1){
-      html+=`<div style="margin-top:8px;padding-top:6px;border-top:1px dashed var(--card-border)"><span style="font-size:12px;font-weight:700;color:var(--primary)">📝 更多例句：</span>${uniqueExamples.slice(0,5).map(ex=>{let exZh2='';const pm2=packExamples.find(p=>(typeof p==='string'?p:p.en)===ex);if(pm2){exZh2=typeof pm2==='string'?'':(pm2.zh||'');}return `<div style="margin-top:4px;font-size:12px;color:#666;font-style:italic;cursor:pointer;padding:2px 6px;border-radius:4px" onclick="speakText('${esc(ex).replace(/'/g,"\\'")}')" title="点击朗读">💬 ${esc(ex)}${exZh2?`<span class="ex-zh" style="display:block;color:var(--primary);font-size:11px;margin-left:18px;font-style:normal">${esc(exZh2)}</span>`:`<span class="ex-zh" data-en="${esc(ex)}" style="display:block;color:var(--primary);font-size:11px;margin-left:18px;font-style:normal">翻译中...</span>`}</div>`;}).join('')}</div>`;
+      html+=`<div style="margin-top:8px;padding-top:6px;border-top:1px dashed var(--card-border)"><span style="font-size:12px;font-weight:700;color:var(--primary)">📝 更多例句：</span>${uniqueExamples.slice(0,5).map(ex=>`<div style="margin-top:4px;font-size:12px;color:#666;font-style:italic;cursor:pointer;padding:2px 6px;border-radius:4px" onclick="speakText('${esc(ex).replace(/'/g,"\\'")}')" title="点击朗读">💬 ${esc(ex)}</div>`).join('')}</div>`;
+    }
+    // 中文释义部分（默认折叠，点击展开）
+    const zhParts=[];
+    if(packZh)zhParts.push(`<div style="font-size:14px;margin-bottom:4px"><strong style="color:var(--primary)">中文释义：</strong>${esc(packZh)}</div>`);
+    if(packExamples.length){
+      zhParts.push(`<div style="margin-top:6px"><span style="font-size:12px;font-weight:700;color:var(--primary)">📝 例句翻译：</span>${packExamples.map(ex=>{const en=typeof ex==='string'?ex:(ex.en||'');const zh=typeof ex==='string'?'':(ex.zh||'');return `<div style="margin-top:4px;font-size:12px;color:#666;font-style:italic;cursor:pointer;padding:2px 6px;border-radius:4px" onclick="speakText('${esc(en).replace(/'/g,"\\'")}')" title="点击朗读">💬 ${esc(en)}${zh?`<span class="ex-zh" style="display:block;color:var(--primary);font-size:11px;margin-left:18px;font-style:normal">${esc(zh)}</span>`:`<span class="ex-zh" data-en="${esc(en)}" style="display:block;color:var(--primary);font-size:11px;margin-left:18px;font-style:normal">翻译中...</span>`}</div>`;}).join('')}</div>`);
+    }
+    // 异步翻译英文释义和例句
+    const translatableItems=[];
+    entry.meanings.forEach(m=>{m.definitions.slice(0,4).forEach(def=>{if(def.definition)translatableItems.push({type:'def',text:def.definition});if(def.example)translatableItems.push({type:'ex',text:def.example});});});
+    if(translatableItems.length||zhParts.length){
+      html+=`<div style="margin-top:8px;padding-top:6px;border-top:1px dashed var(--card-border)">
+        <div class="en-zh-toggle" style="cursor:pointer;color:var(--primary);font-size:13px;font-weight:600;user-select:none">📖 显示中文释义 ›</div>
+        <div class="en-zh-content" style="display:none;margin-top:8px;padding:8px;background:var(--primary-light);border-radius:8px">
+          ${translatableItems.map((item,i)=>`<div class="en-zh-item" data-text="${esc(item.text)}" data-type="${item.type}" style="margin-top:4px;font-size:12px"><span style="color:#666">${esc(item.text)}</span><span class="en-zh-trans" style="display:block;color:var(--primary);font-size:11px;margin-left:12px">翻译中...</span></div>`).join('')}
+          ${zhParts.join('')}
+        </div>
+      </div>`;
     }
     resultEl.innerHTML=html;
     fillExTranslations(resultEl);
     resultEl.querySelector('.en-speak-word')?.addEventListener('click',()=>speakText(entry.word));
     bindAddWordBtn(resultEl);
+    // 绑定中文释义展开/收起
+    const zhToggle=resultEl.querySelector('.en-zh-toggle');
+    const zhContent=resultEl.querySelector('.en-zh-content');
+    let zhExpanded=false;
+    zhToggle?.addEventListener('click',async()=>{
+      zhExpanded=!zhExpanded;
+      if(zhExpanded){
+        zhContent.style.display='block';
+        zhToggle.innerHTML='📖 收起中文释义 ›';
+        // 异步翻译释义和例句
+        const items=resultEl.querySelectorAll('.en-zh-item[data-text]');
+        items.forEach(async item=>{
+          const text=item.dataset.text;
+          const transEl=item.querySelector('.en-zh-trans');
+          if(transEl&&transEl.textContent==='翻译中...'){
+            const zh=await translateExample(text);
+            if(zh)transEl.textContent=zh;else transEl.style.display='none';
+          }
+        });
+      }else{
+        zhContent.style.display='none';
+        zhToggle.innerHTML='📖 显示中文释义 ›';
+      }
+    });
   }catch(e){
     resultEl.innerHTML=`<div style="color:var(--text-sec)">查询失败：${esc(e.message)}</div>`;
   }
@@ -1760,6 +1851,21 @@ function ensureRoutineTasks(data,targetDate){
   data.routineTasks=data.routineTasks||DEFAULT_ROUTINE_TASKS.map(text=>({id:genId(),text}));
   data.routineTasks.forEach(r=>{if(!r.id)r.id=genId();});
 }
+// 为指定日期初始化常规任务：将未保存的常规任务添加到 tasks 数组（done:false）
+// 仅在用户主动导航到该日期时调用，不在页面加载时调用
+function initRoutineTasksForDate(data,dateStr){
+  data.tasks=data.tasks||[];
+  data.routineTasks=data.routineTasks||DEFAULT_ROUTINE_TASKS.map(text=>({id:genId(),text}));
+  data.routineTasks.forEach(r=>{
+    if(!r.id)r.id=genId();
+    if(!r.text)return;
+    // 检查该日期是否已有此常规任务
+    const exists=data.tasks.some(t=>t.date===dateStr&&(t.routineId===r.id||t.text===r.text));
+    if(!exists){
+      data.tasks.push({id:genId(),text:r.text,done:false,date:dateStr,routineId:r.id});
+    }
+  });
+}
 function importHistoricalSleepRecords2026(sleepData){
   sleepData.records=Array.isArray(sleepData.records)?sleepData.records:[];
   let added=0;
@@ -1842,7 +1948,7 @@ const DB={
         {id:genId(),type:'reading',title:'阅读',visible:true,data:{}},
         {id:genId(),type:'english',title:'英语学习',visible:true,data:{}},
         {id:genId(),type:'skill',title:'技能提升',visible:true,data:{}},
-        {id:genId(),type:'trending',title:'爆款话题',visible:true,data:{entries:[],filter:'all',hotBase:'https://dailyhot.cmcq.xyz',hotSource:'weibo',hotResults:[],autoImportUrl:'./hot-topics.json'}},
+        {id:genId(),type:'trending',title:'爆款话题',visible:true,data:{entries:[],filter:'all',hotBase:'https://dailyhot.cmcq.xyz',hotSource:'weibo',hotResults:[],autoImportUrl:'./hot-topics.json',lastAutoSync:0}},
         {id:genId(),type:'inspiration',title:'灵感记录',visible:true,data:{}},
         {id:genId(),type:'collection',title:'收藏库',visible:true,data:{entries:[],filter:'all',categories:DEFAULT_COLLECTION_CATEGORIES.slice()}},
         {id:genId(),type:'changelog',title:'更新日志',visible:true,data:{
@@ -2049,6 +2155,9 @@ const MODULE_TYPES={
       `;
     },
     bind(body,mod,save){
+      // 为当前选中日期初始化常规任务（确保显示和统计一致）
+      mod.data.selectedDate=mod.data.selectedDate||todayStr();
+      initRoutineTasksForDate(mod.data,mod.data.selectedDate);
       const input=body.querySelector('.dp-input');
       const addBtn=body.querySelector('.dp-add');
       const addTask=()=>{
@@ -2065,6 +2174,7 @@ const MODULE_TYPES={
         d.setDate(d.getDate()-1);
         mod.data.selectedDate=dateKey(d);
         mod.data.calViewYear=d.getFullYear();mod.data.calViewMonth=d.getMonth();
+        initRoutineTasksForDate(mod.data,mod.data.selectedDate);
         save();rerender(mod);
       });
       body.querySelector('.dp-next-day')?.addEventListener('click',()=>{
@@ -2072,11 +2182,13 @@ const MODULE_TYPES={
         d.setDate(d.getDate()+1);
         mod.data.selectedDate=dateKey(d);
         mod.data.calViewYear=d.getFullYear();mod.data.calViewMonth=d.getMonth();
+        initRoutineTasksForDate(mod.data,mod.data.selectedDate);
         save();rerender(mod);
       });
       body.querySelector('.dp-today')?.addEventListener('click',()=>{
         mod.data.selectedDate=todayStr();
         mod.data.calViewYear=0;mod.data.calViewMonth=0;
+        initRoutineTasksForDate(mod.data,mod.data.selectedDate);
         save();rerender(mod);
       });
       // 迷你日历：点击日期跳转到对应天
@@ -2089,6 +2201,7 @@ const MODULE_TYPES={
             const d2=new Date(date);
             mod.data.calViewYear=d2.getFullYear();
             mod.data.calViewMonth=d2.getMonth();
+            initRoutineTasksForDate(mod.data,mod.data.selectedDate);
             save();rerender(mod);
           }
         });
@@ -2114,12 +2227,14 @@ const MODULE_TYPES={
         mod.data.selectedDate=dateInput.value||todayStr();
         const d2=new Date(mod.data.selectedDate);
         mod.data.calViewYear=d2.getFullYear();mod.data.calViewMonth=d2.getMonth();
+        initRoutineTasksForDate(mod.data,mod.data.selectedDate);
         save();rerender(mod);
       });
       dateInput?.addEventListener('change',()=>{
         mod.data.selectedDate=dateInput.value||todayStr();
         const d2=new Date(mod.data.selectedDate);
         mod.data.calViewYear=d2.getFullYear();mod.data.calViewMonth=d2.getMonth();
+        initRoutineTasksForDate(mod.data,mod.data.selectedDate);
         save();rerender(mod);
       });
       body.querySelectorAll('.todo-item').forEach(item=>{
@@ -2128,11 +2243,10 @@ const MODULE_TYPES={
         const isUnsaved=item.dataset.unsaved==='1';
         item.querySelector('.dp-toggle').addEventListener('click',()=>{
           if(isUnsaved){
-            // 未保存的常规任务：首次交互时保存到 tasks
-            const r=mod.data.routineTasks.find(x=>x.id===routineId);
-            if(r){
-              mod.data.tasks.push({id:genId(),text:r.text,done:true,date:mod.data.selectedDate,routineId:r.id});
-            }
+            // 未保存的常规任务：先初始化该日期所有常规任务，再切换状态
+            initRoutineTasksForDate(mod.data,mod.data.selectedDate);
+            const t=mod.data.tasks.find(x=>x.date===mod.data.selectedDate&&x.routineId===routineId);
+            if(t){t.done=true;}
           }else{
             const t=mod.data.tasks.find(x=>x.id===id);if(t){t.done=!t.done;save();rerender(mod);return;}
           }
@@ -2255,7 +2369,8 @@ const MODULE_TYPES={
         summary.planTotal+=tasks.length;
         if(tasks.length){
           const doneNames=tasks.filter(t=>t.done).map(t=>t.text).filter(Boolean);
-          items.push(`计划 ${done}/${tasks.length}（${Math.round(done/tasks.length*100)}%）${doneNames.length?`：${doneNames.join('、')}`:''}`);
+          items.push(`计划 ${done}/${tasks.length}（${Math.round(done/tasks.length*100)}%）`);
+          doneNames.forEach(name=>items.push(`  ✓ ${name}`));
         }
         const sl=findByDate(sleep.records||[],key);
         if(sl?.bedtime){const early=isEarlySleep(sl.bedtime);if(early)summary.earlySleep++;items.push(`${early?'✓早睡':'⚠晚睡'} ${sl.bedtime}→${sl.wakeTime||'?'} ${sleepDurationText(sl.bedtime,sl.wakeTime,false)}`);summary.sleep++;}
@@ -2429,6 +2544,7 @@ const MODULE_TYPES={
           </div>
         `).join('')}
         <button class="btn btn-primary btn-sm btn-block goal-save">保存目标规划</button>
+        <div class="small-text" id="goal-save-status" style="text-align:center;margin-top:4px;color:var(--primary);display:none"></div>
         <div class="small-text">建议：每个周期都按自定义板块拆解，年/季放结果，月/周/日放可执行动作。</div>
         `:`
         ${GOAL_PERIODS.map(([period,label])=>`
@@ -2459,7 +2575,15 @@ const MODULE_TYPES={
           mod.data.plans[period]=mod.data.plans[period]||{};
           mod.data.plans[period][block]=field.value.trim();
         });
-        save();rerender(mod);
+        save();
+        // 显示保存成功提示
+        const status=body.querySelector('#goal-save-status');
+        if(status){
+          status.style.display='block';
+          status.textContent='✓ 目标规划已保存 · '+formatDateTime(nowStr());
+          setTimeout(()=>{status.style.display='none';},3000);
+        }
+        rerender(mod);
       };
       const goalSave=body.querySelector('.goal-save');
       if(goalSave)goalSave.addEventListener('click',saveGoals);
@@ -2586,14 +2710,42 @@ const MODULE_TYPES={
         const month=String(i+1).padStart(2,'0');
         const rows=d.records.filter(r=>(r.date||'').slice(0,7)===`${year}-${month}`);
         const days=rows.length;
+        const earlyDays=rows.filter(r=>isEarlySleep(r.bedtime)).length;
         const avg=days?Math.round(rows.reduce((s,r)=>s+(+r.quality||0),0)/days*10)/10:0;
-        return `<div class="trend-mini"><strong>${i+1}月</strong><span>${days}天</span><em>${avg?`${avg}星`:'-'}</em></div>`;
+        const earlyRate=days?Math.round(earlyDays/days*100):0;
+        return {month:i+1,days,earlyDays,avg,earlyRate};
+      });
+      // 年度早睡趋势折线图（SVG）
+      const maxEarly=Math.max(...yearSummary.map(m=>m.earlyDays),1);
+      const chartW=340,chartH=120,padL=20,padB=18,padT=8;
+      const barW=(chartW-padL-8)/12*0.6;
+      const gap=(chartW-padL-8)/12*0.4;
+      const chartBars=yearSummary.map((m,i)=>{
+        const x=padL+i*((chartW-padL-8)/12)+gap/2;
+        const barH=m.earlyDays?Math.round(m.earlyDays/maxEarly*(chartH-padB-padT)):0;
+        const y=chartH-padB-barH;
+        const color=m.earlyRate>=60?'#22a06b':m.earlyRate>=30?'#f5b42f':'#d64545';
+        return `<rect x="${x}" y="${y}" width="${barW}" height="${barH}" fill="${color}" rx="2" opacity="0.85"><title>${m.month}月: 早睡${m.earlyDays}天 / 共${m.days}天 (${m.earlyRate}%)</title></rect>
+        <text x="${x+barW/2}" y="${y-3}" text-anchor="middle" font-size="9" fill="${color}" font-weight="600">${m.earlyDays||''}</text>
+        <text x="${x+barW/2}" y="${chartH-padB+12}" text-anchor="middle" font-size="9" fill="var(--text-sec)">${m.month}月</text>`;
       }).join('');
+      const yearTotalDays=yearSummary.reduce((s,m)=>s+m.days,0);
+      const yearTotalEarly=yearSummary.reduce((s,m)=>s+m.earlyDays,0);
+      const sleepChart=`<div style="background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:12px;margin-bottom:8px">
+        <div class="flex-between" style="margin-bottom:6px"><strong style="font-size:13px">${year} 年度睡眠趋势</strong><span class="small-text">早睡天数 / 记录天数 · 早睡率${yearTotalDays?Math.round(yearTotalEarly/yearTotalDays*100):0}%</span></div>
+        <div style="overflow-x:auto"><svg width="${chartW}" height="${chartH+4}" viewBox="0 0 ${chartW} ${chartH+4}" style="max-width:100%">
+          <line x1="${padL}" y1="${chartH-padB}" x2="${chartW-4}" y2="${chartH-padB}" stroke="var(--card-border)" stroke-width="1"/>
+          ${chartBars}
+        </svg></div>
+        <div class="small-text" style="text-align:center;margin-top:4px;font-size:10px;color:var(--text-sec)">绿色=早睡率≥60% · 橙色=30-59% · 红色=低于30%</div>
+      </div>`;
+      const yearSummaryCards=yearSummary.map(m=>`<div class="trend-mini"><strong>${m.month}月</strong><span>${m.days}天</span><span style="color:#22a06b;font-size:11px">早睡${m.earlyDays}天</span><em>${m.avg?`${m.avg}星`:'-'}</em></div>`).join('');
       return`
         ${sleepMonth}
+        ${sleepChart}
         <div class="trend-panel">
-          <div class="flex-between"><strong>${year} 年度睡眠趋势</strong><span class="small-text">按月记录天数 / 平均质量</span></div>
-          <div class="trend-grid">${yearSummary}</div>
+          <div class="flex-between"><strong>${year} 年度睡眠趋势</strong><span class="small-text">记录天数 / 早睡天数 / 平均质量</span></div>
+          <div class="trend-grid">${yearSummaryCards}</div>
         </div>
         ${renderWeekShell('睡眠日历',sleepWeek)}
         <button class="btn btn-primary btn-sm btn-block sl-week-save">保存本周睡眠</button>
@@ -3612,7 +3764,7 @@ const MODULE_TYPES={
   /* ---- 爆款话题 ---- */
   'trending':{
     title:'爆款话题',icon:'trending',desc:'各平台热点话题收藏',
-    defaultData:{entries:[],filter:'all',hotBase:'https://dailyhot.cmcq.xyz',hotSource:'weibo',hotResults:[],autoImportUrl:'./hot-topics.json'},
+    defaultData:{entries:[],filter:'all',hotBase:'https://dailyhot.cmcq.xyz',hotSource:'weibo',hotResults:[],autoImportUrl:'./hot-topics.json',lastAutoSync:0},
     render(d){
       d.entries=d.entries||[];
       d.filter=d.filter||'all';
@@ -3620,6 +3772,7 @@ const MODULE_TYPES={
       d.hotSource=d.hotSource||'weibo';
       d.hotResults=d.hotResults||[];
       d.autoImportUrl=d.autoImportUrl||'./hot-topics.json';
+      d.lastAutoSync=d.lastAutoSync||0;
       const filtered=d.filter==='all'?d.entries:d.entries.filter(e=>e.platform===d.filter);
       const platforms={wechat:'微信',douyin:'抖音',xhs:'小红书',weibo:'微博',zhihu:'知乎',baidu:'百度','ai-news':'AI新闻',xiaohongshu:'小红书',bilibili:'B站',toutiao:'今日头条'};
       const tagClass={wechat:'tag-wechat',douyin:'tag-douyin',xhs:'tag-xhs',weibo:'',zhihu:'',baidu:'','ai-news':'',xiaohongshu:'tag-xhs',bilibili:'',toutiao:''};
@@ -3649,8 +3802,11 @@ const MODULE_TYPES={
             <button class="btn btn-ghost btn-sm tr-sync-hot-file">同步文件</button>
             <button class="btn btn-ghost btn-sm tr-import-hot-results">批量加入收藏</button>
           </div>
-          <div class="small-text">可让每日自动化任务把热点写入 hot-topics.json，打开工作台后点“同步文件”即可关联到这里。</div>
-          <div class="small-text tr-hot-status">${esc(d.hotStatus||'')}</div>
+          <div class="small-text">GitHub Actions 每日自动更新 hot-topics.json，打开工作台后自动同步。也可手动点击"同步文件"或"一键抓取热榜"。</div>
+          <div class="flex-between" style="margin-top:4px">
+            <div class="small-text tr-hot-status">${esc(d.hotStatus||'')}</div>
+            <button class="btn btn-ghost btn-sm tr-auto-sync" style="font-size:11px;padding:2px 8px">🔄 手动同步</button>
+          </div>
           <div class="auto-hot-list">
             ${d.hotResults.length?d.hotResults.map((item,i)=>`
               <div class="auto-hot-item">
@@ -3984,6 +4140,19 @@ const MODULE_TYPES={
       body.querySelectorAll('.tr-del').forEach(b=>{
         b.addEventListener('click',()=>{mod.data.entries=mod.data.entries.filter(x=>x.id!==b.dataset.id);save();rerender(mod);});
       });
+      // 手动同步按钮（跳过冷却时间）
+      body.querySelector('.tr-auto-sync')?.addEventListener('click',async()=>{
+        const btn=body.querySelector('.tr-auto-sync');
+        const status=body.querySelector('.tr-hot-status');
+        if(btn)btn.disabled=true;
+        if(status)status.textContent='🔄 正在同步...';
+        mod.data.lastAutoSync=0; // 重置冷却时间
+        const ok=await autoSyncHotTopics(mod,save);
+        if(ok)rerender(mod);
+        if(btn){btn.disabled=false;}
+      });
+      // 自动同步热点数据（延迟2秒，避免阻塞页面渲染）
+      setTimeout(()=>autoSyncHotTopics(mod,save).then(ok=>{if(ok)rerender(mod);}),2000);
     }
   },
 
@@ -5341,6 +5510,18 @@ function migrateWorkbenchData(){
         console.log(`[V34清理] 移除了 ${beforeCount-afterCount} 条旧的自动保存常规任务`);
       }
     }
+    // V35 一次性恢复：为已有任务数据的日期重新初始化常规任务
+    // V34清理移除了未完成的常规任务，导致报告只统计已完成项
+    // 此处为每个有任务的日期补回未完成的常规任务
+    if(!daily.data.routineRestoreV35){
+      daily.data.tasks=daily.data.tasks||[];
+      const datesWithTasks=[...new Set(daily.data.tasks.map(t=>t.date).filter(Boolean))];
+      datesWithTasks.forEach(dateStr=>{
+        initRoutineTasksForDate(daily.data,dateStr);
+      });
+      daily.data.routineRestoreV35=true;
+      console.log(`[V35恢复] 为 ${datesWithTasks.length} 个日期补回了未完成的常规任务`);
+    }
   }
   const goals=DB.data.modules.find(m=>m.type==='goals');
   if(goals){
@@ -5435,6 +5616,7 @@ function migrateWorkbenchData(){
     trending.data.hotSource=trending.data.hotSource||'weibo';
     trending.data.hotResults=trending.data.hotResults||[];
     trending.data.autoImportUrl=trending.data.autoImportUrl||'./hot-topics.json';
+    trending.data.lastAutoSync=trending.data.lastAutoSync||0;
   }
   const collection=DB.data.modules.find(m=>m.type==='collection');
   if(collection){
@@ -5509,6 +5691,12 @@ function migrateWorkbenchData(){
       changelog.data.logs.push({
         id:genId(),date:todayStr(),version:'V8.4',
         changes:'V8.4 数据修复与功能增强（对应缓存版本 v34）：\n• 修复长期报告聚合数据不准确：根因是 ensureRoutineTasks 每次加载时自动将常规任务保存到 tasks 数组（done:false），导致计划完成率虚高。现已修复为仅保留模板，不自动保存\n• 一次性数据清理：V34加载时自动移除旧的自动保存的常规任务（routineId且done:false），确保报告数据准确\n• 阅读板块新增月度看板：显示每天阅读时长、书名摘要，支持月份导航，与运动/冥想板块一致\n• 英语学习新增中英互译功能：支持中→英/英→中双向翻译，显示备选译法，可一键加入生词本或查词典\n• 每日计划常规任务优化：所有日期均显示常规任务模板，仅在用户点击时保存，避免无操作日期产生无效数据'
+      });
+    }
+    if(!changelog.data.logs.some(l=>l.version==='V8.5')){
+      changelog.data.logs.push({
+        id:genId(),date:todayStr(),version:'V8.5',
+        changes:'V8.5 全面修复与优化（对应缓存版本 v36）：\n• 修复翻译显示问题：清除翻译结果中的XLIFF标签（如<x id="1"/>），翻译和例句翻译均生效\n• 查单词功能优化：默认显示英文释义、搭配、例句，点击"显示中文释义"后展开中文翻译\n• 行动总览计算修复：V35数据迁移恢复未完成的常规任务，计划完成率=已完成/总计划（如6/9=67%）\n• 行动总览排版优化：每个完成计划单行显示，不再用顿号隔开\n• 长期报告聚合修复：多日聚合时正确统计总计划和已完成数（如8/3+8/4=15/18=83%）\n• 目标规划保存提示：点击保存后显示"目标规划已保存"确认信息\n• 睡眠趋势升级：新增月度早睡天数统计和年度SVG柱状图，绿/橙/红三色标注早睡率\n• 爆款话题自动同步：打开工作台自动同步热点（4小时冷却），新增手动同步按钮，GitHub Actions增加Python兜底抓取'
       });
     }
   }

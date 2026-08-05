@@ -1,7 +1,7 @@
 // Tantan Life Board - Service Worker
 // 采用智能缓存策略：自动检测更新并提示用户刷新
 
-const CACHE_NAME = 'tantan-workbench-v34';
+const CACHE_NAME = 'tantan-workbench-v36';
 const ASSETS = [
   './tantan-workbench.html',
   './tantan-manifest.webmanifest',
@@ -52,7 +52,12 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // 其他资源：stale-while-revalidate（先返回缓存，同时后台更新）
+  // 外部 API 请求（跨域）：直接放行，不拦截不缓存，避免返回 null 导致报错
+  if (url.origin !== self.location.origin) {
+    return;
+  }
+
+  // 同源静态资源：stale-while-revalidate（先返回缓存，同时后台更新）
   event.respondWith(
     caches.match(event.request).then(cached => {
       const fetchPromise = fetch(event.request)
