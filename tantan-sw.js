@@ -1,7 +1,7 @@
 // Tantan Life Board - Service Worker
 // 采用智能缓存策略：自动检测更新并提示用户刷新
 
-const CACHE_NAME = 'tantan-workbench-v36';
+const CACHE_NAME = 'tantan-workbench-v37';
 const ASSETS = [
   './tantan-workbench.html',
   './tantan-manifest.webmanifest',

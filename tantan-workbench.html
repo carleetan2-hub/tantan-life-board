@@ -618,7 +618,7 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
 /* ============================================================
    应用版本与自动更新检测
 ============================================================ */
-const APP_VERSION = 'v36';
+const APP_VERSION = 'v37';
 const APP_BUILD_TIME = '2026-08-04';
 
 /**
@@ -1627,19 +1627,23 @@ async function lookupWord(word,resultEl){
     if(allAntonyms.size){
       html+=`<div style="margin-top:6px"><span style="font-size:12px;font-weight:700;color:#d64545">📎 反义词：</span><div style="margin-top:4px">${[...allAntonyms].slice(0,6).map(s=>`<span class="tag" style="margin:2px;font-size:11px;cursor:pointer" onclick="document.querySelector('.en-lookup-input').value='${esc(s)}';document.querySelector('.en-lookup-btn').click()">${esc(s)}</span>`).join('')}</div></div>`;
     }
-    // 常见搭配
+    // 常见搭配（纯英文显示，中文翻译在展开区）
     const collocations=generateCollocations(entry.word,entry.meanings);
     if(collocations.length){
-      html+=`<div style="margin-top:6px"><span style="font-size:12px;font-weight:700;color:var(--primary)">🔗 常见搭配：</span><div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px">${collocations.map(c=>`<span class="tag" style="margin:2px;font-size:11px;background:var(--primary-light);color:var(--primary);cursor:pointer;padding:3px 8px" onclick="document.querySelector('.en-lookup-input').value='${esc(c.en.split(' ').slice(-1)[0])}';document.querySelector('.en-lookup-btn').click()" title="${esc(c.zh)}">${esc(c.en)} <span style="color:var(--text-sec);font-size:10px">${esc(c.zh)}</span></span>`).join('')}</div></div>`;
+      html+=`<div style="margin-top:6px"><span style="font-size:12px;font-weight:700;color:var(--primary)">🔗 常见搭配：</span><div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px">${collocations.map(c=>`<span class="tag" style="margin:2px;font-size:11px;background:var(--primary-light);color:var(--primary);cursor:pointer;padding:3px 8px" onclick="document.querySelector('.en-lookup-input').value='${esc(c.en.split(' ').slice(-1)[0])}';document.querySelector('.en-lookup-btn').click()">${esc(c.en)}</span>`).join('')}</div></div>`;
     }
-    // 更多例句
+    // 例句（始终显示，即使只有1条）
     const uniqueExamples=[...new Set(allExamples)];
-    if(uniqueExamples.length>1){
-      html+=`<div style="margin-top:8px;padding-top:6px;border-top:1px dashed var(--card-border)"><span style="font-size:12px;font-weight:700;color:var(--primary)">📝 更多例句：</span>${uniqueExamples.slice(0,5).map(ex=>`<div style="margin-top:4px;font-size:12px;color:#666;font-style:italic;cursor:pointer;padding:2px 6px;border-radius:4px" onclick="speakText('${esc(ex).replace(/'/g,"\\'")}')" title="点击朗读">💬 ${esc(ex)}</div>`).join('')}</div>`;
+    if(uniqueExamples.length){
+      html+=`<div style="margin-top:8px;padding-top:6px;border-top:1px dashed var(--card-border)"><span style="font-size:12px;font-weight:700;color:var(--primary)">📝 例句：</span>${uniqueExamples.slice(0,5).map(ex=>`<div style="margin-top:4px;font-size:12px;color:#666;font-style:italic;cursor:pointer;padding:2px 6px;border-radius:4px" onclick="speakText('${esc(ex).replace(/'/g,"\\'")}')" title="点击朗读">💬 ${esc(ex)}</div>`).join('')}</div>`;
     }
     // 中文释义部分（默认折叠，点击展开）
     const zhParts=[];
     if(packZh)zhParts.push(`<div style="font-size:14px;margin-bottom:4px"><strong style="color:var(--primary)">中文释义：</strong>${esc(packZh)}</div>`);
+    // 搭配的中文翻译
+    if(collocations.length){
+      zhParts.push(`<div style="margin-top:6px"><span style="font-size:12px;font-weight:700;color:var(--primary)">🔗 搭配释义：</span><div style="margin-top:4px">${collocations.map(c=>`<div style="font-size:12px;margin-top:2px"><span style="color:var(--text)">${esc(c.en)}</span> <span style="color:var(--primary)">→ ${esc(c.zh)}</span></div>`).join('')}</div></div>`);
+    }
     if(packExamples.length){
       zhParts.push(`<div style="margin-top:6px"><span style="font-size:12px;font-weight:700;color:var(--primary)">📝 例句翻译：</span>${packExamples.map(ex=>{const en=typeof ex==='string'?ex:(ex.en||'');const zh=typeof ex==='string'?'':(ex.zh||'');return `<div style="margin-top:4px;font-size:12px;color:#666;font-style:italic;cursor:pointer;padding:2px 6px;border-radius:4px" onclick="speakText('${esc(en).replace(/'/g,"\\'")}')" title="点击朗读">💬 ${esc(en)}${zh?`<span class="ex-zh" style="display:block;color:var(--primary);font-size:11px;margin-left:18px;font-style:normal">${esc(zh)}</span>`:`<span class="ex-zh" data-en="${esc(en)}" style="display:block;color:var(--primary);font-size:11px;margin-left:18px;font-style:normal">翻译中...</span>`}</div>`;}).join('')}</div>`);
     }
@@ -1716,42 +1720,40 @@ function generateCollocations(word,meanings){
   const isVerb=posList.includes('verb');
   const isAdj=posList.includes('adjective');
   const isAdv=posList.includes('adverb');
-  // 名词搭配（含中文释义）
+  // 名词搭配（纯英文，中文翻译在展开区显示）
   if(isNoun){
-    cols.push({en:`a ${w}`,zh:`一个${w}`});
-    cols.push({en:`the ${w}`,zh:`这个${w}`});
-    cols.push({en:`my ${w}`,zh:`我的${w}`});
-    cols.push({en:`make a ${w}`,zh:`做一个${w}`});
-    cols.push({en:`have a ${w}`,zh:`拥有一个${w}`});
-    cols.push({en:`get a ${w}`,zh:`得到一个${w}`});
-    cols.push({en:`${w} list`,zh:`${w}列表`});
-    cols.push({en:`${w} plan`,zh:`${w}计划`});
+    cols.push({en:`a ${w}`,zh:`一个 ${w}`});
+    cols.push({en:`the ${w}`,zh:`这个 ${w}`});
+    cols.push({en:`make a ${w}`,zh:`制作 ${w}`});
+    cols.push({en:`${w} list`,zh:`${w} 列表`});
+    cols.push({en:`${w} plan`,zh:`${w} 计划`});
+    cols.push({en:`create a ${w}`,zh:`创建 ${w}`});
   }
-  // 动词搭配（含中文释义）
+  // 动词搭配
   if(isVerb){
-    cols.push({en:`${w} to do`,zh:`${w}做某事`});
-    cols.push({en:`try to ${w}`,zh:`尝试${w}`});
-    cols.push({en:`want to ${w}`,zh:`想要${w}`});
-    cols.push({en:`learn to ${w}`,zh:`学习${w}`});
-    cols.push({en:`how to ${w}`,zh:`如何${w}`});
-    cols.push({en:`${w} well`,zh:`擅长${w}`});
+    cols.push({en:`try to ${w}`,zh:`尝试 ${w}`});
+    cols.push({en:`want to ${w}`,zh:`想要 ${w}`});
+    cols.push({en:`learn to ${w}`,zh:`学习 ${w}`});
+    cols.push({en:`how to ${w}`,zh:`如何 ${w}`});
+    cols.push({en:`${w} well`,zh:`擅长 ${w}`});
+    cols.push({en:`begin to ${w}`,zh:`开始 ${w}`});
   }
-  // 形容词搭配（含中文释义）
+  // 形容词搭配
   if(isAdj){
-    cols.push({en:`very ${w}`,zh:`非常${w}`});
-    cols.push({en:`quite ${w}`,zh:`相当${w}`});
-    cols.push({en:`feel ${w}`,zh:`感到${w}`});
-    cols.push({en:`look ${w}`,zh:`看起来${w}`});
-    cols.push({en:`too ${w}`,zh:`太${w}`});
+    cols.push({en:`very ${w}`,zh:`非常 ${w}`});
+    cols.push({en:`quite ${w}`,zh:`相当 ${w}`});
+    cols.push({en:`feel ${w}`,zh:`感到 ${w}`});
+    cols.push({en:`look ${w}`,zh:`看起来 ${w}`});
+    cols.push({en:`too ${w}`,zh:`太 ${w}`});
   }
-  // 副词搭配（含中文释义）
+  // 副词搭配
   if(isAdv){
-    cols.push({en:`${w} good`,zh:`${w}好`});
-    cols.push({en:`${w} fast`,zh:`${w}快`});
+    cols.push({en:`${w} good`,zh:`${w} 好`});
+    cols.push({en:`${w} fast`,zh:`${w} 快`});
   }
   // 去重并限制数量
   const seen=new Set();
-  return cols.filter(c=>{if(seen.has(c.en))return false;seen.add(c.en);return c.en.length>2&&c.en.length<30;}).slice(0,8);
+  return cols.filter(c=>{if(seen.has(c.en))return false;seen.add(c.en);return c.en.length>2&&c.en.length<30;}).slice(0,6);
 }
 
 function englishPackFor(date){
@@ -4939,19 +4941,24 @@ function renderNavSettings(){
   if(!list)return;
   const navCustom=DB.data.navCustom||{pinned:[],hidden:[]};
   const pinnedIds=navCustom.pinned||[];
-  const visibleModules=DB.data.modules.filter(m=>m.visible&&MODULE_TYPES[m.type]);
-  list.innerHTML=visibleModules.map(m=>{
+  const hiddenIds=navCustom.hidden||[];
+  const allModules=DB.data.modules.filter(m=>m.type!=='changelog');
+  list.innerHTML=allModules.map(m=>{
     const def=MODULE_TYPES[m.type]||{icon:'custom'};
     const isPinned=pinnedIds.includes(m.id);
+    const isHidden=hiddenIds.includes(m.id);
     return`
-      <div class="nav-settings-item">
+      <div class="nav-settings-item" style="${isHidden?'opacity:0.5':''}">
         <span class="ns-icon">${iconSvg(def.icon)}</span>
-        <span class="ns-name">${esc(m.title)}</span>
+        <span class="ns-name" data-rename-id="${m.id}" title="双击重命名">${esc(m.title)}</span>
+        <button class="nav-pin-btn" data-rename-id="${m.id}" title="重命名" style="font-size:13px;padding:2px 6px;cursor:pointer;border:1px solid var(--card-border);border-radius:4px;background:var(--card)">✏️</button>
         <button class="nav-pin-btn ${isPinned?'pinned':''}" data-pin-id="${m.id}" title="${isPinned?'取消固定':'固定到顶部'}">📌</button>
+        <button class="nav-pin-btn" data-hide-id="${m.id}" title="${isHidden?'显示':'隐藏'}" style="font-size:13px;padding:2px 6px;cursor:pointer;border:1px solid var(--card-border);border-radius:4px;background:var(--card)">${isHidden?'👁️':'🚫'}</button>
       </div>
     `;
   }).join('');
-  list.querySelectorAll('.nav-pin-btn').forEach(btn=>{
+  // 固定/取消固定
+  list.querySelectorAll('.nav-pin-btn[data-pin-id]').forEach(btn=>{
     btn.addEventListener('click',()=>{
       const id=btn.dataset.pinId;
       const idx=pinnedIds.indexOf(id);
@@ -4961,6 +4968,47 @@ function renderNavSettings(){
       DB.save();
       renderNavSettings();
       renderSideNav();
+    });
+  });
+  // 隐藏/显示
+  list.querySelectorAll('.nav-pin-btn[data-hide-id]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const id=btn.dataset.hideId;
+      const mod=DB.data.modules.find(m=>m.id===id);
+      if(mod){mod.visible=!mod.visible;DB.save();renderNavSettings();renderSideNav();renderDashboard();}
+    });
+  });
+  // 重命名
+  list.querySelectorAll('.nav-pin-btn[data-rename-id]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const id=btn.dataset.renameId;
+      const mod=DB.data.modules.find(m=>m.id===id);
+      if(!mod)return;
+      const nameSpan=list.querySelector(`.ns-name[data-rename-id="${id}"]`);
+      if(!nameSpan)return;
+      const oldName=mod.title;
+      const input=document.createElement('input');
+      input.type='text';input.value=oldName;input.style='flex:1;font-size:13px;padding:2px 6px;border:1px solid var(--primary);border-radius:4px';
+      nameSpan.replaceWith(input);
+      input.focus();input.select();
+      const commit=()=>{
+        const newName=input.value.trim();
+        if(newName&&newName!==oldName){
+          mod.title=newName;DB.save();renderNavSettings();renderSideNav();renderDashboard();
+        }else{
+          renderNavSettings();
+        }
+      };
+      input.addEventListener('blur',commit);
+      input.addEventListener('keydown',e=>{if(e.key==='Enter')commit();if(e.key==='Escape')renderNavSettings();});
+    });
+  });
+  // 双击名称也可以重命名
+  list.querySelectorAll('.ns-name[data-rename-id]').forEach(span=>{
+    span.addEventListener('dblclick',()=>{
+      const id=span.dataset.renameId;
+      const btn=list.querySelector(`.nav-pin-btn[data-rename-id="${id}"]`);
+      if(btn)btn.click();
     });
   });
   const selector=document.getElementById('defaultViewSelector');
