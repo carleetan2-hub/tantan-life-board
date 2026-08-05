@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
+<html lang="zh-CN"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -411,15 +410,15 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
   .content-toolbar{margin-bottom:10px;flex-wrap:wrap}
   .content-title{font-size:15px}
   .view-switcher{padding:3px}
-  .week-grid,.overview-grid,.overview-detail-grid{grid-template-columns:repeat(7,minmax(130px,1fr));overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px;scrollbar-width:thin}
-  .overview-day{min-width:130px}
-  .day-card{min-width:130px}
+  .week-grid,.overview-grid,.overview-detail-grid{grid-template-columns:repeat(7,minmax(140px,1fr));overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px;scrollbar-width:thin}
+  .overview-day{min-width:140px}
+  .day-card{min-width:140px;padding:8px 10px}
   .habit-matrix{min-width:600px}
   .template-grid,.word-grid{grid-template-columns:1fr}
   .goal-year-grid{grid-template-columns:1fr}
   .goal-board-grid{grid-template-columns:1fr}
   .month-grid{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}
-  .month-day{min-width:80px;min-height:80px}
+  .month-day{min-width:72px;min-height:72px}
   .tabs{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;padding-bottom:4px;gap:6px}
   .tab{white-space:nowrap;flex-shrink:0}
   .trend-grid{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}
@@ -431,20 +430,34 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
   .week-head strong{font-size:13px}
   .month-panel{border-radius:12px}
   .header-right{gap:6px}
+  /* 移动端mini-field优化 */
+  .mini-field input,.mini-field textarea,.mini-field select{font-size:13px!important;padding:5px 6px;border-radius:6px}
+  .mini-field input[type="time"]{font-size:12px!important;padding:4px 4px}
+  .mini-field input[type="number"]{font-size:13px!important;padding:4px 6px}
+  .mini-field textarea{min-height:36px}
+  .day-num{font-size:18px}
+  .day-name{font-size:11px}
+  /* 行动总览矩阵优化 */
+  .habit-matrix-wrap{border-radius:12px}
+  /* 长期报告表格优化 */
+  table{font-size:11px}
+  table th,table td{padding:4px 6px}
   /* 防止 iOS 上 input 自动缩放 */
   input,textarea,select{font-size:16px!important}
+  .mini-field input,.mini-field textarea,.mini-field select,.mini-field input[type="time"],.mini-field input[type="number"]{font-size:13px!important}
 }
 @media(max-width:380px){
   .header-left{overflow:hidden}
   .header h1{font-size:14px}
   .theme-dot{width:17px;height:17px}
   .app-shell{padding:6px}
-  .week-grid,.overview-grid,.overview-detail-grid{grid-template-columns:repeat(7,minmax(110px,1fr))}
-  .day-card{min-width:110px;padding:8px}
-  .overview-day{min-width:110px;padding:8px}
+  .week-grid,.overview-grid,.overview-detail-grid{grid-template-columns:repeat(7,minmax(120px,1fr))}
+  .day-card{min-width:120px;padding:8px}
+  .overview-day{min-width:120px;padding:8px}
   .modal{padding:14px;margin:6px}
   .module-body{padding:8px 10px}
   .fab{bottom:12px;right:12px;width:44px;height:44px;font-size:20px}
+  .month-day{min-width:64px;min-height:64px}
 }
 /* 自动更新提示条 */
 .update-bar{position:fixed;top:0;left:0;right:0;z-index:10000;background:var(--primary);color:#fff;text-align:center;padding:10px 16px;font-size:14px;font-weight:600;display:none;align-items:center;justify-content:center;gap:12px;box-shadow:0 2px 12px rgba(0,0,0,.15)}
@@ -453,9 +466,28 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
 .update-bar button:hover{background:rgba(255,255,255,.35)}
 .update-bar .update-close{background:transparent;border:none;padding:4px;color:rgba(255,255,255,.7);font-size:16px;line-height:1;cursor:pointer}
 .update-bar .update-close:hover{color:#fff}
+/* 全屏设置页样式 */
+#settingsModal.modal-overlay{padding:0;background:rgba(0,0,0,.5)}
+#settingsModal .modal{max-width:none;width:100%;max-height:100vh;height:100vh;border-radius:0;padding:0;overflow-y:auto;display:flex;flex-direction:column}
+#settingsModal .modal h2{font-size:20px;padding:20px 24px 16px;margin-bottom:0;border-bottom:1px solid var(--card-border);position:sticky;top:0;background:var(--card-bg);z-index:10;display:flex;align-items:center;justify-content:space-between}
+#settingsModal .modal-close{position:static;font-size:24px;margin:0}
+#settingsModal .modal-section{padding:16px 24px;border-bottom:1px solid var(--card-border);margin-bottom:0}
+#settingsModal .modal-back-btn{margin:16px 24px 24px;border-radius:12px;padding:12px}
+.settings-content{flex:1;padding:0;max-width:800px;margin:0 auto;width:100%}
+@media(max-width:600px){
+  #settingsModal .modal h2{padding:16px 16px 12px;font-size:18px}
+  #settingsModal .modal-section{padding:14px 16px}
+  #settingsModal .modal-back-btn{margin:12px 16px 20px}
+}
+.toast-container{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:10001;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast-msg{background:var(--primary);color:#fff;padding:10px 24px;border-radius:24px;font-size:14px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,.2);display:flex;align-items:center;gap:8px;animation:toastIn .3s ease;white-space:nowrap}
+.toast-msg.fade-out{animation:toastOut .3s ease forwards}
+@keyframes toastIn{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes toastOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-20px)}}
 @media(max-width:600px){
   .update-bar{font-size:13px;padding:8px 12px;gap:8px}
   .update-bar button{padding:3px 10px}
+  .toast-msg{font-size:13px;padding:8px 18px}
 }
 </style>
 </head>
@@ -470,7 +502,7 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
 
 <header class="header">
   <div class="header-left">
-    <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12c4-8 12-8 16 0-4 8-12 8-16 0z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 12c2-3 6-3 8 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12c4-8 12-8 16 0-4 8-12 8-16 0z" fill="none" stroke="currentColor" stroke-width="2"></path><path d="M8 12c2-3 6-3 8 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
     <h1>Tantan Life Board</h1>
     <span class="date-display" id="dateDisplay"></span>
     <span class="daily-quote" id="dailyQuote"></span>
@@ -490,7 +522,7 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
           <div class="sidebar-name">Tantan</div>
           <div class="sidebar-subtitle">Life Board</div>
         </div>
-        <button class="mobile-menu-close" id="sidebarCloseBtn" aria-label="关闭导航">&times;</button>
+        <button class="mobile-menu-close" id="sidebarCloseBtn" aria-label="关闭导航">×</button>
       </div>
     </div>
     <nav class="side-nav" id="sideNav"></nav>
@@ -498,7 +530,7 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
       <div><strong>关于本站</strong></div>
       <div>tantan的个人成长空间</div>
       <div>状态：<strong>迭代中</strong></div>
-      <div id="siteVersion">V8.3</div>
+      <div id="siteVersion">V8.6</div>
       <div style="font-size:11px;color:var(--text-light);margin-top:4px">小改动用小数点后一位（V8.2），大改动用V8.x、V9.x</div>
       <div style="margin-top:6px"><button class="btn btn-ghost btn-sm" id="moreChangelogBtn" style="padding:0;font-size:12px">更新日志</button></div>
     </div>
@@ -522,8 +554,8 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
 <!-- 设置弹窗 -->
 <div class="modal-overlay" id="settingsModal">
   <div class="modal">
-    <button class="modal-close" data-close="settingsModal">&times;</button>
-    <h2>设置</h2>
+    <h2><span>设置</span><button class="modal-close" data-close="settingsModal">×</button></h2>
+    <div class="settings-content">
     <div class="modal-section">
       <h3>主题配色</h3>
       <div class="theme-grid" id="themeGrid"></div>
@@ -531,6 +563,27 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
     <div class="modal-section">
       <h3>导航栏设置</h3>
       <div id="navSettingsList"></div>
+      <div style="margin-top:10px;padding:10px;border:1px dashed var(--card-border);border-radius:10px;background:var(--input-bg)">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <strong style="font-size:13px">➕ 添加自定义板块</strong>
+          <span class="small-text">创建你专属的记录板块</span>
+        </div>
+        <div class="form-row" style="gap:6px">
+          <div class="form-group" style="flex:1"><input type="text" id="customNavName" placeholder="板块名称（如：日记/财务/习惯）" style="font-size:13px"></div>
+          <div class="form-group" style="max-width:120px">
+            <select id="customNavStyle" style="font-size:13px">
+              <option value="notes">笔记记录</option>
+              <option value="tracking">数据追踪</option>
+              <option value="checklist">打卡清单</option>
+              <option value="journal">日志本</option>
+            </select>
+          </div>
+          <button class="btn btn-primary btn-sm" id="addCustomNavBtn">添加</button>
+        </div>
+        <div class="small-text" style="margin-top:6px;color:var(--text-sec)">
+          笔记记录：自由文本记录 · 数据追踪：带数值的记录 · 打卡清单：每日打卡 · 日志本：日期+标题+内容
+        </div>
+      </div>
       <h3 style="margin-top:14px">默认视图</h3>
       <div class="view-mode-selector" id="defaultViewSelector" style="display:flex;gap:8px;margin-top:8px">
         <button class="btn btn-ghost view-mode-btn" data-view="grid">网格</button>
@@ -576,7 +629,7 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
         </div>
         <div class="form-group">
           <label>同步密钥（多设备用同一个密钥）</label>
-          <input type="text" id="syncKey" placeholder="如：tantan2026" style="font-size:13px">
+          <input type="text" id="syncKey" placeholder="如：2026**" style="font-size:13px">
         </div>
         <div class="form-group">
           <label>设备名称</label>
@@ -601,6 +654,7 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
         </div>
       </div>
     </div>
+    </div>
     <button class="modal-back-btn" data-close="settingsModal">← 返回工作台</button>
   </div>
 </div>
@@ -608,7 +662,7 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
 <!-- 添加模块弹窗 -->
 <div class="modal-overlay" id="addModuleModal">
   <div class="modal">
-    <button class="modal-close" data-close="addModuleModal">&times;</button>
+    <button class="modal-close" data-close="addModuleModal">×</button>
     <h2>添加模块</h2>
     <div class="add-module-grid" id="addModuleGrid"></div>
   </div>
@@ -618,8 +672,8 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
 /* ============================================================
    应用版本与自动更新检测
 ============================================================ */
-const APP_VERSION = 'v37';
-const APP_BUILD_TIME = '2026-08-04';
+const APP_VERSION = 'v39';
+const APP_BUILD_TIME = '2026-08-05';
 
 /**
  * 检查是否有新版本可用
@@ -681,7 +735,25 @@ function confirmButton(btn,text='已保存'){
   btn.disabled=true;
   btn.textContent='✓ '+text;
   btn.classList.add('btn-primary');
+  showToast(text);
   setTimeout(()=>{if(btn){btn.disabled=false;btn.textContent=old;}},1200);
+}
+// Toast 通知系统（不受 rerender 影响）
+function showToast(text='已保存',duration=1800){
+  let container=document.querySelector('.toast-container');
+  if(!container){
+    container=document.createElement('div');
+    container.className='toast-container';
+    document.body.appendChild(container);
+  }
+  const msg=document.createElement('div');
+  msg.className='toast-msg';
+  msg.innerHTML=`<span>✓</span><span>${text}</span>`;
+  container.appendChild(msg);
+  setTimeout(()=>{
+    msg.classList.add('fade-out');
+    setTimeout(()=>msg.remove(),300);
+  },duration);
 }
 function saveAndRerenderWithConfirm(btn,mod,save,delay=450){
   // 保存撤销快照
@@ -1606,12 +1678,12 @@ async function lookupWord(word,resultEl){
     const allSynonyms=new Set();
     const allExamples=[];
     const allAntonyms=new Set();
+    // 1. 英文释义（不内联例句，保持简洁）
     entry.meanings.forEach(m=>{
       html+=`<div style="margin-top:8px"><span class="tag" style="font-size:11px;background:var(--primary-light);color:var(--primary)">${esc(m.partOfSpeech)}</span>`;
       m.definitions.slice(0,4).forEach((def,i)=>{
         html+=`<div style="margin-top:4px;font-size:13px;color:var(--text)"><strong>${i+1}.</strong> ${esc(def.definition)}</div>`;
         if(def.example){
-          html+=`<div style="margin-top:2px;font-size:12px;color:#888;font-style:italic;cursor:pointer;padding:2px 6px;border-radius:4px" onclick="speakText('${esc(def.example).replace(/'/g,"\\'")}')" title="点击朗读">💬 ${esc(def.example)}</div>`;
           allExamples.push(def.example);
         }
         if(def.synonyms&&def.synonyms.length){def.synonyms.slice(0,5).forEach(s=>allSynonyms.add(s));}
@@ -1619,42 +1691,47 @@ async function lookupWord(word,resultEl){
       });
       html+=`</div>`;
     });
-    // 同义词/近义词
+    // 2. 常见搭配（紧接释义之后）
+    const collocations=generateCollocations(entry.word,entry.meanings);
+    if(collocations.length){
+      html+=`<div style="margin-top:8px;padding-top:6px;border-top:1px dashed var(--card-border)"><span style="font-size:12px;font-weight:700;color:var(--primary)">🔗 常见搭配：</span><div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px">${collocations.map(c=>`<span class="tag" style="margin:2px;font-size:11px;background:var(--primary-light);color:var(--primary);cursor:pointer;padding:3px 8px" onclick="document.querySelector('.en-lookup-input').value='${esc(c.en.split(' ').slice(-1)[0])}';document.querySelector('.en-lookup-btn').click()">${esc(c.en)}</span>`).join('')}</div></div>`;
+    }
+    // 3. 例句（统一显示在搭配之后）
+    const uniqueExamples=[...new Set(allExamples)];
+    if(uniqueExamples.length){
+      html+=`<div style="margin-top:8px;padding-top:6px;border-top:1px dashed var(--card-border)"><span style="font-size:12px;font-weight:700;color:var(--primary)">📝 例句：</span>${uniqueExamples.slice(0,5).map(ex=>`<div style="margin-top:4px;font-size:12px;color:#666;font-style:italic;cursor:pointer;padding:2px 6px;border-radius:4px" onclick="speakText('${esc(ex).replace(/'/g,"\\'")}')" title="点击朗读">💬 ${esc(ex)}</div>`).join('')}</div>`;
+    }
+    // 4. 同义词/近义词（放在例句之后）
     if(allSynonyms.size){
-      html+=`<div style="margin-top:8px;padding-top:6px;border-top:1px dashed var(--card-border)"><span style="font-size:12px;font-weight:700;color:var(--primary)">📎 同义词/近义词：</span><div style="margin-top:4px">${[...allSynonyms].slice(0,10).map(s=>`<span class="tag" style="margin:2px;font-size:11px;cursor:pointer" onclick="document.querySelector('.en-lookup-input').value='${esc(s)}';document.querySelector('.en-lookup-btn').click()">${esc(s)}</span>`).join('')}</div></div>`;
+      html+=`<div style="margin-top:6px"><span style="font-size:12px;font-weight:700;color:var(--primary)">📎 同义词/近义词：</span><div style="margin-top:4px">${[...allSynonyms].slice(0,10).map(s=>`<span class="tag" style="margin:2px;font-size:11px;cursor:pointer" onclick="document.querySelector('.en-lookup-input').value='${esc(s)}';document.querySelector('.en-lookup-btn').click()">${esc(s)}</span>`).join('')}</div></div>`;
     }
     // 反义词
     if(allAntonyms.size){
       html+=`<div style="margin-top:6px"><span style="font-size:12px;font-weight:700;color:#d64545">📎 反义词：</span><div style="margin-top:4px">${[...allAntonyms].slice(0,6).map(s=>`<span class="tag" style="margin:2px;font-size:11px;cursor:pointer" onclick="document.querySelector('.en-lookup-input').value='${esc(s)}';document.querySelector('.en-lookup-btn').click()">${esc(s)}</span>`).join('')}</div></div>`;
     }
-    // 常见搭配（纯英文显示，中文翻译在展开区）
-    const collocations=generateCollocations(entry.word,entry.meanings);
-    if(collocations.length){
-      html+=`<div style="margin-top:6px"><span style="font-size:12px;font-weight:700;color:var(--primary)">🔗 常见搭配：</span><div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px">${collocations.map(c=>`<span class="tag" style="margin:2px;font-size:11px;background:var(--primary-light);color:var(--primary);cursor:pointer;padding:3px 8px" onclick="document.querySelector('.en-lookup-input').value='${esc(c.en.split(' ').slice(-1)[0])}';document.querySelector('.en-lookup-btn').click()">${esc(c.en)}</span>`).join('')}</div></div>`;
-    }
-    // 例句（始终显示，即使只有1条）
-    const uniqueExamples=[...new Set(allExamples)];
-    if(uniqueExamples.length){
-      html+=`<div style="margin-top:8px;padding-top:6px;border-top:1px dashed var(--card-border)"><span style="font-size:12px;font-weight:700;color:var(--primary)">📝 例句：</span>${uniqueExamples.slice(0,5).map(ex=>`<div style="margin-top:4px;font-size:12px;color:#666;font-style:italic;cursor:pointer;padding:2px 6px;border-radius:4px" onclick="speakText('${esc(ex).replace(/'/g,"\\'")}')" title="点击朗读">💬 ${esc(ex)}</div>`).join('')}</div>`;
-    }
     // 中文释义部分（默认折叠，点击展开）
+    // 依次显示：中文释义 → 搭配中文解释 → 例句中文解释
     const zhParts=[];
-    if(packZh)zhParts.push(`<div style="font-size:14px;margin-bottom:4px"><strong style="color:var(--primary)">中文释义：</strong>${esc(packZh)}</div>`);
-    // 搭配的中文翻译
+    // 1. 中文释义（词包中的中文 + 异步翻译的英文释义）
+    if(packZh)zhParts.push(`<div style="font-size:14px;margin-bottom:6px;padding-bottom:6px;border-bottom:1px dashed var(--card-border)"><strong style="color:var(--primary)">📖 中文释义：</strong>${esc(packZh)}</div>`);
+    // 异步翻译的英文释义
+    const translatableDefs=[];
+    entry.meanings.forEach(m=>{m.definitions.slice(0,4).forEach(def=>{if(def.definition)translatableDefs.push(def.definition);});});
+    if(translatableDefs.length){
+      zhParts.push(`<div style="margin-bottom:6px"><span style="font-size:12px;font-weight:700;color:var(--primary)">释义翻译：</span>${translatableDefs.map(text=>`<div class="en-zh-item" data-text="${esc(text)}" style="margin-top:4px;font-size:12px"><span style="color:#666">${esc(text)}</span><span class="en-zh-trans" style="display:block;color:var(--primary);font-size:11px;margin-left:12px">翻译中...</span></div>`).join('')}</div>`);
+    }
+    // 2. 搭配中文解释
     if(collocations.length){
-      zhParts.push(`<div style="margin-top:6px"><span style="font-size:12px;font-weight:700;color:var(--primary)">🔗 搭配释义：</span><div style="margin-top:4px">${collocations.map(c=>`<div style="font-size:12px;margin-top:2px"><span style="color:var(--text)">${esc(c.en)}</span> <span style="color:var(--primary)">→ ${esc(c.zh)}</span></div>`).join('')}</div></div>`);
+      zhParts.push(`<div style="margin-top:6px;padding-top:6px;border-top:1px dashed var(--card-border)"><span style="font-size:12px;font-weight:700;color:var(--primary)">🔗 搭配释义：</span><div style="margin-top:4px">${collocations.map(c=>`<div style="font-size:12px;margin-top:2px"><span style="color:var(--text)">${esc(c.en)}</span> <span style="color:var(--primary)">→ ${esc(c.zh)}</span></div>`).join('')}</div></div>`);
     }
-    if(packExamples.length){
-      zhParts.push(`<div style="margin-top:6px"><span style="font-size:12px;font-weight:700;color:var(--primary)">📝 例句翻译：</span>${packExamples.map(ex=>{const en=typeof ex==='string'?ex:(ex.en||'');const zh=typeof ex==='string'?'':(ex.zh||'');return `<div style="margin-top:4px;font-size:12px;color:#666;font-style:italic;cursor:pointer;padding:2px 6px;border-radius:4px" onclick="speakText('${esc(en).replace(/'/g,"\\'")}')" title="点击朗读">💬 ${esc(en)}${zh?`<span class="ex-zh" style="display:block;color:var(--primary);font-size:11px;margin-left:18px;font-style:normal">${esc(zh)}</span>`:`<span class="ex-zh" data-en="${esc(en)}" style="display:block;color:var(--primary);font-size:11px;margin-left:18px;font-style:normal">翻译中...</span>`}</div>`;}).join('')}</div>`);
+    // 3. 例句中文解释
+    if(uniqueExamples.length){
+      zhParts.push(`<div style="margin-top:6px;padding-top:6px;border-top:1px dashed var(--card-border)"><span style="font-size:12px;font-weight:700;color:var(--primary)">📝 例句翻译：</span>${uniqueExamples.slice(0,5).map(ex=>{const packEx=packExamples.find(pe=>{const en=typeof pe==='string'?pe:(pe.en||'');return en.toLowerCase()===ex.toLowerCase();});const zh=packEx?(typeof packEx==='string'?'':(packEx.zh||'')):'';return `<div style="margin-top:4px;font-size:12px;color:#666;font-style:italic;cursor:pointer;padding:2px 6px;border-radius:4px" onclick="speakText('${esc(ex).replace(/'/g,"\\'")}')" title="点击朗读">💬 ${esc(ex)}${zh?`<span class="ex-zh" style="display:block;color:var(--primary);font-size:11px;margin-left:18px;font-style:normal">${esc(zh)}</span>`:`<span class="ex-zh" data-en="${esc(ex)}" style="display:block;color:var(--primary);font-size:11px;margin-left:18px;font-style:normal">翻译中...</span>`}</div>`;}).join('')}</div>`);
     }
-    // 异步翻译英文释义和例句
-    const translatableItems=[];
-    entry.meanings.forEach(m=>{m.definitions.slice(0,4).forEach(def=>{if(def.definition)translatableItems.push({type:'def',text:def.definition});if(def.example)translatableItems.push({type:'ex',text:def.example});});});
-    if(translatableItems.length||zhParts.length){
+    if(zhParts.length){
       html+=`<div style="margin-top:8px;padding-top:6px;border-top:1px dashed var(--card-border)">
         <div class="en-zh-toggle" style="cursor:pointer;color:var(--primary);font-size:13px;font-weight:600;user-select:none">📖 显示中文释义 ›</div>
-        <div class="en-zh-content" style="display:none;margin-top:8px;padding:8px;background:var(--primary-light);border-radius:8px">
-          ${translatableItems.map((item,i)=>`<div class="en-zh-item" data-text="${esc(item.text)}" data-type="${item.type}" style="margin-top:4px;font-size:12px"><span style="color:#666">${esc(item.text)}</span><span class="en-zh-trans" style="display:block;color:var(--primary);font-size:11px;margin-left:12px">翻译中...</span></div>`).join('')}
+        <div class="en-zh-content" style="display:none;margin-top:8px;padding:10px;background:var(--primary-light);border-radius:8px">
           ${zhParts.join('')}
         </div>
       </div>`;
@@ -1954,7 +2031,7 @@ const DB={
         {id:genId(),type:'inspiration',title:'灵感记录',visible:true,data:{}},
         {id:genId(),type:'collection',title:'收藏库',visible:true,data:{entries:[],filter:'all',categories:DEFAULT_COLLECTION_CATEGORIES.slice()}},
         {id:genId(),type:'changelog',title:'更新日志',visible:true,data:{
-          logs:[{id:genId(),date:todayStr(),version:'V8.2',changes:'V8.2 五大问题修复：\n• 修复睡眠记录日期错误（2025→2026），1-6月记录恢复正常显示，起床时间统一默认07:00\n• 修复月份视图每次加载跳回最新月份的问题，用户切换月份后不再被重置\n• 修复长期报告计算逻辑，确保本月/本季度/今年数据正确统计\n• 修复英语写作纠错：过去时态按句检查（不再全局误判）、be动词不误改形容词、缩写大小写敏感、a/an例外更完整、Native版本更保守\n• 查单词新增例句中文翻译（词包例句内置翻译+API例句自动翻译），常见搭配已含中文释义\n• 加入生词本按钮改为醒目样式\n• 修复热榜同步：工作流步骤ID修正、新增API连通性测试、占位数据识别、本地文件失败时自动回退直接抓取API'},{id:genId(),date:todayStr(),version:'V8.1',changes:'V8.1 功能修复与优化：\n• 修复英语写作纠错反馈表格无法正常渲染的问题（HTML转义bug）\n• 修复睡眠7月记录看板显示问题，优化月视图自动定位逻辑\n• 行动总览补填改为 ○/✓ 圆圈勾选模式，更简洁直观\n• 为睡眠/运动/冥想/复盘/阅读/英语6个板块增加撤回按钮，误操作可一键恢复\n• 优化热点同步机制，增加多URL回退策略\n• 修复睡眠周保存时备注被清空的问题\n• 修复每日复盘评分0被误判为空的问题\n• 修复正则表达式冗余、XML解析错误处理等多处代码健壮性问题\n• 优化写作反馈表格CSS样式'},{id:genId(),date:todayStr(),version:'v1.0',changes:'初始版本发布：\n• 创建每日计划、睡眠记录、运动记录、每日复盘、阅读、英语学习、技能提升、爆款话题、灵感记录、迭代更新共10个模块\n• 支持6种主题配色自选\n• 支持在线编辑，数据自动保存\n• 响应式设计，支持iPhone访问编辑\n• 支持模块增删管理\n• 支持数据导入导出备份'}]
+          logs:[{id:genId(),date:todayStr(),version:'V8.4',changes:'V8.4 全面优化升级：\n• 修复查单词格式：英文部分依次显示释义→搭配→例句，中文部分可展开显示中文释义→搭配中文→例句中文\n• 修复复盘看板undefined错误，日历改为显示"已复盘"简洁标识\n• 复盘新增AI成长建议功能，基于本月复盘内容生成总结和行动建议（支持离线分析兜底）\n• 运动记录、冥想记录、阅读记录均新增年度趋势看板（SVG柱状图+月度趋势卡片）\n• 新增自定义导航板块功能：支持笔记记录/数据追踪/打卡清单/日志本四种样式\n• 设置页改为全屏布局，类似Kimi设置页体验\n• 全局Toast通知系统，保存成功显示"已保存"提示不受rerender影响\n• 修复阅读记录默认时长问题，未填写日期不再显示10分钟\n• 同步密钥默认提示改为2026**\n• 全面优化移动端UI自适应：周历卡片、行动总览、长期报告等板块布局优化\n• mini-field输入框在移动端使用更紧凑的字体和间距'},{id:genId(),date:todayStr(),version:'V8.2',changes:'V8.2 五大问题修复：\n• 修复睡眠记录日期错误（2025→2026），1-6月记录恢复正常显示，起床时间统一默认07:00\n• 修复月份视图每次加载跳回最新月份的问题，用户切换月份后不再被重置\n• 修复长期报告计算逻辑，确保本月/本季度/今年数据正确统计\n• 修复英语写作纠错：过去时态按句检查（不再全局误判）、be动词不误改形容词、缩写大小写敏感、a/an例外更完整、Native版本更保守\n• 查单词新增例句中文翻译（词包例句内置翻译+API例句自动翻译），常见搭配已含中文释义\n• 加入生词本按钮改为醒目样式\n• 修复热榜同步：工作流步骤ID修正、新增API连通性测试、占位数据识别、本地文件失败时自动回退直接抓取API'},{id:genId(),date:todayStr(),version:'V8.1',changes:'V8.1 功能修复与优化：\n• 修复英语写作纠错反馈表格无法正常渲染的问题（HTML转义bug）\n• 修复睡眠7月记录看板显示问题，优化月视图自动定位逻辑\n• 行动总览补填改为 ○/✓ 圆圈勾选模式，更简洁直观\n• 为睡眠/运动/冥想/复盘/阅读/英语6个板块增加撤回按钮，误操作可一键恢复\n• 优化热点同步机制，增加多URL回退策略\n• 修复睡眠周保存时备注被清空的问题\n• 修复每日复盘评分0被误判为空的问题\n• 修复正则表达式冗余、XML解析错误处理等多处代码健壮性问题\n• 优化写作反馈表格CSS样式'},{id:genId(),date:todayStr(),version:'v1.0',changes:'初始版本发布：\n• 创建每日计划、睡眠记录、运动记录、每日复盘、阅读、英语学习、技能提升、爆款话题、灵感记录、迭代更新共10个模块\n• 支持6种主题配色自选\n• 支持在线编辑，数据自动保存\n• 响应式设计，支持iPhone访问编辑\n• 支持模块增删管理\n• 支持数据导入导出备份'}]
         }},
       ]
     };
@@ -2954,8 +3031,45 @@ const MODULE_TYPES={
       }).join('');
       const selectedRec=findByDate(d.records,d.selectedDate)||{};
       const recent=d.records.slice(-8).reverse();
+      // 年度运动趋势
+      const exNow=new Date();
+      const exYears=[...new Set([...Object.keys(d.quick||{}),...(d.records||[]).map(r=>(r.date||'').slice(0,4))].filter(Boolean))].sort();
+      const exYear=exYears.includes(String(exNow.getFullYear()))?exNow.getFullYear():(+exYears[exYears.length-1]||exNow.getFullYear());
+      const exYearSummary=Array.from({length:12},(_,i)=>{
+        const month=String(i+1).padStart(2,'0');
+        const monthKeys2=monthContext(i-exNow.getMonth()).monthDays.map(dateKey).filter(k=>k.slice(0,7)===`${exYear}-${month}`);
+        const days=monthKeys2.filter(k=>{const q=d.quick[k];return (q?.items||[]).length||(d.records||[]).some(r=>r.date===k)}).length;
+        const minutes=monthKeys2.reduce((sum,k)=>sum+(+(d.quick[k]?.minutes||0))+(d.records||[]).filter(r=>r.date===k).reduce((s,r)=>s+(+r.duration||0),0),0);
+        return {month:i+1,days,minutes};
+      });
+      const exMaxDays=Math.max(...exYearSummary.map(m=>m.days),1);
+      const exChartW=340,exChartH=120,exPadL=20,exPadB=18,exPadT=8;
+      const exBarW=(exChartW-exPadL-8)/12*0.6,exGap=(exChartW-exPadL-8)/12*0.4;
+      const exChartBars=exYearSummary.map((m,i)=>{
+        const x=exPadL+i*((exChartW-exPadL-8)/12)+exGap/2;
+        const barH=m.days?Math.round(m.days/exMaxDays*(exChartH-exPadB-exPadT)):0;
+        const y=exChartH-exPadB-barH;
+        const color=m.days>=15?'#22a06b':m.days>=8?'#f5b42f':'#d64545';
+        return `<rect x="${x}" y="${y}" width="${exBarW}" height="${barH}" fill="${color}" rx="2" opacity="0.85"><title>${m.month}月: 运动${m.days}天 / ${m.minutes}分钟</title></rect>
+        <text x="${x+exBarW/2}" y="${y-3}" text-anchor="middle" font-size="9" fill="${color}" font-weight="600">${m.days||''}</text>
+        <text x="${x+exBarW/2}" y="${exChartH-exPadB+12}" text-anchor="middle" font-size="9" fill="var(--text-sec)">${m.month}月</text>`;
+      }).join('');
+      const exYearTotalDays=exYearSummary.reduce((s,m)=>s+m.days,0);
+      const exYearTotalMin=exYearSummary.reduce((s,m)=>s+m.minutes,0);
+      const exChart=`<div style="background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:12px;margin-bottom:8px">
+        <div class="flex-between" style="margin-bottom:6px"><strong style="font-size:13px">${exYear} 年度运动趋势</strong><span class="small-text">运动${exYearTotalDays}天 · ${exYearTotalMin}分钟 · 日均${exYearTotalDays?Math.round(exYearTotalMin/exYearTotalDays):0}分钟</span></div>
+        <div style="overflow-x:auto"><svg width="${exChartW}" height="${exChartH+4}" viewBox="0 0 ${exChartW} ${exChartH+4}" style="max-width:100%">
+          <line x1="${exPadL}" y1="${exChartH-exPadB}" x2="${exChartW-4}" y2="${exChartH-exPadB}" stroke="var(--card-border)" stroke-width="1"/>
+          ${exChartBars}
+        </svg></div>
+        <div class="small-text" style="text-align:center;margin-top:4px;font-size:10px;color:var(--text-sec)">绿色=≥15天 · 橙色=8-14天 · 红色=低于8天</div>
+      </div>`;
+      const exTrendCards=exYearSummary.map(m=>`<div class="trend-mini"><strong>${m.month}月</strong><span>${m.days}天</span><span style="color:#22a06b;font-size:11px">${m.minutes}分钟</span><em>${m.days?Math.round(m.minutes/m.days)+'分/天':'-'}</em></div>`).join('');
+      const exTrendHtml=`<div class="trend-panel"><div class="flex-between"><strong>${exYear} 年度运动趋势</strong><span class="small-text">运动天数 / 总时长 / 日均</span></div><div class="trend-grid">${exTrendCards}</div></div>`;
       return`
         ${monthBoard}
+        ${exChart}
+        ${exTrendHtml}
         ${renderWeekShell('运动日历',exerciseWeek)}
         <button class="btn btn-primary btn-sm btn-block ex-week-save">保存本周运动</button>
         <button class="btn btn-ghost btn-sm ex-week-undo" style="display:none;width:100%;margin-top:4px">↩ 撤回本周保存</button>
@@ -3001,7 +3115,42 @@ const MODULE_TYPES={
       },`<div class="small-text" style="margin:8px 0;text-align:center">本月冥想 ${monthRows.length} 天 · ${monthMin} 分钟 · 日均 ${monthRows.length?Math.round(monthMin/monthRows.length):0} 分钟</div>`);
       const meditationWeek=weekDates().map(day=>{const key=dateKey(day), r=findByDate(d.records,key)||{};return `<div class="day-card ${key===todayStr()?'today':''}" data-date="${key}"><div class="day-name">周${dayLabel(day)}</div><div class="day-num">${day.getDate()}</div><div class="mini-field"><label>分钟</label><input type="number" class="md-week-min" value="${r.minutes||0}" min="0"></div><div class="mini-field"><label>感受</label><textarea class="md-week-feel" placeholder="放松/焦虑/清醒...">${esc(r.feeling||'')}</textarea></div></div>`;}).join('');
       const selectedRec=findByDate(d.records,d.selectedDate)||{};const recent=d.records.slice(-8).reverse();
-      return`${monthBoard}${renderWeekShell('冥想日历',meditationWeek)}
+      // 年度冥想趋势
+      const mdNow=new Date();
+      const mdYears=[...new Set((d.records||[]).map(r=>(r.date||'').slice(0,4)).filter(Boolean))].sort();
+      const mdYear=mdYears.includes(String(mdNow.getFullYear()))?mdNow.getFullYear():(+mdYears[mdYears.length-1]||mdNow.getFullYear());
+      const mdYearSummary=Array.from({length:12},(_,i)=>{
+        const month=String(i+1).padStart(2,'0');
+        const rows=d.records.filter(r=>(r.date||'').slice(0,7)===`${mdYear}-${month}`);
+        const days=rows.length;
+        const minutes=rows.reduce((s,r)=>s+(+r.minutes||0),0);
+        return {month:i+1,days,minutes};
+      });
+      const mdMaxMin=Math.max(...mdYearSummary.map(m=>m.minutes),1);
+      const mdChartW=340,mdChartH=120,mdPadL=20,mdPadB=18,mdPadT=8;
+      const mdBarW=(mdChartW-mdPadL-8)/12*0.6,mdGap=(mdChartW-mdPadL-8)/12*0.4;
+      const mdChartBars=mdYearSummary.map((m,i)=>{
+        const x=mdPadL+i*((mdChartW-mdPadL-8)/12)+mdGap/2;
+        const barH=m.minutes?Math.round(m.minutes/mdMaxMin*(mdChartH-mdPadB-mdPadT)):0;
+        const y=mdChartH-mdPadB-barH;
+        const color=m.days>=15?'#8b5cf6':m.days>=8?'#a78bfa':'#c4b5fd';
+        return `<rect x="${x}" y="${y}" width="${mdBarW}" height="${barH}" fill="${color}" rx="2" opacity="0.85"><title>${m.month}月: 冥想${m.days}天 / ${m.minutes}分钟</title></rect>
+        <text x="${x+mdBarW/2}" y="${y-3}" text-anchor="middle" font-size="9" fill="${color}" font-weight="600">${m.minutes||''}</text>
+        <text x="${x+mdBarW/2}" y="${mdChartH-mdPadB+12}" text-anchor="middle" font-size="9" fill="var(--text-sec)">${m.month}月</text>`;
+      }).join('');
+      const mdYearTotalDays=mdYearSummary.reduce((s,m)=>s+m.days,0);
+      const mdYearTotalMin=mdYearSummary.reduce((s,m)=>s+m.minutes,0);
+      const mdChart=`<div style="background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:12px;margin-bottom:8px">
+        <div class="flex-between" style="margin-bottom:6px"><strong style="font-size:13px">${mdYear} 年度冥想趋势</strong><span class="small-text">冥想${mdYearTotalDays}天 · ${mdYearTotalMin}分钟 · 日均${mdYearTotalDays?Math.round(mdYearTotalMin/mdYearTotalDays):0}分钟</span></div>
+        <div style="overflow-x:auto"><svg width="${mdChartW}" height="${mdChartH+4}" viewBox="0 0 ${mdChartW} ${mdChartH+4}" style="max-width:100%">
+          <line x1="${mdPadL}" y1="${mdChartH-mdPadB}" x2="${mdChartW-4}" y2="${mdChartH-mdPadB}" stroke="var(--card-border)" stroke-width="1"/>
+          ${mdChartBars}
+        </svg></div>
+        <div class="small-text" style="text-align:center;margin-top:4px;font-size:10px;color:var(--text-sec)">紫色深浅表示冥想时长</div>
+      </div>`;
+      const mdTrendCards=mdYearSummary.map(m=>`<div class="trend-mini"><strong>${m.month}月</strong><span>${m.days}天</span><span style="color:#8b5cf6;font-size:11px">${m.minutes}分钟</span><em>${m.days?Math.round(m.minutes/m.days)+'分/天':'-'}</em></div>`).join('');
+      const mdTrendHtml=`<div class="trend-panel"><div class="flex-between"><strong>${mdYear} 年度冥想趋势</strong><span class="small-text">冥想天数 / 总时长 / 日均</span></div><div class="trend-grid">${mdTrendCards}</div></div>`;
+      return`${monthBoard}${mdChart}${mdTrendHtml}${renderWeekShell('冥想日历',meditationWeek)}
         <button class="btn btn-primary btn-sm btn-block md-week-save">保存本周冥想</button>
         <button class="btn btn-ghost btn-sm md-week-undo" style="display:none;width:100%;margin-top:4px">↩ 撤回本周保存</button>
         <div class="form-row"><div class="form-group" style="max-width:180px"><label>选择日期</label><input type="date" class="md-date" value="${esc(d.selectedDate)}"></div><button class="btn btn-ghost btn-sm md-load-date">载入选中日期</button></div>
@@ -3037,26 +3186,47 @@ const MODULE_TYPES={
         <div class="month-panel">
           <div class="week-head" style="justify-content:space-between">
             <button class="btn btn-ghost btn-sm rv-month-prev" style="padding:2px 8px">‹ 上月</button>
-            <strong>${rvCtx.monthLabel} 复盘看板</strong>
+            <strong>${rvCtx.label} 复盘看板</strong>
             <button class="btn btn-ghost btn-sm rv-month-next" style="padding:2px 8px">下月 ›</button>
           </div>
           <div class="month-grid">
             ${['日','一','二','三','四','五','六'].map(w=>`<div class="month-weekday">周${w}</div>`).join('')}
             ${rvCtx.monthDays.map(day=>{
               const key=dateKey(day), r=findByDate(d.records,key), inMonth=key.slice(0,7)===rvMonthKey;
-              const hasReview=r&&r.wellDone;
-              const reviewSummary=hasReview?[
-                r.wellDone?`✓${esc(r.wellDone.slice(0,16))}${r.wellDone.length>16?'...':''}`:'',
-                r.improve?`⚠${esc(r.improve.slice(0,14))}${r.improve.length>14?'...':''}`:'',
-              ].filter(Boolean).join(' '):'';
+              const hasReview=r&&(r.wellDone||r.improve||r.gratitude);
               return `<div class="month-day ${inMonth?'':'empty'} ${key===todayStr()?'today':''} ${hasReview?'has-review':''}" data-date="${key}" style="cursor:pointer;${hasReview?'background:#f0fdf4;border-color:#bbf7d0':''}">
                 <div class="month-day-num">${day.getDate()}</div>
-                <div class="month-day-info">${hasReview?`<span style="color:#22a06b;font-size:10px;line-height:1.3">${reviewSummary}</span>${r.rating?`<br><span style="font-size:9px;color:#f5b42f">${'★'.repeat(r.rating)}</span>`:''}${r.gratitude?`<br><span style="font-size:9px;color:var(--primary)">🙏</span>`:''}`:'<span class="small-text">-</span>'}</div>
+                <div class="month-day-info">${hasReview?`<span style="color:#22a06b;font-size:11px;font-weight:600;line-height:1.3">已复盘</span>${r.rating?`<br><span style="font-size:9px;color:#f5b42f">${'★'.repeat(r.rating)}</span>`:''}${r.gratitude?`<span style="font-size:9px;color:var(--primary);margin-left:2px">🙏</span>`:''}`:'<span class="small-text">-</span>'}</div>
               </div>`;
             }).join('')}
           </div>
           ${(()=>{const mc=d.records.filter(r=>(r.date||'').slice(0,7)===rvMonthKey);return mc.length?`<div class="small-text" style="margin-top:6px;text-align:center">本月复盘 ${mc.length} 天 · 平均评分 ${mc.length?(mc.reduce((s,r)=>s+(r.rating||3),0)/mc.length).toFixed(1):0} 星 · <span style="color:var(--primary)">点击任意日期可查看完整复盘内容</span></div>`:''})()}
         </div>`;
+      // 复盘AI总结：基于本月复盘内容生成成长建议
+      const monthReviews=d.records.filter(r=>(r.date||'').slice(0,7)===rvMonthKey);
+      let aiSummaryHtml='';
+      if(monthReviews.length>=3){
+        const reviewTexts=monthReviews.map(r=>{const parts=[];if(r.wellDone)parts.push(`做得好的：${r.wellDone}`);if(r.improve)parts.push(`待改进：${r.improve}`);if(r.gratitude)parts.push(`感恩：${r.gratitude}`);Object.entries(r.extra||{}).forEach(([k,v])=>{if(v)parts.push(`${k}：${v}`)});return parts.join('；');}).filter(Boolean);
+        const avgRating=monthReviews.length?(monthReviews.reduce((s,r)=>s+(r.rating||3),0)/monthReviews.length).toFixed(1):0;
+        const wellDoneCount=monthReviews.filter(r=>r.wellDone).length;
+        const improveCount=monthReviews.filter(r=>r.improve).length;
+        const gratitudeCount=monthReviews.filter(r=>r.gratitude).length;
+        aiSummaryHtml=`<div class="trend-panel" style="border-color:var(--primary);border-width:1.5px">
+          <div class="flex-between" style="margin-bottom:8px"><strong style="color:var(--primary)">🤖 复盘AI总结与成长建议</strong><span class="small-text">基于${monthReviews.length}天复盘</span></div>
+          <div id="rvAiSummary" style="font-size:13px;line-height:1.8;color:var(--text)">
+            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px">
+              <span class="tag" style="background:var(--primary-light);color:var(--primary)">平均评分 ${avgRating} 星</span>
+              <span class="tag" style="background:#f0fdf4;color:#22a06b">做得好记录 ${wellDoneCount} 天</span>
+              <span class="tag" style="background:#fef3c7;color:#92400e">待改进记录 ${improveCount} 天</span>
+              <span class="tag" style="background:#fdf2f8;color:#be185d">感恩记录 ${gratitudeCount} 天</span>
+            </div>
+            <div id="rvAiContent" style="background:var(--input-bg);border-radius:10px;padding:12px;min-height:60px">
+              <div class="small-text" style="color:var(--text-sec)">点击下方按钮，AI将根据你的复盘内容生成成长建议...</div>
+            </div>
+            <button class="btn btn-primary btn-sm rv-ai-summarize" style="margin-top:8px">✨ 生成AI成长建议</button>
+          </div>
+        </div>`;
+      }
       const reviewWeek=weekDates().map(day=>{
         const key=dateKey(day), r=findByDate(d.records,key)||{};
         return `<div class="day-card ${key===todayStr()?'today':''}" data-date="${key}">
@@ -3071,6 +3241,7 @@ const MODULE_TYPES={
       const recent=d.records.slice().reverse().slice(0,30);
       return`
         ${reviewMonth}
+        ${aiSummaryHtml}
         ${renderWeekShell('复盘日历',reviewWeek)}
         <button class="btn btn-primary btn-sm btn-block rv-week-save">保存本周复盘</button>
         <button class="btn btn-ghost btn-sm rv-week-undo" style="display:none;width:100%;margin-top:4px">↩ 撤回本周保存</button>
@@ -3219,6 +3390,66 @@ const MODULE_TYPES={
         mod.data.fields=(mod.data.fields||[]).filter(f=>f!==b.dataset.field);
         save();rerender(mod);
       }));
+      // AI成长建议生成
+      body.querySelector('.rv-ai-summarize')?.addEventListener('click',async(e)=>{
+        const btn=e.currentTarget;
+        const contentEl=body.querySelector('#rvAiContent');
+        if(!contentEl)return;
+        btn.disabled=true;btn.textContent='✨ AI分析中...';
+        contentEl.innerHTML='<div class="small-text" style="color:var(--text-sec)">🤖 正在分析你的复盘内容，请稍候...</div>';
+        try{
+          const rvCtx2=monthContext(mod.data.monthOffset||0);
+          const monthReviews=mod.data.records.filter(r=>(r.date||'').slice(0,7)===rvCtx2.monthKey);
+          const reviewTexts=monthReviews.map(r=>{
+            const parts=[];
+            if(r.wellDone)parts.push(`【做得好的】${r.wellDone}`);
+            if(r.improve)parts.push(`【待改进】${r.improve}`);
+            if(r.gratitude)parts.push(`【感恩】${r.gratitude}`);
+            Object.entries(r.extra||{}).forEach(([k,v])=>{if(v)parts.push(`【${k}】${v}`)});
+            return parts.join(' ');
+          }).filter(Boolean);
+          const prompt=`你是一个个人成长教练。请根据以下用户本月的每日复盘记录，进行归纳总结并给出成长建议。\n\n复盘记录：\n${reviewTexts.join('\n\n')}\n\n请从以下几个维度分析：\n1. 总结本月复盘的核心主题和模式\n2. 指出用户做得好的方面（继续保持）\n3. 指出需要改进的方面（具体建议）\n4. 给出未来一个月的行动建议（3-5条具体可执行的）\n\n请用简洁有力的语言，直接给出分析和建议，不要客套话。`;
+          const res=await fetch('https://api.tencentyun.com/v1/chat/completions',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({model:'gpt-4o-mini',messages:[{role:'user',content:prompt}],max_tokens:1200,temperature:0.7}),
+            signal:AbortSignal.timeout(30000)
+          }).catch(()=>null);
+          if(res&&res.ok){
+            const data=await res.json();
+            const summary=data.choices?.[0]?.message?.content||'';
+            if(summary){
+              contentEl.innerHTML=summary.split('\n').map(line=>line.trim()?`<div style="margin-bottom:4px">${esc(line)}</div>`:'').join('');
+              btn.textContent='✨ 重新生成';btn.disabled=false;
+              return;
+            }
+          }
+          // 离线分析兜底
+          const wellTopics={};
+          const improveTopics={};
+          monthReviews.forEach(r=>{
+            if(r.wellDone)r.wellDone.split(/[，,。；;、]/).forEach(p=>{p=p.trim();if(p.length>2)wellTopics[p]=(wellTopics[p]||0)+1});
+            if(r.improve)r.improve.split(/[，,。；;、]/).forEach(p=>{p=p.trim();if(p.length>2)improveTopics[p]=(improveTopics[p]||0)+1});
+          });
+          const topWell=Object.entries(wellTopics).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k,v])=>`${k}(${v}次)`);
+          const topImprove=Object.entries(improveTopics).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k,v])=>`${k}(${v}次)`);
+          const avgRating=(monthReviews.reduce((s,r)=>s+(r.rating||3),0)/monthReviews.length).toFixed(1);
+          contentEl.innerHTML=`<div style="margin-bottom:8px"><strong>📊 本月复盘总结</strong></div>
+            <div style="margin-bottom:6px">本月共复盘 <strong>${monthReviews.length}</strong> 天，平均评分 <strong>${avgRating}</strong> 星。</div>
+            ${topWell.length?`<div style="margin-bottom:6px"><strong style="color:#22a06b">✓ 做得好的方面：</strong>${topWell.join('、')}。建议继续保持这些好习惯。</div>`:''}
+            ${topImprove.length?`<div style="margin-bottom:6px"><strong style="color:#e0703a">⚠ 需要改进的方面：</strong>${topImprove.join('、')}。建议针对这些问题制定具体的改进计划。</div>`:''}
+            <div style="margin-bottom:6px"><strong>💡 行动建议：</strong></div>
+            <div>1. 每天坚持复盘，保持记录的连续性</div>
+            <div>2. 针对高频问题制定周计划，逐步改善</div>
+            <div>3. 多记录感恩事项，培养积极心态</div>
+            <div>4. 将"做得好"的经验固化为日常习惯</div>
+            <div class="small-text" style="margin-top:8px;color:var(--text-sec)">（离线分析模式，连接AI服务可获得更个性化建议）</div>`;
+          btn.textContent='✨ 重新生成';btn.disabled=false;
+        }catch(err){
+          contentEl.innerHTML=`<div class="small-text" style="color:#d64545">分析失败：${esc(err.message)}，请稍后重试</div>`;
+          btn.textContent='✨ 重新生成';btn.disabled=false;
+        }
+      });
     }
   },
 
@@ -3255,8 +3486,8 @@ const MODULE_TYPES={
         const key=dateKey(day), rec=d.daily[key]||{};
         return `<div class="day-card ${key===todayStr()?'today':''}" data-date="${key}">
           <div class="day-name">周${dayLabel(day)}</div><div class="day-num">${day.getDate()}</div>
-          <div class="mini-field"><label>书名</label><input class="rd-week-title" value="${esc(rec.title||currentTitles[0]||'')}" placeholder="今天读什么"></div>
-          <div class="mini-field"><label>分钟</label><input type="number" class="rd-week-min" value="${rec.minutes||10}" min="0"></div>
+          <div class="mini-field"><label>书名</label><input class="rd-week-title" value="${esc(rec.title||'')}" placeholder="${esc(currentTitles[0]||'今天读什么')}"></div>
+          <div class="mini-field"><label>分钟</label><input type="number" class="rd-week-min" value="${rec.minutes||0}" min="0" placeholder="0"></div>
           <div class="mini-field"><label>页数/笔记</label><input class="rd-week-note" value="${esc(rec.note||'')}" placeholder="p12-20 / 感悟"></div>
         </div>`;
       }).join('');
@@ -3286,8 +3517,46 @@ const MODULE_TYPES={
           </div>
         </div>`;
       }).join('');
+      // 年度阅读趋势
+      const rdNow=new Date();
+      const rdYears=[...new Set(Object.keys(d.daily||{}).filter(k=>k.slice(0,4)).map(k=>k.slice(0,4)))].sort();
+      const rdYear=rdYears.includes(String(rdNow.getFullYear()))?rdNow.getFullYear():(+rdYears[rdYears.length-1]||rdNow.getFullYear());
+      const rdYearSummary=Array.from({length:12},(_,i)=>{
+        const month=String(i+1).padStart(2,'0');
+        const monthKeys2=Object.keys(d.daily||{}).filter(k=>k.slice(0,7)===`${rdYear}-${month}`);
+        const days=monthKeys2.filter(k=>+(d.daily[k]?.minutes||0)>0).length;
+        const minutes=monthKeys2.reduce((sum,k)=>sum+(+(d.daily[k]?.minutes||0)),0);
+        const books=[...new Set(monthKeys2.map(k=>d.daily[k]?.title).filter(Boolean))];
+        return {month:i+1,days,minutes,books:books.length};
+      });
+      const rdMaxMin=Math.max(...rdYearSummary.map(m=>m.minutes),1);
+      const rdChartW=340,rdChartH=120,rdPadL=20,rdPadB=18,rdPadT=8;
+      const rdBarW=(rdChartW-rdPadL-8)/12*0.6,rdGap=(rdChartW-rdPadL-8)/12*0.4;
+      const rdChartBars=rdYearSummary.map((m,i)=>{
+        const x=rdPadL+i*((rdChartW-rdPadL-8)/12)+rdGap/2;
+        const barH=m.minutes?Math.round(m.minutes/rdMaxMin*(rdChartH-rdPadB-rdPadT)):0;
+        const y=rdChartH-rdPadB-barH;
+        const color=m.days>=20?'#2563eb':m.days>=10?'#3b82f6':'#93c5fd';
+        return `<rect x="${x}" y="${y}" width="${rdBarW}" height="${barH}" fill="${color}" rx="2" opacity="0.85"><title>${m.month}月: 阅读${m.days}天 / ${m.minutes}分钟 / ${m.books}本书</title></rect>
+        <text x="${x+rdBarW/2}" y="${y-3}" text-anchor="middle" font-size="9" fill="${color}" font-weight="600">${m.minutes||''}</text>
+        <text x="${x+rdBarW/2}" y="${rdChartH-rdPadB+12}" text-anchor="middle" font-size="9" fill="var(--text-sec)">${m.month}月</text>`;
+      }).join('');
+      const rdYearTotalDays=rdYearSummary.reduce((s,m)=>s+m.days,0);
+      const rdYearTotalMin=rdYearSummary.reduce((s,m)=>s+m.minutes,0);
+      const rdChart=`<div style="background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:12px;margin-bottom:8px">
+        <div class="flex-between" style="margin-bottom:6px"><strong style="font-size:13px">${rdYear} 年度阅读趋势</strong><span class="small-text">阅读${rdYearTotalDays}天 · ${rdYearTotalMin}分钟 · 日均${rdYearTotalDays?Math.round(rdYearTotalMin/rdYearTotalDays):0}分钟</span></div>
+        <div style="overflow-x:auto"><svg width="${rdChartW}" height="${rdChartH+4}" viewBox="0 0 ${rdChartW} ${rdChartH+4}" style="max-width:100%">
+          <line x1="${rdPadL}" y1="${rdChartH-rdPadB}" x2="${rdChartW-4}" y2="${rdChartH-rdPadB}" stroke="var(--card-border)" stroke-width="1"/>
+          ${rdChartBars}
+        </svg></div>
+        <div class="small-text" style="text-align:center;margin-top:4px;font-size:10px;color:var(--text-sec)">蓝色深浅表示阅读时长</div>
+      </div>`;
+      const rdTrendCards=rdYearSummary.map(m=>`<div class="trend-mini"><strong>${m.month}月</strong><span>${m.days}天</span><span style="color:#2563eb;font-size:11px">${m.minutes}分钟</span><em>${m.books?m.books+'本':'-'}</em></div>`).join('');
+      const rdTrendHtml=`<div class="trend-panel"><div class="flex-between"><strong>${rdYear} 年度阅读趋势</strong><span class="small-text">阅读天数 / 总时长 / 涉及书目</span></div><div class="trend-grid">${rdTrendCards}</div></div>`;
       return`
         ${monthBoard}
+        ${rdChart}
+        ${rdTrendHtml}
         <div class="quick-chips">
           <span class="tag">已读完 ${finishedCount} 本</span>
           <span class="tag">正在看 ${readingCount} 本</span>
@@ -4657,12 +4926,112 @@ const MODULE_TYPES={
         });
       });
     }
+  },
+
+  /* ---- 自定义板块 ---- */
+  'custom':{
+    title:'自定义',icon:'custom',desc:'用户自定义记录板块',
+    defaultData:{records:[],style:'notes',selectedDate:'',monthOffset:0},
+    render(d){
+      d.records=d.records||[];d.style=d.style||'notes';d.selectedDate=d.selectedDate||todayStr();d.monthOffset=d.monthOffset||0;
+      const styleLabels={notes:'笔记记录',tracking:'数据追踪',checklist:'打卡清单',journal:'日志本'};
+      const styleLabel=styleLabels[d.style]||'笔记记录';
+      // 月度看板
+      const ctx=monthContext(d.monthOffset);
+      const monthKey=ctx.monthKey;
+      const monthRecords=d.records.filter(r=>(r.date||'').slice(0,7)===monthKey);
+      const monthBoard=renderMonthBoard(styleLabel+'看板',d.monthOffset,(day,key)=>{
+        const r=findByDate(d.records,key);
+        if(!r)return '';
+        if(d.style==='tracking'&&r.value){return `<span class="month-dot"></span>${esc(r.value)}${r.label?`<br>${esc(r.label).slice(0,10)}`:''}`;}
+        if(d.style==='checklist'){return r.done?`<span class="month-dot"></span>✓ 已完成`:'';}
+        if(d.style==='journal'&&r.title){return `<span class="month-dot"></span>${esc(r.title).slice(0,12)}`;}
+        if(r.content){return `<span class="month-dot"></span>${esc(r.content).slice(0,12)}${r.content.length>12?'...':''}`;}
+        return '';
+      },`<div class="small-text" style="margin:8px 0;text-align:center">本月记录 ${monthRecords.length} 条</div>`);
+      // 周历
+      const customWeek=weekDates().map(day=>{
+        const key=dateKey(day), r=findByDate(d.records,key)||{};
+        if(d.style==='notes'){
+          return `<div class="day-card ${key===todayStr()?'today':''}" data-date="${key}"><div class="day-name">周${dayLabel(day)}</div><div class="day-num">${day.getDate()}</div><div class="mini-field"><label>记录</label><textarea class="cu-week-content" placeholder="今天记录什么...">${esc(r.content||'')}</textarea></div></div>`;
+        }
+        if(d.style==='tracking'){
+          return `<div class="day-card ${key===todayStr()?'today':''}" data-date="${key}"><div class="day-name">周${dayLabel(day)}</div><div class="day-num">${day.getDate()}</div><div class="mini-field"><label>数值</label><input type="number" class="cu-week-value" value="${r.value||''}" placeholder="0" step="0.1"></div><div class="mini-field"><label>标签</label><input type="text" class="cu-week-label" value="${esc(r.label||'')}" placeholder="如：体重/花费"></div></div>`;
+        }
+        if(d.style==='checklist'){
+          return `<div class="day-card ${key===todayStr()?'today':''}" data-date="${key}"><div class="day-name">周${dayLabel(day)}</div><div class="day-num">${day.getDate()}</div><div class="mini-field"><label><input type="checkbox" class="cu-week-done" ${r.done?'checked':''}> 完成</label></div><div class="mini-field"><label>备注</label><input type="text" class="cu-week-note" value="${esc(r.note||'')}" placeholder="可选"></div></div>`;
+        }
+        return `<div class="day-card ${key===todayStr()?'today':''}" data-date="${key}"><div class="day-name">周${dayLabel(day)}</div><div class="day-num">${day.getDate()}</div><div class="mini-field"><label>标题</label><input type="text" class="cu-week-title" value="${esc(r.title||'')}" placeholder="标题"></div><div class="mini-field"><label>内容</label><textarea class="cu-week-content" placeholder="详细内容...">${esc(r.content||'')}</textarea></div></div>`;
+      }).join('');
+      // 年度趋势
+      const years=[...new Set(d.records.map(r=>(r.date||'').slice(0,4)).filter(Boolean))].sort();
+      const year=years.includes(String(new Date().getFullYear()))?new Date().getFullYear():(+years[years.length-1]||new Date().getFullYear());
+      const yearSummary=Array.from({length:12},(_,i)=>{
+        const month=String(i+1).padStart(2,'0');
+        const rows=d.records.filter(r=>(r.date||'').slice(0,7)===`${year}-${month}`);
+        return {month:i+1,days:rows.length,avg:rows.length&&d.style==='tracking'?Math.round(rows.reduce((s,r)=>s+(+r.value||0),0)/rows.length*10)/10:0};
+      });
+      const yearSummaryCards=yearSummary.map(m=>`<div class="trend-mini"><strong>${m.month}月</strong><span>${m.days}条</span>${m.avg?`<em>均值${m.avg}</em>`:'<em>-</em>'}</div>`).join('');
+      const trendHtml=d.style==='tracking'?`<div class="trend-panel"><div class="flex-between"><strong>${year} 年度趋势</strong><span class="small-text">月度记录数 / 数值均值</span></div><div class="trend-grid">${yearSummaryCards}</div></div>`:'';
+      // 历史记录
+      const recent=d.records.slice().reverse().slice(0,20);
+      const selectedRec=findByDate(d.records,d.selectedDate)||{};
+      return`
+        ${monthBoard}
+        ${trendHtml}
+        ${renderWeekShell(styleLabel+'日历',customWeek)}
+        <button class="btn btn-primary btn-sm btn-block cu-week-save">保存本周记录</button>
+        <button class="btn btn-ghost btn-sm cu-week-undo" style="display:none;width:100%;margin-top:4px">↩ 撤回本周保存</button>
+        <div class="form-row">
+          <div class="form-group" style="max-width:180px"><label>选择日期</label><input type="date" class="cu-date" value="${esc(d.selectedDate)}"></div>
+          <button class="btn btn-ghost btn-sm cu-load-date">载入选中日期</button>
+        </div>
+        ${d.style==='tracking'?`<div class="form-row"><div class="form-group" style="max-width:120px"><label>数值</label><input type="number" class="cu-value" value="${selectedRec.value||''}" step="0.1" placeholder="0"></div><div class="form-group" style="max-width:120px"><label>标签</label><input type="text" class="cu-label" value="${esc(selectedRec.label||'')}" placeholder="如：体重/花费"></div></div>`:''}
+        ${d.style==='checklist'?`<div class="form-group"><label><input type="checkbox" class="cu-done" ${selectedRec.done?'checked':''}> 当日完成</label></div>`:''}
+        ${d.style==='journal'?`<div class="form-group"><label>标题</label><input type="text" class="cu-title" value="${esc(selectedRec.title||'')}" placeholder="日志标题"></div>`:''}
+        <div class="form-group"><label>${d.style==='checklist'?'备注':'内容'}</label><textarea class="cu-content" placeholder="${d.style==='tracking'?'备注（可选）':'记录内容...'}">${esc(selectedRec.content||selectedRec.note||'')}</textarea></div>
+        <button class="btn btn-primary btn-sm btn-block cu-save">保存选中日期记录</button>
+        <div class="section-label">历史记录 (${d.records.length})</div>
+        <div class="record-list">
+          ${recent.length?recent.map(r=>`<div class="record-item"><div class="record-content">${d.style==='tracking'?`<strong>${esc(r.value||'')}</strong>${r.label?` <span class="tag">${esc(r.label)}</span>`:''}`:d.style==='checklist'?`<strong>${r.done?'✓':'○'}</strong>${r.note?` ${esc(r.note)}`:''}`:d.style==='journal'?`<strong>${esc(r.title||'无标题')}</strong>${r.content?`<div class="small-text">${esc(r.content).slice(0,80)}${r.content.length>80?'...':''}</div>`:''}`:`<div class="small-text">${esc(r.content||'').slice(0,100)}${(r.content||'').length>100?'...':''}</div>`}<div class="record-meta">${formatDate(r.date)}</div></div><button class="record-del cu-del" data-id="${r.id}">✕</button></div>`).join(''):'<div class="empty-state">暂无记录</div>'}
+        </div>
+      `;
+    },
+    bind(body,mod,save){
+      bindMonthBoard(body,mod,save,'.cu-date');
+      const dateInput=body.querySelector('.cu-date');
+      const loadSelected=()=>{mod.data.selectedDate=dateInput.value||todayStr();save();rerender(mod);};
+      dateInput?.addEventListener('change',loadSelected);
+      body.querySelector('.cu-load-date')?.addEventListener('click',loadSelected);
+      body.querySelector('.cu-save')?.addEventListener('click',e=>{
+        const date=dateInput?.value||todayStr();
+        mod.data.selectedDate=date;
+        const style=mod.data.style||'notes';
+        const record={date};
+        if(style==='tracking'){record.value=body.querySelector('.cu-value')?.value||'';record.label=body.querySelector('.cu-label')?.value.trim()||'';}
+        if(style==='checklist'){record.done=body.querySelector('.cu-done')?.checked||false;record.note=body.querySelector('.cu-content')?.value.trim()||'';}
+        if(style==='journal'){record.title=body.querySelector('.cu-title')?.value.trim()||'';record.content=body.querySelector('.cu-content')?.value.trim()||'';}
+        if(style==='notes'){record.content=body.querySelector('.cu-content')?.value.trim()||'';}
+        if(Object.values(record).some(v=>v&&v!==date))mod.data.records=upsertByDate(mod.data.records||[],date,record);
+        saveAndRerenderWithConfirm(e.currentTarget,mod,save);
+      });
+      body.querySelector('.cu-week-save')?.addEventListener('click',e=>{
+        mod.data.records=mod.data.records||[];
+        body.querySelectorAll('.day-card').forEach(card=>{
+          const date=card.dataset.date;const style=mod.data.style||'notes';
+          if(style==='notes'){const content=card.querySelector('.cu-week-content')?.value.trim()||'';if(content)mod.data.records=upsertByDate(mod.data.records,date,{content});}
+          if(style==='tracking'){const value=card.querySelector('.cu-week-value')?.value||'';const label=card.querySelector('.cu-week-label')?.value.trim()||'';if(value||label)mod.data.records=upsertByDate(mod.data.records,date,{value,label});}
+          if(style==='checklist'){const done=card.querySelector('.cu-week-done')?.checked||false;const note=card.querySelector('.cu-week-note')?.value.trim()||'';if(done||note)mod.data.records=upsertByDate(mod.data.records,date,{done,note});}
+          if(style==='journal'){const title=card.querySelector('.cu-week-title')?.value.trim()||'';const content=card.querySelector('.cu-week-content')?.value.trim()||'';if(title||content)mod.data.records=upsertByDate(mod.data.records,date,{title,content});}
+        });
+        saveAndRerenderWithConfirm(e.currentTarget,mod,save);
+      });
+      const cuUndo=body.querySelector('.cu-week-undo');
+      if(cuUndo&&_undoStack[mod.id])cuUndo.style.display='';
+      if(cuUndo)cuUndo.addEventListener('click',()=>{if(_undoRestore(mod,save)){rerender(mod);}});
+      body.querySelectorAll('.cu-del').forEach(b=>b.addEventListener('click',()=>{mod.data.records=mod.data.records.filter(r=>r.id!==b.dataset.id);save();rerender(mod);}));
+    }
   }
-
-};
-
-/* ============================================================
-   渲染函数
 
 };
 
@@ -5747,6 +6116,12 @@ function migrateWorkbenchData(){
         changes:'V8.5 全面修复与优化（对应缓存版本 v36）：\n• 修复翻译显示问题：清除翻译结果中的XLIFF标签（如<x id="1"/>），翻译和例句翻译均生效\n• 查单词功能优化：默认显示英文释义、搭配、例句，点击"显示中文释义"后展开中文翻译\n• 行动总览计算修复：V35数据迁移恢复未完成的常规任务，计划完成率=已完成/总计划（如6/9=67%）\n• 行动总览排版优化：每个完成计划单行显示，不再用顿号隔开\n• 长期报告聚合修复：多日聚合时正确统计总计划和已完成数（如8/3+8/4=15/18=83%）\n• 目标规划保存提示：点击保存后显示"目标规划已保存"确认信息\n• 睡眠趋势升级：新增月度早睡天数统计和年度SVG柱状图，绿/橙/红三色标注早睡率\n• 爆款话题自动同步：打开工作台自动同步热点（4小时冷却），新增手动同步按钮，GitHub Actions增加Python兜底抓取'
       });
     }
+    if(!changelog.data.logs.some(l=>l.version==='V8.6')){
+      changelog.data.logs.push({
+        id:genId(),date:todayStr(),version:'V8.6',
+        changes:'V8.6 移动端适配与功能增强（对应缓存版本 v39）：\n• 查单词格式重构：英文释义→搭配→例句依次显示，点击"显示中文释义"展开中文释义→搭配释义→例句翻译\n• 移动端UI全面适配：睡眠/运动/冥想/阅读周记录横向滚动，行动总览矩阵和长期报告表格自适应\n• 复盘看板修复：修复undefined显示问题，改为"已复盘"标签，新增AI成长建议功能（归纳复盘内容并给出行动建议）\n• 阅读记录修复：书名不再自动填充到所有日期，仅显示为placeholder，未填日期不保存\n• 保存确认统一：所有保存按钮点击后显示"已保存"悬浮提示\n• 趋势看板扩展：运动/冥想/阅读新增年度趋势看板，显示运动天数/总时长/日均等汇总数据\n• 自定义导航板块：支持添加自定义板块，可选笔记/清单/打卡/月历四种样式\n• 全屏设置页：设置改为全屏页面（类似Kimi），不再是卡片弹窗\n• 同步密钥默认显示优化：placeholder改为2026**格式\n• 设置页移动端适配：全屏设置页在手机上优化间距和字体'
+      });
+    }
   }
   DB.save();
 }
@@ -5838,6 +6213,23 @@ function init(){
   document.getElementById('addModuleBtn').addEventListener('click',()=>{
     renderAddModuleGrid();
     openModal('addModuleModal');
+  });
+
+  // Custom navigation module creation
+  document.getElementById('addCustomNavBtn')?.addEventListener('click',()=>{
+    const nameInput=document.getElementById('customNavName');
+    const styleInput=document.getElementById('customNavStyle');
+    const name=nameInput?.value.trim();
+    if(!name){alert('请输入板块名称');return;}
+    const style=styleInput?.value||'notes';
+    const newMod={id:genId(),type:'custom',title:name,visible:true,data:{records:[],style,selectedDate:todayStr(),monthOffset:0}};
+    DB.data.modules.push(newMod);
+    DB.save();
+    nameInput.value='';
+    renderNavSettings();
+    renderSideNav();
+    renderDashboard();
+    showToast('自定义板块已添加');
   });
 
   // Mobile sidebar toggle
@@ -5975,5 +6367,6 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
-</body>
-</html>
+
+
+</body></html>

@@ -1,0 +1,2481 @@
+{
+  "theme": "slate-blue",
+  "focusModule": "mscwmek56y870",
+  "viewMode": "list",
+  "defaultViewMode": "grid",
+  "navCustom": {
+    "pinned": [],
+    "hidden": []
+  },
+  "modules": [
+    {
+      "id": "mscwmek5nxqnv",
+      "type": "daily-plan",
+      "title": "每日计划",
+      "visible": true,
+      "data": {
+        "routineTasks": [
+          {
+            "id": "mscwmek5dd2k8",
+            "text": "11点前入睡"
+          },
+          {
+            "id": "mscwmek5xgvtk",
+            "text": "快走10分钟"
+          },
+          {
+            "id": "mscwmek5gqgiv",
+            "text": "冥想5分钟"
+          },
+          {
+            "id": "mscwmek5yp8ly",
+            "text": "英语学习：单词10个"
+          },
+          {
+            "id": "mscwmek5f044i",
+            "text": "英语学习：词组/句型1个"
+          },
+          {
+            "id": "mscwmek5ahpdi",
+            "text": "英语学习：AI对话10分钟"
+          },
+          {
+            "id": "mscwmek5gy6bw",
+            "text": "英语学习：影子跟读5分钟"
+          },
+          {
+            "id": "mscwmek5aq7mb",
+            "text": "改善圆肩动作跟练"
+          },
+          {
+            "id": "mscwmek5ttcyu",
+            "text": "每日输出50字"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "mscwmek7h0k0r",
+            "text": "快走10分钟",
+            "done": true,
+            "date": "2026-08-03",
+            "routineId": "mscwmek5xgvtk"
+          },
+          {
+            "id": "mscwmek7bq7oq",
+            "text": "英语学习：单词10个",
+            "done": true,
+            "date": "2026-08-03",
+            "routineId": "mscwmek5yp8ly"
+          },
+          {
+            "id": "mscwmek7amw3s",
+            "text": "英语学习：词组/句型1个",
+            "done": true,
+            "date": "2026-08-03",
+            "routineId": "mscwmek5f044i"
+          },
+          {
+            "id": "mscwmek764082",
+            "text": "英语学习：AI对话10分钟",
+            "done": true,
+            "date": "2026-08-03",
+            "routineId": "mscwmek5ahpdi"
+          },
+          {
+            "id": "mscwmek77jz86",
+            "text": "英语学习：影子跟读5分钟",
+            "done": true,
+            "date": "2026-08-03",
+            "routineId": "mscwmek5gy6bw"
+          },
+          {
+            "id": "mscwmek7nxjm3",
+            "text": "每日输出50字",
+            "done": true,
+            "date": "2026-08-03",
+            "routineId": "mscwmek5ttcyu"
+          },
+          {
+            "id": "msedqwy1cfg5x",
+            "text": "快走10分钟",
+            "done": true,
+            "date": "2026-08-04",
+            "routineId": "mscwmek5xgvtk"
+          },
+          {
+            "id": "msedqwy1mngnz",
+            "text": "冥想5分钟",
+            "done": true,
+            "date": "2026-08-04",
+            "routineId": "mscwmek5gqgiv"
+          },
+          {
+            "id": "msedqwy102pq7",
+            "text": "英语学习：单词10个",
+            "done": true,
+            "date": "2026-08-04",
+            "routineId": "mscwmek5yp8ly"
+          },
+          {
+            "id": "msedqwy1wqarz",
+            "text": "英语学习：词组/句型1个",
+            "done": true,
+            "date": "2026-08-04",
+            "routineId": "mscwmek5f044i"
+          },
+          {
+            "id": "msedqwy16xb4u",
+            "text": "英语学习：AI对话10分钟",
+            "done": true,
+            "date": "2026-08-04",
+            "routineId": "mscwmek5ahpdi"
+          },
+          {
+            "id": "msedqwy1h8mru",
+            "text": "英语学习：影子跟读5分钟",
+            "done": true,
+            "date": "2026-08-04",
+            "routineId": "mscwmek5gy6bw"
+          },
+          {
+            "id": "msfka5izfu3f2",
+            "text": "11点前入睡",
+            "done": false,
+            "date": "2026-08-03",
+            "routineId": "mscwmek5dd2k8"
+          },
+          {
+            "id": "msfka5iz4dqif",
+            "text": "冥想5分钟",
+            "done": false,
+            "date": "2026-08-03",
+            "routineId": "mscwmek5gqgiv"
+          },
+          {
+            "id": "msfka5izrexjz",
+            "text": "改善圆肩动作跟练",
+            "done": false,
+            "date": "2026-08-03",
+            "routineId": "mscwmek5aq7mb"
+          },
+          {
+            "id": "msfka5iz8tm8f",
+            "text": "11点前入睡",
+            "done": false,
+            "date": "2026-08-04",
+            "routineId": "mscwmek5dd2k8"
+          },
+          {
+            "id": "msfka5iz2ta9c",
+            "text": "改善圆肩动作跟练",
+            "done": false,
+            "date": "2026-08-04",
+            "routineId": "mscwmek5aq7mb"
+          },
+          {
+            "id": "msfka5iz9rrpa",
+            "text": "每日输出50字",
+            "done": false,
+            "date": "2026-08-04",
+            "routineId": "mscwmek5ttcyu"
+          },
+          {
+            "id": "msfkvwpxeuen6",
+            "text": "11点前入睡",
+            "done": false,
+            "date": "2026-08-05",
+            "routineId": "mscwmek5dd2k8"
+          },
+          {
+            "id": "msfkvwpxta6te",
+            "text": "快走10分钟",
+            "done": false,
+            "date": "2026-08-05",
+            "routineId": "mscwmek5xgvtk"
+          },
+          {
+            "id": "msfkvwpxpdih6",
+            "text": "冥想5分钟",
+            "done": false,
+            "date": "2026-08-05",
+            "routineId": "mscwmek5gqgiv"
+          },
+          {
+            "id": "msfkvwpx4od0d",
+            "text": "英语学习：单词10个",
+            "done": false,
+            "date": "2026-08-05",
+            "routineId": "mscwmek5yp8ly"
+          },
+          {
+            "id": "msfkvwpx3fkdt",
+            "text": "英语学习：词组/句型1个",
+            "done": false,
+            "date": "2026-08-05",
+            "routineId": "mscwmek5f044i"
+          },
+          {
+            "id": "msfkvwpxjjdzc",
+            "text": "英语学习：AI对话10分钟",
+            "done": false,
+            "date": "2026-08-05",
+            "routineId": "mscwmek5ahpdi"
+          },
+          {
+            "id": "msfkvwpxhwee9",
+            "text": "英语学习：影子跟读5分钟",
+            "done": false,
+            "date": "2026-08-05",
+            "routineId": "mscwmek5gy6bw"
+          },
+          {
+            "id": "msfkvwpxymi4l",
+            "text": "改善圆肩动作跟练",
+            "done": false,
+            "date": "2026-08-05",
+            "routineId": "mscwmek5aq7mb"
+          },
+          {
+            "id": "msfkvwpx2q94i",
+            "text": "每日输出50字",
+            "done": false,
+            "date": "2026-08-05",
+            "routineId": "mscwmek5ttcyu"
+          }
+        ],
+        "currentDate": "2026-08-03",
+        "selectedDate": "2026-08-05",
+        "calViewYear": 2026,
+        "calViewMonth": 7,
+        "routineCleanV34": true,
+        "routineRestoreV35": true
+      }
+    },
+    {
+      "id": "mscwmek5fw4ki",
+      "type": "overview",
+      "title": "行动总览",
+      "visible": true,
+      "data": {
+        "weekOffset": 0,
+        "customRows": [],
+        "customDone": {},
+        "hiddenDays": []
+      }
+    },
+    {
+      "id": "mscwmek59a7ug",
+      "type": "report",
+      "title": "长期报告",
+      "visible": true,
+      "data": {
+        "period": "week",
+        "view": "cards",
+        "showDetail": false
+      }
+    },
+    {
+      "id": "mscwmek5qgpnw",
+      "type": "goals",
+      "title": "目标规划",
+      "visible": true,
+      "data": {
+        "blocks": [
+          "健康",
+          "学习",
+          "生活",
+          "PlanB"
+        ],
+        "plans": {
+          "year": {
+            "健康": "",
+            "学习": "",
+            "生活": "",
+            "PlanB": ""
+          },
+          "quarter": {
+            "健康": "",
+            "学习": "Q3 计划（7/9-10/9）\n\n学习\n1. 阅读6本书：每个月阅读2本书；输出感悟2篇；每天至少阅读10页。\n2. 英语（100-200）：每天影子跟读10分钟、单词10个；记忆5个句型（3+2）并仿写；与AI对话10分钟；写作5分钟。\n\n健康\n1. 18次10点早睡（向10点迈进）：每个月至少6次10点睡觉；每天11点之前入睡；每月晚睡不超过3次。\n2. 运动（36公里+12次力量训练）：每周跑步至少3公里，至少早起跑步一次；每周1次力量训练，高于30分钟；每天至少快走10分钟。\n3. 冥想：每天冥想5分钟。\n\nPlan B\n1. 公众号更新16篇原创，总数达50篇：每周1篇原创；可记录灵感；每天记录/输出50字以上。\n2. 小红书总数达57篇：每周更新3篇笔记。\n3. 抖音总数达50篇。\n\n兴趣爱好\n1. 爵士舞。\n2. 精力充足可学习游泳。\n3. 学习剪纸或者一门乐器。",
+            "生活": "",
+            "PlanB": ""
+          },
+          "month": {
+            "健康": "",
+            "学习": "",
+            "生活": "",
+            "PlanB": ""
+          },
+          "week": {
+            "健康": "",
+            "学习": "",
+            "生活": "",
+            "PlanB": ""
+          },
+          "day": {
+            "健康": "",
+            "学习": "",
+            "生活": "",
+            "PlanB": ""
+          }
+        },
+        "viewMode": "board"
+      }
+    },
+    {
+      "id": "mscwmek5bojfv",
+      "type": "sleep",
+      "title": "睡眠记录",
+      "visible": true,
+      "data": {
+        "records": [
+          {
+            "id": "msedqwy7e267x",
+            "date": "2026-01-01",
+            "bedtime": "22:00",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy7ofwdi",
+            "date": "2026-01-02",
+            "bedtime": "22:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy733d0v",
+            "date": "2026-01-03",
+            "bedtime": "22:55",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy74wsmi",
+            "date": "2026-01-04",
+            "bedtime": "22:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy7psdn3",
+            "date": "2026-01-05",
+            "bedtime": "22:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy7wi8lv",
+            "date": "2026-01-06",
+            "bedtime": "22:41",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy78nsoc",
+            "date": "2026-01-07",
+            "bedtime": "22:47",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy7u3j1i",
+            "date": "2026-01-08",
+            "bedtime": "22:47",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy7irhwz",
+            "date": "2026-01-09",
+            "bedtime": "01:03",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy795smc",
+            "date": "2026-01-10",
+            "bedtime": "00:16",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy7huc0a",
+            "date": "2026-01-11",
+            "bedtime": "00:52",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy7m8rwp",
+            "date": "2026-01-12",
+            "bedtime": "22:16",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy79csd7",
+            "date": "2026-01-13",
+            "bedtime": "22:40",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy7e1rxb",
+            "date": "2026-01-14",
+            "bedtime": "22:59",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy7khxs0",
+            "date": "2026-01-15",
+            "bedtime": "23:45",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy79cyde",
+            "date": "2026-01-16",
+            "bedtime": "22:58",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy7o3n35",
+            "date": "2026-01-17",
+            "bedtime": "22:48",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy71vbbi",
+            "date": "2026-01-18",
+            "bedtime": "23:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy7xh6b9",
+            "date": "2026-01-19",
+            "bedtime": "22:52",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy7icwvp",
+            "date": "2026-01-20",
+            "bedtime": "23:57",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy7fxski",
+            "date": "2026-01-21",
+            "bedtime": "23:02",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy7xhw26",
+            "date": "2026-01-22",
+            "bedtime": "01:45",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy7esjqv",
+            "date": "2026-02-06",
+            "bedtime": "22:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy7uf71l",
+            "date": "2026-02-07",
+            "bedtime": "23:16",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy7mtqyd",
+            "date": "2026-02-08",
+            "bedtime": "23:50",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy7cvtv3",
+            "date": "2026-02-09",
+            "bedtime": "23:54",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy7qcbf7",
+            "date": "2026-02-10",
+            "bedtime": "22:47",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy74id5i",
+            "date": "2026-02-11",
+            "bedtime": "23:17",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy7oyw2u",
+            "date": "2026-02-12",
+            "bedtime": "23:19",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy7ioplb",
+            "date": "2026-02-13",
+            "bedtime": "23:18",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy7luu4g",
+            "date": "2026-02-14",
+            "bedtime": "23:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy7ckgni",
+            "date": "2026-02-15",
+            "bedtime": "22:25",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy7dj5gb",
+            "date": "2026-02-16",
+            "bedtime": "22:36",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8narm2",
+            "date": "2026-02-17",
+            "bedtime": "22:38",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8fsbzn",
+            "date": "2026-02-18",
+            "bedtime": "22:43",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8xa6ix",
+            "date": "2026-02-19",
+            "bedtime": "22:40",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8wfusf",
+            "date": "2026-02-21",
+            "bedtime": "23:25",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8eezg9",
+            "date": "2026-02-22",
+            "bedtime": "23:20",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy823f84",
+            "date": "2026-02-23",
+            "bedtime": "22:40",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8uf52u",
+            "date": "2026-02-24",
+            "bedtime": "23:18",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8euzmw",
+            "date": "2026-02-25",
+            "bedtime": "23:20",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8b3vux",
+            "date": "2026-02-26",
+            "bedtime": "22:25",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8r48u9",
+            "date": "2026-02-27",
+            "bedtime": "22:34",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8txri5",
+            "date": "2026-02-28",
+            "bedtime": "23:15",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8tjdwn",
+            "date": "2026-03-01",
+            "bedtime": "23:32",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy874jfy",
+            "date": "2026-03-02",
+            "bedtime": "22:58",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy80zb0u",
+            "date": "2026-03-03",
+            "bedtime": "22:50",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8wsze7",
+            "date": "2026-03-04",
+            "bedtime": "00:00",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy83fs5d",
+            "date": "2026-03-05",
+            "bedtime": "23:55",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8f6s9n",
+            "date": "2026-03-07",
+            "bedtime": "00:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8ap5aq",
+            "date": "2026-03-08",
+            "bedtime": "00:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy84a2jg",
+            "date": "2026-03-09",
+            "bedtime": "22:48",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8n9m34",
+            "date": "2026-03-10",
+            "bedtime": "22:35",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8auboc",
+            "date": "2026-03-11",
+            "bedtime": "00:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8i1473",
+            "date": "2026-03-12",
+            "bedtime": "00:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy858idz",
+            "date": "2026-03-13",
+            "bedtime": "23:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8ys3cm",
+            "date": "2026-03-14",
+            "bedtime": "00:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8gnpey",
+            "date": "2026-03-15",
+            "bedtime": "23:15",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8e4ipw",
+            "date": "2026-03-16",
+            "bedtime": "23:50",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8mwb4l",
+            "date": "2026-03-17",
+            "bedtime": "23:55",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8n7yre",
+            "date": "2026-03-20",
+            "bedtime": "23:15",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8lxfdy",
+            "date": "2026-03-21",
+            "bedtime": "22:46",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8ittyl",
+            "date": "2026-03-25",
+            "bedtime": "00:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy86bxqx",
+            "date": "2026-03-26",
+            "bedtime": "23:15",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8okens",
+            "date": "2026-03-27",
+            "bedtime": "23:51",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8a2r80",
+            "date": "2026-03-28",
+            "bedtime": "23:55",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8wwp7i",
+            "date": "2026-03-30",
+            "bedtime": "22:40",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8y100c",
+            "date": "2026-03-31",
+            "bedtime": "22:20",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy84184w",
+            "date": "2026-04-01",
+            "bedtime": "23:25",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy88mzwg",
+            "date": "2026-04-02",
+            "bedtime": "23:02",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8hqxlm",
+            "date": "2026-04-03",
+            "bedtime": "22:31",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8wav0n",
+            "date": "2026-04-04",
+            "bedtime": "22:45",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy83qhtq",
+            "date": "2026-04-05",
+            "bedtime": "23:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8jqka3",
+            "date": "2026-04-06",
+            "bedtime": "00:35",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy83q3j0",
+            "date": "2026-04-07",
+            "bedtime": "23:00",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8uvu4o",
+            "date": "2026-04-08",
+            "bedtime": "00:20",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8sa9nu",
+            "date": "2026-04-09",
+            "bedtime": "00:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8jc890",
+            "date": "2026-04-10",
+            "bedtime": "22:20",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8mafvx",
+            "date": "2026-04-11",
+            "bedtime": "22:54",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8qdqkh",
+            "date": "2026-04-12",
+            "bedtime": "23:00",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy853x65",
+            "date": "2026-04-13",
+            "bedtime": "22:55",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy88bbk4",
+            "date": "2026-04-14",
+            "bedtime": "00:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8hh4w6",
+            "date": "2026-04-15",
+            "bedtime": "00:15",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8irnie",
+            "date": "2026-04-16",
+            "bedtime": "00:00",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8qnsfz",
+            "date": "2026-04-17",
+            "bedtime": "00:40",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy85vuqj",
+            "date": "2026-04-18",
+            "bedtime": "23:39",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy80x2od",
+            "date": "2026-04-20",
+            "bedtime": "22:20",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8l40a8",
+            "date": "2026-04-21",
+            "bedtime": "23:40",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8cmbvk",
+            "date": "2026-04-22",
+            "bedtime": "22:55",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8gywae",
+            "date": "2026-04-23",
+            "bedtime": "23:00",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8lunrj",
+            "date": "2026-04-24",
+            "bedtime": "22:55",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8auv6r",
+            "date": "2026-04-25",
+            "bedtime": "00:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8eh033",
+            "date": "2026-04-26",
+            "bedtime": "00:15",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8x3nra",
+            "date": "2026-04-27",
+            "bedtime": "00:00",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy83t4ss",
+            "date": "2026-04-28",
+            "bedtime": "00:40",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8y4fjf",
+            "date": "2026-04-29",
+            "bedtime": "23:39",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8mc93x",
+            "date": "2026-05-01",
+            "bedtime": "22:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8pzo8c",
+            "date": "2026-05-02",
+            "bedtime": "22:40",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8as1hv",
+            "date": "2026-05-03",
+            "bedtime": "23:26",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8xpy4u",
+            "date": "2026-05-04",
+            "bedtime": "23:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8xs9hh",
+            "date": "2026-05-05",
+            "bedtime": "23:00",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8xenuf",
+            "date": "2026-05-06",
+            "bedtime": "23:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8scqwp",
+            "date": "2026-05-07",
+            "bedtime": "23:00",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy81s6ww",
+            "date": "2026-05-08",
+            "bedtime": "22:20",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8eo8ob",
+            "date": "2026-05-09",
+            "bedtime": "21:58",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8bbdzm",
+            "date": "2026-05-10",
+            "bedtime": "23:05",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8sv54r",
+            "date": "2026-05-11",
+            "bedtime": "22:48",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy83xd94",
+            "date": "2026-05-12",
+            "bedtime": "22:40",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8ikw28",
+            "date": "2026-05-13",
+            "bedtime": "22:37",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8ssi9k",
+            "date": "2026-05-14",
+            "bedtime": "22:55",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8p917a",
+            "date": "2026-05-16",
+            "bedtime": "23:58",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8kynyz",
+            "date": "2026-05-18",
+            "bedtime": "22:55",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8dt0em",
+            "date": "2026-05-19",
+            "bedtime": "23:12",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8x7xbk",
+            "date": "2026-05-20",
+            "bedtime": "22:28",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy88x0rh",
+            "date": "2026-05-21",
+            "bedtime": "22:13",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy81r7b0",
+            "date": "2026-05-22",
+            "bedtime": "23:50",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8x0tpl",
+            "date": "2026-05-23",
+            "bedtime": "23:00",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8o65il",
+            "date": "2026-05-24",
+            "bedtime": "23:49",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy82wji1",
+            "date": "2026-05-25",
+            "bedtime": "22:15",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8ngwko",
+            "date": "2026-05-26",
+            "bedtime": "21:58",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8ioy8h",
+            "date": "2026-05-27",
+            "bedtime": "22:40",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy89k9tg",
+            "date": "2026-05-28",
+            "bedtime": "22:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8qvjb7",
+            "date": "2026-05-29",
+            "bedtime": "23:57",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8m7rnl",
+            "date": "2026-06-01",
+            "bedtime": "22:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8koeps",
+            "date": "2026-06-02",
+            "bedtime": "22:25",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy82ozt9",
+            "date": "2026-06-03",
+            "bedtime": "23:55",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8oz5pq",
+            "date": "2026-06-04",
+            "bedtime": "00:55",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy837m8k",
+            "date": "2026-06-05",
+            "bedtime": "22:50",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8hmk4v",
+            "date": "2026-06-06",
+            "bedtime": "22:45",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8nxcgc",
+            "date": "2026-06-07",
+            "bedtime": "22:15",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8cef2e",
+            "date": "2026-06-08",
+            "bedtime": "22:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8m1kt3",
+            "date": "2026-06-09",
+            "bedtime": "22:35",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8tpyuv",
+            "date": "2026-06-10",
+            "bedtime": "22:35",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8sxz51",
+            "date": "2026-06-11",
+            "bedtime": "22:43",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8qnp7j",
+            "date": "2026-06-12",
+            "bedtime": "22:55",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy88sdf5",
+            "date": "2026-06-13",
+            "bedtime": "23:35",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy81v2i0",
+            "date": "2026-06-14",
+            "bedtime": "22:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8f76y1",
+            "date": "2026-06-15",
+            "bedtime": "23:00",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8g0rm7",
+            "date": "2026-06-16",
+            "bedtime": "22:40",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy835p7b",
+            "date": "2026-06-17",
+            "bedtime": "00:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy87uqs0",
+            "date": "2026-06-18",
+            "bedtime": "23:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8naklb",
+            "date": "2026-06-19",
+            "bedtime": "22:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy82xi33",
+            "date": "2026-06-20",
+            "bedtime": "23:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8oq0eg",
+            "date": "2026-06-21",
+            "bedtime": "23:35",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy81f0lu",
+            "date": "2026-06-22",
+            "bedtime": "22:32",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8tft2a",
+            "date": "2026-06-23",
+            "bedtime": "23:05",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy80cbkx",
+            "date": "2026-06-24",
+            "bedtime": "23:55",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8y3b92",
+            "date": "2026-06-25",
+            "bedtime": "02:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8mhvpe",
+            "date": "2026-06-26",
+            "bedtime": "22:40",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8mwqea",
+            "date": "2026-06-27",
+            "bedtime": "22:40",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8361wx",
+            "date": "2026-06-28",
+            "bedtime": "22:35",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8gqcnw",
+            "date": "2026-06-29",
+            "bedtime": "22:35",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "msedqwy8f7e6m",
+            "date": "2026-06-30",
+            "bedtime": "23:12",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由1-6月手写睡眠记录导入（2026）"
+          },
+          {
+            "id": "mscwmekdd4ued",
+            "date": "2026-07-01",
+            "bedtime": "00:45",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由7月手写睡眠记录导入，起床时间可继续补填"
+          },
+          {
+            "id": "mscwmekdipgbx",
+            "date": "2026-07-02",
+            "bedtime": "22:45",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由7月手写睡眠记录导入，起床时间可继续补填"
+          },
+          {
+            "id": "mscwmekd2bmkf",
+            "date": "2026-07-03",
+            "bedtime": "22:45",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由7月手写睡眠记录导入，起床时间可继续补填"
+          },
+          {
+            "id": "mscwmekducgvn",
+            "date": "2026-07-04",
+            "bedtime": "22:15",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由7月手写睡眠记录导入，起床时间可继续补填"
+          },
+          {
+            "id": "mscwmekdvecz6",
+            "date": "2026-07-05",
+            "bedtime": "22:55",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由7月手写睡眠记录导入，起床时间可继续补填"
+          },
+          {
+            "id": "mscwmekdyto4l",
+            "date": "2026-07-06",
+            "bedtime": "22:55",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由7月手写睡眠记录导入，起床时间可继续补填"
+          },
+          {
+            "id": "mscwmekd66acm",
+            "date": "2026-07-07",
+            "bedtime": "23:50",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由7月手写睡眠记录导入，起床时间可继续补填"
+          },
+          {
+            "id": "mscwmekdljs9k",
+            "date": "2026-07-08",
+            "bedtime": "23:38",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由7月手写睡眠记录导入，起床时间可继续补填"
+          },
+          {
+            "id": "mscwmekd06thn",
+            "date": "2026-07-09",
+            "bedtime": "22:28",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由7月手写睡眠记录导入，起床时间可继续补填"
+          },
+          {
+            "id": "mscwmekdwlzrq",
+            "date": "2026-07-10",
+            "bedtime": "22:57",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由7月手写睡眠记录导入，起床时间可继续补填"
+          },
+          {
+            "id": "mscwmekdkixmi",
+            "date": "2026-07-11",
+            "bedtime": "22:35",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由7月手写睡眠记录导入，起床时间可继续补填"
+          },
+          {
+            "id": "mscwmekd80nwn",
+            "date": "2026-07-12",
+            "bedtime": "23:12",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由7月手写睡眠记录导入，起床时间可继续补填"
+          },
+          {
+            "id": "mscwmekdq44gs",
+            "date": "2026-07-13",
+            "bedtime": "23:15",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由7月手写睡眠记录导入，起床时间可继续补填"
+          },
+          {
+            "id": "mscwmekdqkuxo",
+            "date": "2026-07-14",
+            "bedtime": "22:35",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由7月手写睡眠记录导入，起床时间可继续补填"
+          },
+          {
+            "id": "mscwmekdrutdi",
+            "date": "2026-07-15",
+            "bedtime": "23:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由7月手写睡眠记录导入，起床时间可继续补填"
+          },
+          {
+            "id": "mscwmekd4b2jd",
+            "date": "2026-07-16",
+            "bedtime": "23:21",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由7月手写睡眠记录导入，起床时间可继续补填"
+          },
+          {
+            "id": "mscwmekdtdp2n",
+            "date": "2026-07-17",
+            "bedtime": "22:45",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由7月手写睡眠记录导入，起床时间可继续补填"
+          },
+          {
+            "id": "mscwmekdhgroy",
+            "date": "2026-07-18",
+            "bedtime": "22:35",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由7月手写睡眠记录导入，起床时间可继续补填"
+          },
+          {
+            "id": "mscwmekd0qhgz",
+            "date": "2026-07-19",
+            "bedtime": "22:35",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由7月手写睡眠记录导入，起床时间可继续补填"
+          },
+          {
+            "id": "mscwmekdljuzs",
+            "date": "2026-07-20",
+            "bedtime": "23:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由7月手写睡眠记录导入，起床时间可继续补填"
+          },
+          {
+            "id": "mscwmekdgbzr8",
+            "date": "2026-07-21",
+            "bedtime": "00:40",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由7月手写睡眠记录导入，起床时间可继续补填"
+          },
+          {
+            "id": "mscwmekdsf8rv",
+            "date": "2026-07-22",
+            "bedtime": "22:45",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由7月手写睡眠记录导入，起床时间可继续补填"
+          },
+          {
+            "id": "mscwmekd0udwz",
+            "date": "2026-07-23",
+            "bedtime": "22:45",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由7月手写睡眠记录导入，起床时间可继续补填"
+          },
+          {
+            "id": "mscwmekdexk4m",
+            "date": "2026-07-24",
+            "bedtime": "23:01",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由7月手写睡眠记录导入，起床时间可继续补填"
+          },
+          {
+            "id": "mscwmekdav1vs",
+            "date": "2026-07-25",
+            "bedtime": "23:50",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由7月手写睡眠记录导入，起床时间可继续补填"
+          },
+          {
+            "id": "mscwmekdi7s37",
+            "date": "2026-07-26",
+            "bedtime": "22:35",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由7月手写睡眠记录导入，起床时间可继续补填"
+          },
+          {
+            "id": "mscwmekdiy4r3",
+            "date": "2026-07-27",
+            "bedtime": "22:30",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由7月手写睡眠记录导入，起床时间可继续补填"
+          },
+          {
+            "id": "mscwmekdzdnun",
+            "date": "2026-07-28",
+            "bedtime": "23:35",
+            "wakeTime": "07:00",
+            "quality": 3,
+            "notes": "由7月手写睡眠记录导入，起床时间可继续补填"
+          }
+        ],
+        "historyImport2025": true,
+        "julyImport2026": true,
+        "monthViewTouched": true,
+        "monthOffset": -6,
+        "selectedDate": "2026-07-29",
+        "historyImport2026": true,
+        "sleepV84": true
+      }
+    },
+    {
+      "id": "mscwmek58lv89",
+      "type": "exercise",
+      "title": "运动记录",
+      "visible": true,
+      "data": {
+        "records": [],
+        "quick": {},
+        "selectedDate": "2026-08-03",
+        "monthOffset": 0
+      }
+    },
+    {
+      "id": "mscwmek5uwqda",
+      "type": "meditation",
+      "title": "冥想记录",
+      "visible": true,
+      "data": {
+        "records": [
+          {
+            "id": "msfuxt4r9fteh",
+            "date": "2026-08-04",
+            "minutes": 5,
+            "feeling": ""
+          }
+        ],
+        "selectedDate": "2026-08-03",
+        "monthOffset": 0
+      }
+    },
+    {
+      "id": "mscwmek56qvso",
+      "type": "review",
+      "title": "每日复盘",
+      "visible": true,
+      "data": {
+        "records": [
+          {
+            "id": "msfuq17u5av75",
+            "date": "2026-08-04",
+            "wellDone": "完成了既定目标",
+            "improve": "控制玩手机的时长",
+            "gratitude": "",
+            "rating": 3,
+            "extra": {
+              "经验总结": "晚上尽量9:30之前洗澡才能早睡"
+            }
+          },
+          {
+            "id": "msfkzjgpt5y74",
+            "date": "2026-08-05",
+            "wellDone": "11",
+            "improve": "",
+            "gratitude": "",
+            "rating": 3,
+            "extra": {
+              "经验总结": ""
+            }
+          }
+        ],
+        "selectedDate": "2026-08-04",
+        "monthOffset": 0,
+        "fields": [
+          "经验总结"
+        ]
+      }
+    },
+    {
+      "id": "mscwmek5eb154",
+      "type": "reading",
+      "title": "阅读",
+      "visible": true,
+      "data": {
+        "wishlist": [],
+        "current": [],
+        "books": [],
+        "daily": {
+          "2026-08-03": {
+            "title": "《好女孩综合征》",
+            "minutes": 5,
+            "note": ""
+          },
+          "2026-08-04": {
+            "title": "《好女孩综合征》",
+            "minutes": 10,
+            "note": ""
+          },
+          "2026-08-05": {
+            "title": "",
+            "minutes": 10,
+            "note": ""
+          },
+          "2026-08-06": {
+            "title": "",
+            "minutes": 10,
+            "note": ""
+          },
+          "2026-08-07": {
+            "title": "",
+            "minutes": 10,
+            "note": ""
+          },
+          "2026-08-08": {
+            "title": "",
+            "minutes": 10,
+            "note": ""
+          },
+          "2026-08-09": {
+            "title": "",
+            "minutes": 10,
+            "note": ""
+          }
+        },
+        "monthOffset": 0,
+        "selectedDate": "2026-08-03"
+      }
+    },
+    {
+      "id": "mscwmek5ho223",
+      "type": "english",
+      "title": "英语学习",
+      "visible": true,
+      "data": {
+        "words": [],
+        "sentences": [],
+        "studyLog": [],
+        "daily": {
+          "2026-08-03": {
+            "writing": true
+          }
+        },
+        "writing": {
+          "2026-08-03": {
+            "text": "I do it is good",
+            "feedback": "<div style=\"font-size:14px;color:var(--text);font-weight:600\">你已经主动用英文表达当天感受，这是非常棒的输出练习！</div>\n\n<div style=\"margin-top:10px\"></div>\n<strong style=\"font-size:14px;color:var(--text)\">🔍 逐句纠错分析：</strong>\n<table class=\"en-feedback-table\"><thead><tr><th style=\"width:20%\">原句片段</th><th style=\"width:20%\">问题</th><th style=\"width:60%\">✓ 正确表达 & 规则</th></tr></thead><tbody><tr><td style=\"color:#d64545\">it is good</td><td>句末缺少标点符号</td><td><strong style=\"color:#22a06b\">I do it is good.</strong><br><small style=\"color:var(--text-sec)\">英文句子必须以 . ! ? 结尾。</small></td></tr></tbody></table>\n\n<strong style=\"font-size:14px;color:var(--text)\">💡 提升建议：</strong>\n<div style=\"margin-top:4px\">• 使用更丰富的连接词（however, moreover, therefore, meanwhile）<br>• 增加具体细节（时间、地点、感受）让表达更生动<br>• 尝试复合句结构：It was ... because ... / Not only ... but also ...</div>\n\n<strong style=\"font-size:14px;color:var(--text)\">📝 修正版（已应用所有纠错）：</strong>\n<div style=\"background:var(--primary-light);border:1px solid var(--primary);border-radius:10px;padding:10px 14px;margin-top:6px;font-size:14px;color:var(--text);line-height:1.8\">I do it is good.</div>\n\n<strong style=\"font-size:14px;color:var(--text)\">🌟 Native 地道表达（母语者改写版）：</strong>\n<div style=\"background:#fffbe6;border:1px solid #f0d860;border-radius:10px;padding:10px 14px;margin-top:6px;font-size:14px;color:var(--text);line-height:1.8\">I do it's good.</div><div style=\"font-size:12px;color:var(--text-sec);margin-top:4px\">💡 这不只是修正错误，而是用英语母语者更自然的方式重新表达。注意缩写形式、短语动词和地道搭配的用法。</div>\n\n📚 <strong style=\"font-size:14px;color:var(--text)\">写作小贴士：</strong> <span style=\"font-size:13px\">下次可以按「感受 → 原因 → 下一步」的结构来写，让你的表达更有层次感。试试用 because / so that / although 等连接词串联句子。</span>",
+            "updatedAt": "2026-08-04T09:48",
+            "history": [
+              {
+                "text": "I do it is good",
+                "feedback": "<div style=\"font-size:14px;color:var(--text);font-weight:600\">你已经主动用英文表达当天感受，这是非常棒的输出练习！</div>\n\n<div style=\"margin-top:10px\"></div>\n<strong style=\"font-size:14px;color:var(--text)\">🔍 逐句纠错分析：</strong>\n<table class=\"en-feedback-table\"><thead><tr><th style=\"width:20%\">原句片段</th><th style=\"width:20%\">问题</th><th style=\"width:60%\">✓ 正确表达 & 规则</th></tr></thead><tbody><tr><td style=\"color:#d64545\">it is good</td><td>句末缺少标点符号</td><td><strong style=\"color:#22a06b\">I do it is good.</strong><br><small style=\"color:var(--text-sec)\">英文句子必须以 . ! ? 结尾。</small></td></tr></tbody></table>\n\n<strong style=\"font-size:14px;color:var(--text)\">💡 提升建议：</strong>\n<div style=\"margin-top:4px\">• 使用更丰富的连接词（however, moreover, therefore, meanwhile）<br>• 增加具体细节（时间、地点、感受）让表达更生动<br>• 尝试复合句结构：It was ... because ... / Not only ... but also ...</div>\n\n<strong style=\"font-size:14px;color:var(--text)\">📝 修正版（已应用所有纠错）：</strong>\n<div style=\"background:var(--primary-light);border:1px solid var(--primary);border-radius:10px;padding:10px 14px;margin-top:6px;font-size:14px;color:var(--text);line-height:1.8\">I do it is good.</div>\n\n<strong style=\"font-size:14px;color:var(--text)\">🌟 Native 地道表达（母语者改写版）：</strong>\n<div style=\"background:#fffbe6;border:1px solid #f0d860;border-radius:10px;padding:10px 14px;margin-top:6px;font-size:14px;color:var(--text);line-height:1.8\">I do it's good.</div><div style=\"font-size:12px;color:var(--text-sec);margin-top:4px\">💡 这不只是修正错误，而是用英语母语者更自然的方式重新表达。注意缩写形式、短语动词和地道搭配的用法。</div>\n\n📚 <strong style=\"font-size:14px;color:var(--text)\">写作小贴士：</strong> <span style=\"font-size:13px\">下次可以按「感受 → 原因 → 下一步」的结构来写，让你的表达更有层次感。试试用 because / so that / although 等连接词串联句子。</span>",
+                "updatedAt": "2026-08-04T09:48"
+              }
+            ]
+          }
+        },
+        "selectedDate": "2026-08-03",
+        "monthOffset": 0,
+        "soundEnabled": true
+      }
+    },
+    {
+      "id": "mscwmek5i49dg",
+      "type": "skill",
+      "title": "技能提升",
+      "visible": true,
+      "data": {
+        "skills": []
+      }
+    },
+    {
+      "id": "mscwmek587irx",
+      "type": "trending",
+      "title": "爆款话题",
+      "visible": true,
+      "data": {
+        "entries": [],
+        "filter": "all",
+        "hotBase": "https://dailyhot.cmcq.xyz",
+        "hotSource": "weibo",
+        "hotResults": [
+          {
+            "title": "8月份返校的高三生",
+            "url": "https://search.bilibili.com/all?keyword=8%E6%9C%88%E4%BB%BD%E8%BF%94%E6%A0%A1%E7%9A%84%E9%AB%98%E4%B8%89%E7%94%9F",
+            "hot": "1",
+            "platform": "bilibili",
+            "raw": {
+              "platform": "bilibili",
+              "title": "8月份返校的高三生",
+              "url": "https://search.bilibili.com/all?keyword=8%E6%9C%88%E4%BB%BD%E8%BF%94%E6%A0%A1%E7%9A%84%E9%AB%98%E4%B8%89%E7%94%9F",
+              "hot": "1",
+              "fetchedAt": "2026-08-05T03:43:56.717841+00:00"
+            }
+          },
+          {
+            "title": "Vitality官宣jL以替补身份加盟",
+            "url": "https://search.bilibili.com/all?keyword=Vitality%E5%AE%98%E5%AE%A3jL%E4%BB%A5%E6%9B%BF%E8%A1%A5%E8%BA%AB%E4%BB%BD%E5%8A%A0%E7%9B%9F",
+            "hot": "2",
+            "platform": "bilibili",
+            "raw": {
+              "platform": "bilibili",
+              "title": "Vitality官宣jL以替补身份加盟",
+              "url": "https://search.bilibili.com/all?keyword=Vitality%E5%AE%98%E5%AE%A3jL%E4%BB%A5%E6%9B%BF%E8%A1%A5%E8%BA%AB%E4%BB%BD%E5%8A%A0%E7%9B%9F",
+              "hot": "2",
+              "fetchedAt": "2026-08-05T03:43:56.717930+00:00"
+            }
+          },
+          {
+            "title": "爆笑解说新剧昭阳公主",
+            "url": "https://search.bilibili.com/all?keyword=%E7%88%86%E7%AC%91%E8%A7%A3%E8%AF%B4%E6%96%B0%E5%89%A7%E6%98%AD%E9%98%B3%E5%85%AC%E4%B8%BB",
+            "hot": "3",
+            "platform": "bilibili",
+            "raw": {
+              "platform": "bilibili",
+              "title": "爆笑解说新剧昭阳公主",
+              "url": "https://search.bilibili.com/all?keyword=%E7%88%86%E7%AC%91%E8%A7%A3%E8%AF%B4%E6%96%B0%E5%89%A7%E6%98%AD%E9%98%B3%E5%85%AC%E4%B8%BB",
+              "hot": "3",
+              "fetchedAt": "2026-08-05T03:43:56.717992+00:00"
+            }
+          },
+          {
+            "title": "鬼畜复兴摇一摇",
+            "url": "https://search.bilibili.com/all?keyword=%E9%AC%BC%E7%95%9C%E5%A4%8D%E5%85%B4%E6%91%87%E4%B8%80%E6%91%87",
+            "hot": "4",
+            "platform": "bilibili",
+            "raw": {
+              "platform": "bilibili",
+              "title": "鬼畜复兴摇一摇",
+              "url": "https://search.bilibili.com/all?keyword=%E9%AC%BC%E7%95%9C%E5%A4%8D%E5%85%B4%E6%91%87%E4%B8%80%E6%91%87",
+              "hot": "4",
+              "fetchedAt": "2026-08-05T03:43:56.718003+00:00"
+            }
+          },
+          {
+            "title": "完蛋被男同学包围主创读评论",
+            "url": "https://search.bilibili.com/all?keyword=%E5%AE%8C%E8%9B%8B%E8%A2%AB%E7%94%B7%E5%90%8C%E5%AD%A6%E5%8C%85%E5%9B%B4%E4%B8%BB%E5%88%9B%E8%AF%BB%E8%AF%84%E8%AE%BA",
+            "hot": "5",
+            "platform": "bilibili",
+            "raw": {
+              "platform": "bilibili",
+              "title": "完蛋被男同学包围主创读评论",
+              "url": "https://search.bilibili.com/all?keyword=%E5%AE%8C%E8%9B%8B%E8%A2%AB%E7%94%B7%E5%90%8C%E5%AD%A6%E5%8C%85%E5%9B%B4%E4%B8%BB%E5%88%9B%E8%AF%BB%E8%AF%84%E8%AE%BA",
+              "hot": "5",
+              "fetchedAt": "2026-08-05T03:43:56.718029+00:00"
+            }
+          },
+          {
+            "title": "蜘蛛侠替身是河南人吗",
+            "url": "https://search.bilibili.com/all?keyword=%E8%9C%98%E8%9B%9B%E4%BE%A0%E6%9B%BF%E8%BA%AB%E6%98%AF%E6%B2%B3%E5%8D%97%E4%BA%BA%E5%90%97",
+            "hot": "6",
+            "platform": "bilibili",
+            "raw": {
+              "platform": "bilibili",
+              "title": "蜘蛛侠替身是河南人吗",
+              "url": "https://search.bilibili.com/all?keyword=%E8%9C%98%E8%9B%9B%E4%BE%A0%E6%9B%BF%E8%BA%AB%E6%98%AF%E6%B2%B3%E5%8D%97%E4%BA%BA%E5%90%97",
+              "hot": "6",
+              "fetchedAt": "2026-08-05T03:43:56.718037+00:00"
+            }
+          },
+          {
+            "title": "专业厨师细评一饭封神2入围赛",
+            "url": "https://search.bilibili.com/all?keyword=%E4%B8%93%E4%B8%9A%E5%8E%A8%E5%B8%88%E7%BB%86%E8%AF%84%E4%B8%80%E9%A5%AD%E5%B0%81%E7%A5%9E2%E5%85%A5%E5%9B%B4%E8%B5%9B",
+            "hot": "7",
+            "platform": "bilibili",
+            "raw": {
+              "platform": "bilibili",
+              "title": "专业厨师细评一饭封神2入围赛",
+              "url": "https://search.bilibili.com/all?keyword=%E4%B8%93%E4%B8%9A%E5%8E%A8%E5%B8%88%E7%BB%86%E8%AF%84%E4%B8%80%E9%A5%AD%E5%B0%81%E7%A5%9E2%E5%85%A5%E5%9B%B4%E8%B5%9B",
+              "hot": "7",
+              "fetchedAt": "2026-08-05T03:43:56.718047+00:00"
+            }
+          },
+          {
+            "title": "另类解读考研英语为何这么难",
+            "url": "https://search.bilibili.com/all?keyword=%E5%8F%A6%E7%B1%BB%E8%A7%A3%E8%AF%BB%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD%E4%B8%BA%E4%BD%95%E8%BF%99%E4%B9%88%E9%9A%BE",
+            "hot": "8",
+            "platform": "bilibili",
+            "raw": {
+              "platform": "bilibili",
+              "title": "另类解读考研英语为何这么难",
+              "url": "https://search.bilibili.com/all?keyword=%E5%8F%A6%E7%B1%BB%E8%A7%A3%E8%AF%BB%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD%E4%B8%BA%E4%BD%95%E8%BF%99%E4%B9%88%E9%9A%BE",
+              "hot": "8",
+              "fetchedAt": "2026-08-05T03:43:56.718071+00:00"
+            }
+          },
+          {
+            "title": "曝巴萨欲抬高罗德里转会费",
+            "url": "https://search.bilibili.com/all?keyword=%E6%9B%9D%E5%B7%B4%E8%90%A8%E6%AC%B2%E6%8A%AC%E9%AB%98%E7%BD%97%E5%BE%B7%E9%87%8C%E8%BD%AC%E4%BC%9A%E8%B4%B9",
+            "hot": "9",
+            "platform": "bilibili",
+            "raw": {
+              "platform": "bilibili",
+              "title": "曝巴萨欲抬高罗德里转会费",
+              "url": "https://search.bilibili.com/all?keyword=%E6%9B%9D%E5%B7%B4%E8%90%A8%E6%AC%B2%E6%8A%AC%E9%AB%98%E7%BD%97%E5%BE%B7%E9%87%8C%E8%BD%AC%E4%BC%9A%E8%B4%B9",
+              "hot": "9",
+              "fetchedAt": "2026-08-05T03:43:56.718077+00:00"
+            }
+          },
+          {
+            "title": "八仙为何是这八位",
+            "url": "https://search.bilibili.com/all?keyword=%E5%85%AB%E4%BB%99%E4%B8%BA%E4%BD%95%E6%98%AF%E8%BF%99%E5%85%AB%E4%BD%8D",
+            "hot": "10",
+            "platform": "bilibili",
+            "raw": {
+              "platform": "bilibili",
+              "title": "八仙为何是这八位",
+              "url": "https://search.bilibili.com/all?keyword=%E5%85%AB%E4%BB%99%E4%B8%BA%E4%BD%95%E6%98%AF%E8%BF%99%E5%85%AB%E4%BD%8D",
+              "hot": "10",
+              "fetchedAt": "2026-08-05T03:43:56.718097+00:00"
+            }
+          },
+          {
+            "title": "一次看完完蛋男同学剧情",
+            "url": "https://search.bilibili.com/all?keyword=%E4%B8%80%E6%AC%A1%E7%9C%8B%E5%AE%8C%E5%AE%8C%E8%9B%8B%E7%94%B7%E5%90%8C%E5%AD%A6%E5%89%A7%E6%83%85",
+            "hot": "11",
+            "platform": "bilibili",
+            "raw": {
+              "platform": "bilibili",
+              "title": "一次看完完蛋男同学剧情",
+              "url": "https://search.bilibili.com/all?keyword=%E4%B8%80%E6%AC%A1%E7%9C%8B%E5%AE%8C%E5%AE%8C%E8%9B%8B%E7%94%B7%E5%90%8C%E5%AD%A6%E5%89%A7%E6%83%85",
+              "hot": "11",
+              "fetchedAt": "2026-08-05T03:43:56.718103+00:00"
+            }
+          },
+          {
+            "title": "鸿蒙智行回应竹知了事件",
+            "url": "https://search.bilibili.com/all?keyword=%E9%B8%BF%E8%92%99%E6%99%BA%E8%A1%8C%E5%9B%9E%E5%BA%94%E7%AB%B9%E7%9F%A5%E4%BA%86%E4%BA%8B%E4%BB%B6",
+            "hot": "12",
+            "platform": "bilibili",
+            "raw": {
+              "platform": "bilibili",
+              "title": "鸿蒙智行回应竹知了事件",
+              "url": "https://search.bilibili.com/all?keyword=%E9%B8%BF%E8%92%99%E6%99%BA%E8%A1%8C%E5%9B%9E%E5%BA%94%E7%AB%B9%E7%9F%A5%E4%BA%86%E4%BA%8B%E4%BB%B6",
+              "hot": "12",
+              "fetchedAt": "2026-08-05T03:43:56.718108+00:00"
+            }
+          },
+          {
+            "title": "韩国因高温进入国家灾难状态",
+            "url": "https://search.bilibili.com/all?keyword=%E9%9F%A9%E5%9B%BD%E5%9B%A0%E9%AB%98%E6%B8%A9%E8%BF%9B%E5%85%A5%E5%9B%BD%E5%AE%B6%E7%81%BE%E9%9A%BE%E7%8A%B6%E6%80%81",
+            "hot": "13",
+            "platform": "bilibili",
+            "raw": {
+              "platform": "bilibili",
+              "title": "韩国因高温进入国家灾难状态",
+              "url": "https://search.bilibili.com/all?keyword=%E9%9F%A9%E5%9B%BD%E5%9B%A0%E9%AB%98%E6%B8%A9%E8%BF%9B%E5%85%A5%E5%9B%BD%E5%AE%B6%E7%81%BE%E9%9A%BE%E7%8A%B6%E6%80%81",
+              "hot": "13",
+              "fetchedAt": "2026-08-05T03:43:56.718129+00:00"
+            }
+          },
+          {
+            "title": "完蛋我被男同学包围了",
+            "url": "https://search.bilibili.com/all?keyword=%E5%AE%8C%E8%9B%8B%E6%88%91%E8%A2%AB%E7%94%B7%E5%90%8C%E5%AD%A6%E5%8C%85%E5%9B%B4%E4%BA%86",
+            "hot": "14",
+            "platform": "bilibili",
+            "raw": {
+              "platform": "bilibili",
+              "title": "完蛋我被男同学包围了",
+              "url": "https://search.bilibili.com/all?keyword=%E5%AE%8C%E8%9B%8B%E6%88%91%E8%A2%AB%E7%94%B7%E5%90%8C%E5%AD%A6%E5%8C%85%E5%9B%B4%E4%BA%86",
+              "hot": "14",
+              "fetchedAt": "2026-08-05T03:43:56.718134+00:00"
+            }
+          },
+          {
+            "title": "精神小伙写给妈妈的信",
+            "url": "https://search.bilibili.com/all?keyword=%E7%B2%BE%E7%A5%9E%E5%B0%8F%E4%BC%99%E5%86%99%E7%BB%99%E5%A6%88%E5%A6%88%E7%9A%84%E4%BF%A1",
+            "hot": "15",
+            "platform": "bilibili",
+            "raw": {
+              "platform": "bilibili",
+              "title": "精神小伙写给妈妈的信",
+              "url": "https://search.bilibili.com/all?keyword=%E7%B2%BE%E7%A5%9E%E5%B0%8F%E4%BC%99%E5%86%99%E7%BB%99%E5%A6%88%E5%A6%88%E7%9A%84%E4%BF%A1",
+              "hot": "15",
+              "fetchedAt": "2026-08-05T03:43:56.718139+00:00"
+            }
+          },
+          {
+            "title": "UP主解读西班牙移民危机",
+            "url": "https://search.bilibili.com/all?keyword=UP%E4%B8%BB%E8%A7%A3%E8%AF%BB%E8%A5%BF%E7%8F%AD%E7%89%99%E7%A7%BB%E6%B0%91%E5%8D%B1%E6%9C%BA",
+            "hot": "16",
+            "platform": "bilibili",
+            "raw": {
+              "platform": "bilibili",
+              "title": "UP主解读西班牙移民危机",
+              "url": "https://search.bilibili.com/all?keyword=UP%E4%B8%BB%E8%A7%A3%E8%AF%BB%E8%A5%BF%E7%8F%AD%E7%89%99%E7%A7%BB%E6%B0%91%E5%8D%B1%E6%9C%BA",
+              "hot": "16",
+              "fetchedAt": "2026-08-05T03:43:56.718144+00:00"
+            }
+          },
+          {
+            "title": "欧洲高温致纳粹军舰露出",
+            "url": "https://search.bilibili.com/all?keyword=%E6%AC%A7%E6%B4%B2%E9%AB%98%E6%B8%A9%E8%87%B4%E7%BA%B3%E7%B2%B9%E5%86%9B%E8%88%B0%E9%9C%B2%E5%87%BA",
+            "hot": "17",
+            "platform": "bilibili",
+            "raw": {
+              "platform": "bilibili",
+              "title": "欧洲高温致纳粹军舰露出",
+              "url": "https://search.bilibili.com/all?keyword=%E6%AC%A7%E6%B4%B2%E9%AB%98%E6%B8%A9%E8%87%B4%E7%BA%B3%E7%B2%B9%E5%86%9B%E8%88%B0%E9%9C%B2%E5%87%BA",
+              "hot": "17",
+              "fetchedAt": "2026-08-05T03:43:56.718176+00:00"
+            }
+          },
+          {
+            "title": "蜘蛛侠4 MJ恢复记忆了吗",
+            "url": "https://search.bilibili.com/all?keyword=%E8%9C%98%E8%9B%9B%E4%BE%A04%20MJ%E6%81%A2%E5%A4%8D%E8%AE%B0%E5%BF%86%E4%BA%86%E5%90%97",
+            "hot": "18",
+            "platform": "bilibili",
+            "raw": {
+              "platform": "bilibili",
+              "title": "蜘蛛侠4 MJ恢复记忆了吗",
+              "url": "https://search.bilibili.com/all?keyword=%E8%9C%98%E8%9B%9B%E4%BE%A04%20MJ%E6%81%A2%E5%A4%8D%E8%AE%B0%E5%BF%86%E4%BA%86%E5%90%97",
+              "hot": "18",
+              "fetchedAt": "2026-08-05T03:43:56.718210+00:00"
+            }
+          },
+          {
+            "title": "王者六耳新皮肤爆料",
+            "url": "https://search.bilibili.com/all?keyword=%E7%8E%8B%E8%80%85%E5%85%AD%E8%80%B3%E6%96%B0%E7%9A%AE%E8%82%A4%E7%88%86%E6%96%99",
+            "hot": "19",
+            "platform": "bilibili",
+            "raw": {
+              "platform": "bilibili",
+              "title": "王者六耳新皮肤爆料",
+              "url": "https://search.bilibili.com/all?keyword=%E7%8E%8B%E8%80%85%E5%85%AD%E8%80%B3%E6%96%B0%E7%9A%AE%E8%82%A4%E7%88%86%E6%96%99",
+              "hot": "19",
+              "fetchedAt": "2026-08-05T03:43:56.718217+00:00"
+            }
+          },
+          {
+            "title": "王者扁鹊双面药师皮肤爆料",
+            "url": "https://search.bilibili.com/all?keyword=%E7%8E%8B%E8%80%85%E6%89%81%E9%B9%8A%E5%8F%8C%E9%9D%A2%E8%8D%AF%E5%B8%88%E7%9A%AE%E8%82%A4%E7%88%86%E6%96%99",
+            "hot": "20",
+            "platform": "bilibili",
+            "raw": {
+              "platform": "bilibili",
+              "title": "王者扁鹊双面药师皮肤爆料",
+              "url": "https://search.bilibili.com/all?keyword=%E7%8E%8B%E8%80%85%E6%89%81%E9%B9%8A%E5%8F%8C%E9%9D%A2%E8%8D%AF%E5%B8%88%E7%9A%AE%E8%82%A4%E7%88%86%E6%96%99",
+              "hot": "20",
+              "fetchedAt": "2026-08-05T03:43:56.718222+00:00"
+            }
+          },
+          {
+            "title": "国家邮政局对申通立案调查",
+            "url": "https://www.douyin.com/search/%E5%9B%BD%E5%AE%B6%E9%82%AE%E6%94%BF%E5%B1%80%E5%AF%B9%E7%94%B3%E9%80%9A%E7%AB%8B%E6%A1%88%E8%B0%83%E6%9F%A5",
+            "hot": "11184219",
+            "platform": "douyin",
+            "raw": {
+              "platform": "douyin",
+              "title": "国家邮政局对申通立案调查",
+              "url": "https://www.douyin.com/search/%E5%9B%BD%E5%AE%B6%E9%82%AE%E6%94%BF%E5%B1%80%E5%AF%B9%E7%94%B3%E9%80%9A%E7%AB%8B%E6%A1%88%E8%B0%83%E6%9F%A5",
+              "hot": "11184219",
+              "fetchedAt": "2026-08-05T03:43:56.792714+00:00"
+            }
+          },
+          {
+            "title": "白海豚再次减弱为强台风级",
+            "url": "https://www.douyin.com/search/%E7%99%BD%E6%B5%B7%E8%B1%9A%E5%86%8D%E6%AC%A1%E5%87%8F%E5%BC%B1%E4%B8%BA%E5%BC%BA%E5%8F%B0%E9%A3%8E%E7%BA%A7",
+            "hot": "11147591",
+            "platform": "douyin",
+            "raw": {
+              "platform": "douyin",
+              "title": "白海豚再次减弱为强台风级",
+              "url": "https://www.douyin.com/search/%E7%99%BD%E6%B5%B7%E8%B1%9A%E5%86%8D%E6%AC%A1%E5%87%8F%E5%BC%B1%E4%B8%BA%E5%BC%BA%E5%8F%B0%E9%A3%8E%E7%BA%A7",
+              "hot": "11147591",
+              "fetchedAt": "2026-08-05T03:43:56.792743+00:00"
+            }
+          },
+          {
+            "title": "我国大科学装置建设全面提速",
+            "url": "https://www.douyin.com/search/%E6%88%91%E5%9B%BD%E5%A4%A7%E7%A7%91%E5%AD%A6%E8%A3%85%E7%BD%AE%E5%BB%BA%E8%AE%BE%E5%85%A8%E9%9D%A2%E6%8F%90%E9%80%9F",
+            "hot": "11137168",
+            "platform": "douyin",
+            "raw": {
+              "platform": "douyin",
+              "title": "我国大科学装置建设全面提速",
+              "url": "https://www.douyin.com/search/%E6%88%91%E5%9B%BD%E5%A4%A7%E7%A7%91%E5%AD%A6%E8%A3%85%E7%BD%AE%E5%BB%BA%E8%AE%BE%E5%85%A8%E9%9D%A2%E6%8F%90%E9%80%9F",
+              "hot": "11137168",
+              "fetchedAt": "2026-08-05T03:43:56.792753+00:00"
+            }
+          },
+          {
+            "title": "今年第14号台风鲸鱼生成",
+            "url": "https://www.douyin.com/search/%E4%BB%8A%E5%B9%B4%E7%AC%AC14%E5%8F%B7%E5%8F%B0%E9%A3%8E%E9%B2%B8%E9%B1%BC%E7%94%9F%E6%88%90",
+            "hot": "11084575",
+            "platform": "douyin",
+            "raw": {
+              "platform": "douyin",
+              "title": "今年第14号台风鲸鱼生成",
+              "url": "https://www.douyin.com/search/%E4%BB%8A%E5%B9%B4%E7%AC%AC14%E5%8F%B7%E5%8F%B0%E9%A3%8E%E9%B2%B8%E9%B1%BC%E7%94%9F%E6%88%90",
+              "hot": "11084575",
+              "fetchedAt": "2026-08-05T03:43:56.792778+00:00"
+            }
+          },
+          {
+            "title": "山西菜申请出战暑期美食展",
+            "url": "https://www.douyin.com/search/%E5%B1%B1%E8%A5%BF%E8%8F%9C%E7%94%B3%E8%AF%B7%E5%87%BA%E6%88%98%E6%9A%91%E6%9C%9F%E7%BE%8E%E9%A3%9F%E5%B1%95",
+            "hot": "10485625",
+            "platform": "douyin",
+            "raw": {
+              "platform": "douyin",
+              "title": "山西菜申请出战暑期美食展",
+              "url": "https://www.douyin.com/search/%E5%B1%B1%E8%A5%BF%E8%8F%9C%E7%94%B3%E8%AF%B7%E5%87%BA%E6%88%98%E6%9A%91%E6%9C%9F%E7%BE%8E%E9%A3%9F%E5%B1%95",
+              "hot": "10485625",
+              "fetchedAt": "2026-08-05T03:43:56.792787+00:00"
+            }
+          },
+          {
+            "title": "趁夏天赴一场八大古镇之约",
+            "url": "https://www.douyin.com/search/%E8%B6%81%E5%A4%8F%E5%A4%A9%E8%B5%B4%E4%B8%80%E5%9C%BA%E5%85%AB%E5%A4%A7%E5%8F%A4%E9%95%87%E4%B9%8B%E7%BA%A6",
+            "hot": "10452133",
+            "platform": "douyin",
+            "raw": {
+              "platform": "douyin",
+              "title": "趁夏天赴一场八大古镇之约",
+              "url": "https://www.douyin.com/search/%E8%B6%81%E5%A4%8F%E5%A4%A9%E8%B5%B4%E4%B8%80%E5%9C%BA%E5%85%AB%E5%A4%A7%E5%8F%A4%E9%95%87%E4%B9%8B%E7%BA%A6",
+              "hot": "10452133",
+              "fetchedAt": "2026-08-05T03:43:56.792794+00:00"
+            }
+          },
+          {
+            "title": "国务院成立重庆山体崩塌调查评估组",
+            "url": "https://www.douyin.com/search/%E5%9B%BD%E5%8A%A1%E9%99%A2%E6%88%90%E7%AB%8B%E9%87%8D%E5%BA%86%E5%B1%B1%E4%BD%93%E5%B4%A9%E5%A1%8C%E8%B0%83%E6%9F%A5%E8%AF%84%E4%BC%B0%E7%BB%84",
+            "hot": "9349641",
+            "platform": "douyin",
+            "raw": {
+              "platform": "douyin",
+              "title": "国务院成立重庆山体崩塌调查评估组",
+              "url": "https://www.douyin.com/search/%E5%9B%BD%E5%8A%A1%E9%99%A2%E6%88%90%E7%AB%8B%E9%87%8D%E5%BA%86%E5%B1%B1%E4%BD%93%E5%B4%A9%E5%A1%8C%E8%B0%83%E6%9F%A5%E8%AF%84%E4%BC%B0%E7%BB%84",
+              "hot": "9349641",
+              "fetchedAt": "2026-08-05T03:43:56.792802+00:00"
+            }
+          },
+          {
+            "title": "张智扬101:66拿下皮带哥",
+            "url": "https://www.douyin.com/search/%E5%BC%A0%E6%99%BA%E6%89%AC101%3A66%E6%8B%BF%E4%B8%8B%E7%9A%AE%E5%B8%A6%E5%93%A5",
+            "hot": "9286860",
+            "platform": "douyin",
+            "raw": {
+              "platform": "douyin",
+              "title": "张智扬101:66拿下皮带哥",
+              "url": "https://www.douyin.com/search/%E5%BC%A0%E6%99%BA%E6%89%AC101%3A66%E6%8B%BF%E4%B8%8B%E7%9A%AE%E5%B8%A6%E5%93%A5",
+              "hot": "9286860",
+              "fetchedAt": "2026-08-05T03:43:56.792813+00:00"
+            }
+          },
+          {
+            "title": "秋天的第一束奶茶花准备好了",
+            "url": "https://www.douyin.com/search/%E7%A7%8B%E5%A4%A9%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9D%9F%E5%A5%B6%E8%8C%B6%E8%8A%B1%E5%87%86%E5%A4%87%E5%A5%BD%E4%BA%86",
+            "hot": "9282919",
+            "platform": "douyin",
+            "raw": {
+              "platform": "douyin",
+              "title": "秋天的第一束奶茶花准备好了",
+              "url": "https://www.douyin.com/search/%E7%A7%8B%E5%A4%A9%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9D%9F%E5%A5%B6%E8%8C%B6%E8%8A%B1%E5%87%86%E5%A4%87%E5%A5%BD%E4%BA%86",
+              "hot": "9282919",
+              "fetchedAt": "2026-08-05T03:43:56.792818+00:00"
+            }
+          },
+          {
+            "title": "火影手游百战虎皮初爆料",
+            "url": "https://www.douyin.com/search/%E7%81%AB%E5%BD%B1%E6%89%8B%E6%B8%B8%E7%99%BE%E6%88%98%E8%99%8E%E7%9A%AE%E5%88%9D%E7%88%86%E6%96%99",
+            "hot": "9189515",
+            "platform": "douyin",
+            "raw": {
+              "platform": "douyin",
+              "title": "火影手游百战虎皮初爆料",
+              "url": "https://www.douyin.com/search/%E7%81%AB%E5%BD%B1%E6%89%8B%E6%B8%B8%E7%99%BE%E6%88%98%E8%99%8E%E7%9A%AE%E5%88%9D%E7%88%86%E6%96%99",
+              "hot": "9189515",
+              "fetchedAt": "2026-08-05T03:43:56.792823+00:00"
+            }
+          }
+        ],
+        "autoImportUrl": "./hot-topics.json",
+        "lastAutoSync": 1785903568712,
+        "hotStatus": "✅ 自动同步：30条（本地文件）·12:19"
+      }
+    },
+    {
+      "id": "mscwmek56y870",
+      "type": "inspiration",
+      "title": "灵感记录",
+      "visible": true,
+      "data": {
+        "ideas": [],
+        "tags": [
+          "生活",
+          "工作",
+          "写作",
+          "成长",
+          "其他"
+        ],
+        "filter": "all"
+      }
+    },
+    {
+      "id": "mscwmek580dzr",
+      "type": "collection",
+      "title": "收藏库",
+      "visible": true,
+      "data": {
+        "entries": [],
+        "filter": "all",
+        "categories": [
+          "生活",
+          "成长",
+          "金句",
+          "方法",
+          "其他"
+        ],
+        "openCats": {}
+      }
+    },
+    {
+      "id": "mscwmek5q27gu",
+      "type": "changelog",
+      "title": "更新日志",
+      "visible": true,
+      "data": {
+        "logs": [
+          {
+            "id": "mscwmek5xzax5",
+            "date": "2026-08-03",
+            "version": "V8.1",
+            "changes": "V8.1 功能修复与优化：\n• 修复英语写作纠错反馈表格无法正常渲染的问题（HTML转义bug）\n• 修复睡眠7月记录看板显示问题，优化月视图自动定位逻辑\n• 行动总览补填改为 ○/✓ 圆圈勾选模式，更简洁直观\n• 为睡眠/运动/冥想/复盘/阅读/英语6个板块增加撤回按钮，误操作可一键恢复\n• 优化热点同步机制，增加多URL回退策略\n• 修复睡眠周保存时备注被清空的问题\n• 修复每日复盘评分0被误判为空的问题\n• 修复正则表达式冗余、XML解析错误处理等多处代码健壮性问题\n• 优化写作反馈表格CSS样式"
+          },
+          {
+            "id": "mscwmek5yqrhl",
+            "date": "2026-08-03",
+            "version": "v1.0",
+            "changes": "初始版本发布：\n• 创建每日计划、睡眠记录、运动记录、每日复盘、阅读、英语学习、技能提升、爆款话题、灵感记录、迭代更新共10个模块\n• 支持6种主题配色自选\n• 支持在线编辑，数据自动保存\n• 响应式设计，支持iPhone访问编辑\n• 支持模块增删管理\n• 支持数据导入导出备份"
+          },
+          {
+            "id": "mscwmekdb8phb",
+            "date": "2026-08-03",
+            "version": "v1.2",
+            "changes": "新增：\n• 每日计划加入可编辑常规模板，并自动生成当天事项\n• 新增目标规划：年/季度/月/周/日目标\n• 新增冥想记录：支持日历填写、今日记录、周/月统计\n• 行动总览加入完成率与冥想聚合"
+          },
+          {
+            "id": "mscwmekdsaeer",
+            "date": "2026-08-03",
+            "version": "v1.3",
+            "changes": "修复与优化：\n• 修复时区bug：dateKey/todayStr改用本地时间，解决7/27等记录不显示问题\n• 睡眠看板增加月份导航（‹上月/下月›），可查看填写1-6月历史数据\n• 睡眠日历支持点击日期快速选中编辑\n• 新增11点前入睡指标：月度早睡率统计 + 行动总览周早睡完成率\n• 爆款话题增加小红书/B站/今日头条平台，多API端点+代理自动降级\n• 阅读模块支持多本同时阅读，每本独立进度条和开始日期追踪\n• 每日复盘历史显示全部记录，支持一键载入历史复盘"
+          },
+          {
+            "id": "mscwmekdrzp3i",
+            "date": "2026-08-03",
+            "version": "v1.4",
+            "changes": "新增与优化：\n• 运动/冥想/英语学习增加月度看板，可回溯填写历史月份\n• 英语学习增加日/月完成率\n• 增加 #68B59B 薄荷绿、#6EA8FF 天空蓝、#7AA7FF 灰蓝主题，并减淡紫色按钮\n• 顶部增加每日随机金句\n• 行动总览卡片加高，文本完整换行显示\n• 技能提升支持根据资源生成学习步骤\n• 新增长期报告模块：周/月/季/年回顾，支持看板/文字预览\n• 每日复盘增加经验总结和自定义维度"
+          },
+          {
+            "id": "mscwmekdls402",
+            "date": "2026-08-03",
+            "version": "v1.5",
+            "changes": "收藏库优化：\n• 收藏内容按分类折叠展示，避免平铺混乱\n• 备注改为多行输入并支持换行展示\n• 每条收藏可尝试读取链接并生成摘要\n• 修复收藏数据迁移保护，避免刷新后丢失\n• 左侧底部改为关于本站/版本信息"
+          },
+          {
+            "id": "mscwmeke7hbyl",
+            "date": "2026-08-03",
+            "version": "v1.6",
+            "changes": "本次优化：\n• 收藏库保存链接后自动尝试生成摘要\n• 备注换行在收藏卡片中按原格式展示\n• 爆款话题增加自动化文件同步入口，可读取 hot-topics.json\n• 支持将同步到的热点批量加入爆款话题收藏"
+          },
+          {
+            "id": "mscwmekex2zag",
+            "date": "2026-08-03",
+            "version": "V7.11",
+            "changes": "修复与优化：\n• 修复更新后旧记录可能不显示的问题：加载时会扫描主数据、旧数据键和备份键，并选择最完整的数据\n• 每次保存前自动生成备份，设置中新增“恢复旧数据”入口\n• 睡眠看板在时间下一行显示睡眠时长\n• 根据1-6月手写记录导入2025年历史睡眠记录，起床时间统一为07:00，且不覆盖已填写日期\n• 行动总览升级为“每日计划 × 日期”的完成矩阵，并保留每天具体完成内容"
+          },
+          {
+            "id": "mscwmekeho2ds",
+            "date": "2026-08-03",
+            "version": "V8.0",
+            "changes": "V8.0 大版本更新：\n• 设置弹窗增加返回按钮，移动端体验优化\n• 英语学习新增生词本：点击单词直接加入，支持标签（已认识/模糊/不认识）\n• 英语学习新增查单词：手动输入或图片识别，接入词典API显示发音/释义/例句\n• 修复睡眠颜色bug：23:00后入睡（含00:30/2:30等）统一标红\n• 新增平均睡眠时长统计\n• 补充7月睡眠记录（7/1-7/28）\n• 英语写作反馈修复：每次输入都能生成新反馈，不再卡在上一条\n• 收藏库编辑/完成状态切换优化\n• 行动总览支持补填历史计划，自定义追踪板块\n• 修复网格/双栏/列表布局显示一致问题\n• 各模块保存按钮统一加入已保存确认反馈\n• 热点自动化支持9个平台（微博/知乎/抖音/小红书/微信/百度/B站/头条/AI科技新闻）\n• 英语朗读优化：优先选择自然语音，调整语速音高"
+          },
+          {
+            "id": "msedqwy82w2o8",
+            "date": "2026-08-04",
+            "version": "V8.2",
+            "changes": "V8.2 功能修复与优化：\n• 修复英语写作润色版本：不再复制错误原文，逐步应用所有修正规则生成正确版本\n• 查单词增强：新增常见搭配、反义词、更多例句，例句可点击朗读\n• 图片OCR增强：支持 Ctrl+V 粘贴截图识别，拖拽/点击/粘贴三种方式\n• 修复睡眠7月看板不显示：每次加载重置月份视图，保存后自动跳转到最新记录月份\n• 修复本周快速填写与睡眠看板关联：保存后看板自动刷新显示新填写的日期\n• 修复爆款话题同步：修复GitHub Actions语法错误，新增直接API抓取回退策略\n• 行动总览新增列隐藏功能：点击列标签可像Excel一样隐藏/显示日期列\n• 行动总览周复盘排版优化：改用卡片式HTML布局，区分做得好/需改进/建议\n• 长期报告全面升级：SVG圆环进度图、进度条、多周期对比表、自动总结摘要\n• 长期报告新增总结摘要：自动分析做得好的、需要改进的、优化建议"
+          },
+          {
+            "id": "msedqwy8vylyd",
+            "date": "2026-08-04",
+            "version": "V8.3",
+            "changes": "V8.3 系统性优化（对应缓存版本 v33）：\n• 跨模块实时刷新：补填周一到周四行动后，行动总览每周汇总和复盘总结自动更新\n• 面板跳转增强：英语/睡眠/运动/复盘面板点击月历某天，自动跳转到下方打卡日历并高亮对应日期\n• 英语写作Native地道表达升级：不止修正错误，还提供母语者更自然的句式改写（缩写/短语动词/地道搭配/语气优化）\n• 每日复盘回溯增强：月历看板显示每天复盘摘要，点击任意日期可查看完整复盘内容\n• 隐私保护声明：明确所有数据仅存储在本地浏览器，不外泄任何个人信息\n• 爆款话题抓取修复：新增多个可靠API源，优化前端直抓回退策略\n• 长期报告数据校准：修正英语完成率统计（不再将无记录日计入总量）、复盘天数统计（含仅填改进项的记录）\n• 长期报告新增数据明细表：可展开查看周期内每天的计划/睡眠/运动/冥想/英语/阅读/复盘数据来源\n• 长期报告新增日期范围显示：明确标注当前统计周期起止日期和有记录天数\n• 每日计划日期回溯：显示当天日期，支持迷你日历导航回到任意历史日期的计划，可返回今天"
+          },
+          {
+            "id": "msfka5j4qu4l5",
+            "date": "2026-08-05",
+            "version": "V8.4",
+            "changes": "V8.4 数据修复与功能增强（对应缓存版本 v34）：\n• 修复长期报告聚合数据不准确：根因是 ensureRoutineTasks 每次加载时自动将常规任务保存到 tasks 数组（done:false），导致计划完成率虚高。现已修复为仅保留模板，不自动保存\n• 一次性数据清理：V34加载时自动移除旧的自动保存的常规任务（routineId且done:false），确保报告数据准确\n• 阅读板块新增月度看板：显示每天阅读时长、书名摘要，支持月份导航，与运动/冥想板块一致\n• 英语学习新增中英互译功能：支持中→英/英→中双向翻译，显示备选译法，可一键加入生词本或查词典\n• 每日计划常规任务优化：所有日期均显示常规任务模板，仅在用户点击时保存，避免无操作日期产生无效数据"
+          },
+          {
+            "id": "msfka5j5taeov",
+            "date": "2026-08-05",
+            "version": "V8.5",
+            "changes": "V8.5 全面修复与优化（对应缓存版本 v36）：\n• 修复翻译显示问题：清除翻译结果中的XLIFF标签（如<x id=\"1\"/>），翻译和例句翻译均生效\n• 查单词功能优化：默认显示英文释义、搭配、例句，点击\"显示中文释义\"后展开中文翻译\n• 行动总览计算修复：V35数据迁移恢复未完成的常规任务，计划完成率=已完成/总计划（如6/9=67%）\n• 行动总览排版优化：每个完成计划单行显示，不再用顿号隔开\n• 长期报告聚合修复：多日聚合时正确统计总计划和已完成数（如8/3+8/4=15/18=83%）\n• 目标规划保存提示：点击保存后显示\"目标规划已保存\"确认信息\n• 睡眠趋势升级：新增月度早睡天数统计和年度SVG柱状图，绿/橙/红三色标注早睡率\n• 爆款话题自动同步：打开工作台自动同步热点（4小时冷却），新增手动同步按钮，GitHub Actions增加Python兜底抓取"
+          }
+        ]
+      }
+    }
+  ],
+  "updatedAt": "2026-08-05T09:05:11.560Z",
+  "recoveredFrom": "tantan_workbench_backup_version_update_v34"
+}
