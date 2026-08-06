@@ -423,8 +423,9 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
   .tab{white-space:nowrap;flex-shrink:0}
   .trend-grid{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}
   .report-grid{grid-template-columns:1fr}
-  .form-row{flex-direction:column;gap:6px}
-  .form-group{min-width:0}
+  .form-row{flex-direction:column;gap:6px;align-items:stretch}
+  .form-group{min-width:0;max-width:none!important}
+  .form-group[style*="max-width"]{max-width:none!important}
   .record-list{max-height:200px}
   .week-head{padding:8px 10px;flex-wrap:wrap;gap:4px}
   .week-head strong{font-size:13px}
@@ -445,6 +446,9 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
   /* 防止 iOS 上 input 自动缩放 */
   input,textarea,select{font-size:16px!important}
   .mini-field input,.mini-field textarea,.mini-field select,.mini-field input[type="time"],.mini-field input[type="number"]{font-size:13px!important}
+  /* 移动端表单按钮宽度适配 */
+  .form-row > button{width:100%;margin-top:4px}
+  .form-row > .btn-block{width:100%}
 }
 @media(max-width:380px){
   .header-left{overflow:hidden}
@@ -530,7 +534,7 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
       <div><strong>关于本站</strong></div>
       <div>tantan的个人成长空间</div>
       <div>状态：<strong>迭代中</strong></div>
-      <div id="siteVersion">V8.6</div>
+      <div id="siteVersion">V8.7</div>
       <div style="font-size:11px;color:var(--text-light);margin-top:4px">小改动用小数点后一位（V8.2），大改动用V8.x、V9.x</div>
       <div style="margin-top:6px"><button class="btn btn-ghost btn-sm" id="moreChangelogBtn" style="padding:0;font-size:12px">更新日志</button></div>
     </div>
@@ -672,8 +676,8 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
 /* ============================================================
    应用版本与自动更新检测
 ============================================================ */
-const APP_VERSION = 'v39';
-const APP_BUILD_TIME = '2026-08-05';
+const APP_VERSION = 'v41';
+const APP_BUILD_TIME = '2026-08-06';
 
 /**
  * 检查是否有新版本可用
@@ -1024,6 +1028,12 @@ function englishWritingFeedback(text='',packWords=[]){
   const specialIng={'go':'going','do':'doing','make':'making','take':'taking','write':'writing','read':'reading','lie':'lying','die':'dying','tie':'tying','get':'getting','put':'putting','sit':'sitting','begin':'beginning','plan':'planning','stop':'stopping','run':'running','swim':'swimming','cut':'cutting','hit':'hitting'};
   // be 动词后应跳过的词：已带 -ed 的过去分词/形容词，或本身即可作形容词的词（如 It is live / The date is set）
   const beSkipAdj=/^(set|put|let|live|ready|good|great|fine|ok|okay|able|sure|certain|aware|afraid|alive|alone|asleep|awake|worth|tired|interested|bored|excited|surprised|confused|worried|pleased|delighted|annoyed|irritated|frustrated|relaxed|exhausted|fascinated|disappointed|satisfied|married|divorced|finished|done|gone)$/i;
+  // 常见形容词列表（仅包含主要作形容词的词，避免与动词混淆导致误判）
+  const commonAdj='lazy|tired|happy|sad|angry|hungry|sick|busy|ready|afraid|sure|glad|proud|ashamed|aware|certain|alive|alone|asleep|awake|worth|bored|excited|surprised|confused|worried|pleased|annoyed|frustrated|relaxed|exhausted|fascinated|disappointed|satisfied|interested|nervous|anxious|confident|grateful|thankful|sorry|upset|delighted|scared|frightened|terrified|embarrassed|shocked|stunned|amazed|thrilled|furious|depressed|lonely|jealous|guilty|sympathetic|enthusiastic|optimistic|pessimistic|skeptical|curious|eager|willing|reluctant|hesitant|determined|motivated|inspired|creative|productive|diligent|hardworking|responsible|reliable|honest|sincere|humble|modest|generous|selfish|stubborn|arrogant|shy|outgoing|sociable|friendly|unfriendly|polite|rude|kind|cruel|gentle|peaceful|violent|brave|cowardly|cautious|careful|careless|clumsy|graceful|awkward|elegant|messy|neat|tidy';
+  // 系动词列表（这些动词后可以直接跟形容词，不算缺少be动词）
+  const linkingVerbs='am|is|are|was|were|feel|seem|look|sound|taste|smell|become|get|turn|grow|remain|stay|keep|prove|appear|stand|sit|lie|fall|go|come|run|wear|blush|marry|fold|ring|turn|wash|eat|blow|cut|prove|shine|shoot|strike|burst|creep|fly|roll|slide|slip|break|burn|cook|dry|freeze|open|sink|tear|wear|wave|draw|hang|lean|settle|stop|total';
+  // 副词列表（常用于修饰形容词的副词）
+  const adjAdv='just|very|so|too|really|quite|pretty|also|still|even|always|never|sometimes|often|usually|probably|definitely|actually|honestly|truly|simply|merely|barely|hardly|almost|nearly|quite|rather|fairly|somewhat|slightly|extremely|incredibly|remarkably|particularly|especially|specifically|obviously|clearly|apparently|evidently|undoubtedly|undeniably|unquestionably|certainly|surely|indeed|of course|not|no longer|no more';
 
   // ========== 逐句检查 ==========
   sentences.forEach((s,i)=>{
@@ -1122,6 +1132,25 @@ function englishWritingFeedback(text='',packWords=[]){
     if(hopeCan){
       errors.push({line:lineNum,orig:hopeCan[0],error:'表达不够自然',fix:hopeCan[0].replace(/\bcan\b/i,'will'),rule:'hope it can finish 偏中式英语，更自然的表达是 hope it will finish / hope to finish it。'});
     }
+    // 14. 缺少be动词/系动词：主语 + (副词) + 形容词（如 "I just lazy" → "I am just lazy"）
+    // 模式A：主语 + 副词 + 形容词（如 "I just lazy to move"）
+    const missingBeAdv=trimmed.match(new RegExp('\\b(I|you|we|they|he|she|it)\\s+('+adjAdv+')\\s+('+commonAdj+')\\b','i'));
+    if(missingBeAdv){
+      const pron=missingBeAdv[1],adv=missingBeAdv[2],adj=missingBeAdv[3];
+      const beMap={i:'am',you:'are',we:'are',they:'are',he:'is',she:'is',it:'is'};
+      const be=beMap[pron.toLowerCase()]||'is';
+      errors.push({line:lineNum,orig:missingBeAdv[0],error:`缺少be动词：${adj}是形容词，不能直接放在主语后`,fix:`${pron} ${be} ${adv} ${adj}`,rule:`${adj} 是形容词，不是动词，不能直接放在主语后面。需要be动词连接：主语 + be动词 + 副词 + 形容词。例如：I am ${adv} ${adj} ✓。更地道的表达可以用 feel：I ${adv} feel too ${adj}。`});
+    }
+    // 模式B：主语 + 形容词（如 "I lazy"），排除已有系动词的情况
+    if(!missingBeAdv){
+      const missingBeDirect=trimmed.match(new RegExp('\\b(I|you|we|they|he|she|it)\\s+('+commonAdj+')\\b','i'));
+      if(missingBeDirect){
+        const pron=missingBeDirect[1],adj=missingBeDirect[2];
+        const beMap={i:'am',you:'are',we:'are',they:'are',he:'is',she:'is',it:'is'};
+        const be=beMap[pron.toLowerCase()]||'is';
+        errors.push({line:lineNum,orig:missingBeDirect[0],error:`缺少be动词：${adj}是形容词`,fix:`${pron} ${be} ${adj}`,rule:`${adj} 是形容词，不是动词，不能直接放在主语后面。需要be动词连接：主语 + be动词 + 形容词。例如：I am ${adj} ✓。`});
+      }
+    }
   });
 
   // ========== 构建反馈 ==========
@@ -1179,6 +1208,21 @@ function englishWritingFeedback(text='',packWords=[]){
     // g. hope it can → hope it will
     sent = sent.replace(/\b(hope|wish)\s+(it|this|that)\s+can\b/gi, '$1 $2 will');
     
+    // g2. 缺少be动词修正：主语 + 副词 + 形容词 → 主语 + be动词 + 副词 + 形容词
+    // 如 "I just lazy to move" → "I am just lazy to move"
+    sent = sent.replace(new RegExp('\\b(I|you|we|they|he|she|it)\\s+('+adjAdv+')\\s+('+commonAdj+')\\b','gi'), (m, pron, adv, adj) => {
+      const beMap={i:'am',you:'are',we:'are',they:'are',he:'is',she:'is',it:'is'};
+      return `${pron} ${beMap[pron.toLowerCase()]||'is'} ${adv} ${adj}`;
+    });
+    // 主语 + 形容词 → 主语 + be动词 + 形容词（排除前面已有系动词的情况）
+    sent = sent.replace(new RegExp('\\b(I|you|we|they|he|she|it)\\s+('+commonAdj+')\\b','gi'), (m, pron, adj) => {
+      const idx = sent.indexOf(m);
+      const before = sent.slice(0, idx);
+      if (new RegExp('\\b('+linkingVerbs+')\\s*$','i').test(before)) return m;
+      const beMap={i:'am',you:'are',we:'are',they:'are',he:'is',she:'is',it:'is'};
+      return `${pron} ${beMap[pron.toLowerCase()]||'is'} ${adj}`;
+    });
+    
     // h. 介词搭配
     sent = sent.replace(/\bdepend\s+of\b/gi, 'depend on');
     sent = sent.replace(/\b(discuss|mention|describe)\s+about\b/gi, '$1');
@@ -1207,13 +1251,14 @@ function englishWritingFeedback(text='',packWords=[]){
   let corrected = correctedSentences.join(' ');
 
   // 3. 生成 Native 地道表达版本（在修正版基础上进行地道改写）
+  // 注意：仅做安全、可靠的改写，避免误导用户
   let nativeVersion = corrected;
   let nativeNotes=[]; // 记录改了什么，方便用户学习
 
-  // a. 缩写形式（更口语化、更地道）
+  // a. 缩写形式（更口语化、更地道）—— 这是唯一绝对安全的改写
   const contractions=[
     [/\bI am\b/g,"I'm"],[/\bI will\b/g,"I'll"],[/\bI have\b/g,"I've"],
-    [/\bI would\b/g,"I'd"],[/\bI had\b/g,"I'd"],[/\bdo not\b/g,"don't"],
+    [/\bI would\b/g,"I'd"],[/\bdo not\b/g,"don't"],
     [/\bcannot\b/g,"can't"],[/\bwill not\b/g,"won't"],[/\bis not\b/g,"isn't"],
     [/\bare not\b/g,"aren't"],[/\bdid not\b/g,"didn't"],[/\bwas not\b/g,"wasn't"],
     [/\bwere not\b/g,"weren't"],[/\bhas not\b/g,"hasn't"],[/\bhave not\b/g,"haven't"],
@@ -1223,81 +1268,28 @@ function englishWritingFeedback(text='',packWords=[]){
     [/\bwhat is\b/gi,"what's"],[/\bwho is\b/gi,"who's"],[/\bhow is\b/gi,"how's"],
     [/\blet us\b/gi,"let's"],[/\bI am going to\b/gi,"I'm going to"],
   ];
-  contractions.forEach(([re,rep])=>{if(re.test(nativeVersion)){nativeVersion=nativeVersion.replace(re,rep);}});
+  contractions.forEach(([re,rep])=>{if(re.test(nativeVersion)){nativeVersion=nativeVersion.replace(re,rep);nativeNotes.push(`缩写形式更口语化`);}});
 
-  // b. 更地道的词汇替换（避免 very + 形容词的中式表达）
-  const vocabUpgrades=[
-    [/\bvery good\b/gi,'great',],[/\bvery happy\b/gi,'thrilled'],
-    [/\bvery big\b/gi,'huge'],[/\bvery small\b/gi,'tiny'],
-    [/\bvery important\b/gi,'crucial'],[/\bvery tired\b/gi,'exhausted'],
-    [/\bvery interesting\b/gi,'fascinating'],[/\bvery difficult\b/gi,'challenging'],
-    [/\bvery easy\b/gi,'effortless'],[/\bvery beautiful\b/gi,'gorgeous'],
-    [/\bvery angry\b/gi,'furious'],[/\bvery sad\b/gi,'devastated'],
-    [/\bvery fast\b/gi,'rapid'],[/\bvery slow\b/gi,'sluggish'],
-    [/\bvery smart\b/gi,'brilliant'],[/\bvery cold\b/gi,'freezing'],
-    [/\bvery hot\b/gi,'scorching'],[/\bvery bad\b/gi,'terrible'],
-    [/\bvery nice\b/gi,'wonderful'],[/\bvery clear\b/gi,'obvious'],
-  ];
-  vocabUpgrades.forEach(([re,rep])=>{if(re.test(nativeVersion)){nativeVersion=nativeVersion.replace(re,rep);nativeNotes.push(`"${rep}" 替代了更自然的表达`);}});
-
-  // c. 短语动词替换（母语者更常用短语动词而非正式动词）
-  const phrasalVerbs=[
-    [/\butilize\b/gi,'use'],[/\bcommence\b/gi,'start'],[/\bterminate\b/gi,'end'],
-    [/\bdiscover\b/gi,'find out'],[/\breturn\b/gi,'go back'],[/\benter\b/gi,'go in'],
-    [/\bexit\b/gi,'go out'],[/\bcontinue\b/gi,'keep going'],[/\bpostpone\b/gi,'put off'],
-    [/\bcancel\b/gi,'call off'],[/\bresolve\b/gi,'figure out'],[/\bexamine\b/gi,'look into'],
-    [/\bconstruct\b/gi,'build'],[/\bpurchase\b/gi,'buy'],[/\bconsume\b/gi,'have'],
-    [/\bobtain\b/gi,'get'],[/\brequire\b/gi,'need'],[/\bassist\b/gi,'help'],
-    [/\bendeavor\b/gi,'try'],[/\bdemonstrate\b/gi,'show'],
-  ];
-  phrasalVerbs.forEach(([re,rep])=>{if(re.test(nativeVersion)){nativeVersion=nativeVersion.replace(re,rep);nativeNotes.push(`用短语动词 "${rep}" 替代了正式用语`);}});
-
-  // d. 更自然的句式改写
-  const sentenceRewrites=[
-    [/\bI think that\b/gi,'I think',],[/\bI want to\b/gi,"I'd like to"],
-    [/\bin order to\b/gi,'to'],[/\ba lot of\b/gi,'plenty of'],
-    [/\bI hope to (finish|complete) (it|this|that)\b/gi,'I hope to get it done'],
-    [/\bI hope I can (finish|complete|do)\b/gi,"I'm hoping to $1"],
-    [/\bbecause of this\b/gi,'because of that'],
-    [/\bI started my morning routine\b/gi,'I kicked off my morning routine'],
-    [/\bI feel very\b/gi,'I feel really'],
+  // b. 仅做最安全的句式简化（不改变语义）
+  const safeRewrites=[
+    [/\bI think that\b/gi,'I think'],
+    [/\bin order to\b/gi,'to'],
+    [/\ba lot of\b/gi,'plenty of'],
     [/\bI am writing to\b/gi,"I'm writing to"],
     [/\bI would like to\b/gi,"I'd like to"],
     [/\bIt is a good idea to\b/gi,"It's a good idea to"],
     [/\bI have been\b/gi,"I've been"],
-    [/\bI have to\b/gi,"I have to"],
-    [/\bI need to\b/gi,"I need to"],
     [/\bI am going to\b/gi,"I'm going to"],
     [/\bThank you for\b/gi,'Thanks for'],
     [/\bI am sorry\b/gi,"I'm sorry"],
     [/\bI do not know\b/gi,"I don't know"],
     [/\bI do not think\b/gi,"I don't think"],
-    [/\bat the same time\b/gi,'meanwhile'],
-    [/\bin my opinion\b/gi,"personally"],
-    [/\bfor example\b/gi,'for instance'],
-    [/\bin addition\b/gi,'plus'],
-    [/\bas a result\b/gi,'so'],
-    [/\bon the other hand\b/gi,'that said'],
+    [/\bI'?m just lazy to\b/gi,"I just feel too lazy to"],
+    [/\bI'?m too lazy to\b/gi,"I feel too lazy to"],
   ];
-  sentenceRewrites.forEach(([re,rep])=>{if(re.test(nativeVersion)){nativeVersion=nativeVersion.replace(re,rep);nativeNotes.push(`句式改写为更地道的表达`);}});
+  safeRewrites.forEach(([re,rep])=>{if(re.test(nativeVersion)){nativeVersion=nativeVersion.replace(re,rep);nativeNotes.push(`句式简化为更自然的表达`);}});
 
-  // e. 语气和连贯性优化：添加自然的过渡词
-  // 如果有多句且没有连接词，在第二句前加自然的过渡
-  const nativeSents=nativeVersion.split(/(?<=[.!?])\s+/).filter(Boolean);
-  if(nativeSents.length>1){
-    nativeSents.forEach((s,i)=>{
-      if(i>0&&!/^(However|Moreover|Therefore|Meanwhile|Also|Besides|Then|So|But|And|Actually|Honestly|Anyway|Plus|That said|Personally|For instance)/i.test(s)){
-        // 根据上下文添加自然的过渡（简单启发式）
-        if(/(good|great|happy|love|enjoy|like|wonderful|perfect)/i.test(nativeSents[i-1])&&/(but|however|problem|difficult|hard|issue|challenge|worry)/i.test(s)){
-          nativeSents[i]='That said, '+s.charAt(0).toLowerCase()+s.slice(1);
-          nativeNotes.push('添加了 "That said" 使转折更自然');
-        }
-      }
-    });
-    nativeVersion=nativeSents.join(' ');
-  }
-
-  // f. 清理
+  // c. 清理（不做词汇替换和过渡词添加，避免语义错误）
   nativeVersion = nativeVersion.replace(/\s+/g, ' ').trim();
   nativeVersion = nativeVersion.split(/(?<=[.!?])\s+/).map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join(' ');
   if (!/[.!?]$/.test(nativeVersion)) nativeVersion += '.';
@@ -1323,7 +1315,7 @@ function englishWritingFeedback(text='',packWords=[]){
   // 7. Native 版本（仅在不同于修正版时显示）
   const nativeChanged=nativeVersion.toLowerCase()!==corrected.toLowerCase();
   const nativeNotesHtml=nativeNotes.length?`<div style="font-size:12px;color:var(--text-sec);margin-top:6px;padding:6px 10px;background:#fffef0;border-radius:6px">📌 本次改写要点：${[...new Set(nativeNotes)].slice(0,5).map(n=>`<span style="display:inline-block;margin:2px 4px;padding:2px 8px;background:#fff5d6;border-radius:10px">${esc(n)}</span>`).join('')}</div>`:'';
-  const nativeBlock=nativeChanged?`\n\n<strong style="font-size:14px;color:var(--text)">🌟 Native 地道表达（母语者改写版）：</strong>\n<div style="background:#fffbe6;border:1px solid #f0d860;border-radius:10px;padding:10px 14px;margin-top:6px;font-size:14px;color:var(--text);line-height:1.8">${esc(nativeVersion)}</div>${nativeNotesHtml}<div style="font-size:12px;color:var(--text-sec);margin-top:4px">💡 这不只是修正错误，而是用英语母语者更自然的方式重新表达。注意缩写形式、短语动词和地道搭配的用法。</div>`:'';
+  const nativeBlock=nativeChanged?`\n\n<strong style="font-size:14px;color:var(--text)">🌟 口语化版本（缩写+简化）：</strong>\n<div style="background:#fffbe6;border:1px solid #f0d860;border-radius:10px;padding:10px 14px;margin-top:6px;font-size:14px;color:var(--text);line-height:1.8">${esc(nativeVersion)}</div>${nativeNotesHtml}<div style="font-size:12px;color:var(--text-sec);margin-top:4px">⚠️ 以上仅为基础的缩写和句式简化建议。如需更地道的母语者表达，建议使用专业翻译工具或咨询英语母语者。</div>`:'';
 
   // 8. 写作小贴士
   const tipsBlock='\n\n📚 <strong style="font-size:14px;color:var(--text)">写作小贴士：</strong> <span style="font-size:13px">下次可以按「感受 → 原因 → 下一步」的结构来写，让你的表达更有层次感。试试用 because / so that / although 等连接词串联句子。</span>';
@@ -1607,7 +1599,10 @@ async function translateExample(text){
     const data=await res.json();
     const raw=data?.responseData?.translatedText||'';
     // 清除 XLIFF 标签（如 <x id="1"/>）
-    return raw.replace(/<x[^>]*\/>/g,'').replace(/<g[^>]*>(.*?)<\/g>/g,'$1').replace(/<ph[^>]*>.*?<\/ph>/g,'').replace(/<\/?[a-z][^>]*>/g,'').replace(/\s+/g,' ').trim();
+    const cleaned=raw.replace(/<x[^>]*\/>/g,'').replace(/<g[^>]*>(.*?)<\/g>/g,'$1').replace(/<ph[^>]*>.*?<\/ph>/g,'').replace(/<\/?[a-z][^>]*>/g,'').replace(/\s+/g,' ').trim();
+    // 验证翻译结果：如果翻译结果和原文一样，说明翻译失败
+    if(!cleaned||cleaned.toLowerCase()===text.toLowerCase())return '';
+    return cleaned;
   }catch(e){return '';}
 }
 // 中英互译：支持中→英和英→中
@@ -2022,7 +2017,7 @@ const DB={
         {id:genId(),type:'goals',title:'目标规划',visible:true,data:{blocks:DEFAULT_GOAL_BLOCKS.slice(),plans:{year:{健康:'',学习:'',生活:'',PlanB:''},quarter:{健康:'',学习:DEFAULT_QUARTER_GOAL,生活:'',PlanB:''},month:{健康:'',学习:'',生活:'',PlanB:''},week:{健康:'',学习:'',生活:'',PlanB:''},day:{健康:'',学习:'',生活:'',PlanB:''}}}},
         {id:genId(),type:'sleep',title:'睡眠记录',visible:true,data:{}},
         {id:genId(),type:'exercise',title:'运动记录',visible:true,data:{}},
-        {id:genId(),type:'meditation',title:'冥想记录',visible:true,data:{}},
+        {id:genId(),type:'meditation',title:'正念冥想',visible:true,data:{}},
         {id:genId(),type:'review',title:'每日复盘',visible:true,data:{}},
         {id:genId(),type:'reading',title:'阅读',visible:true,data:{}},
         {id:genId(),type:'english',title:'英语学习',visible:true,data:{}},
@@ -2031,7 +2026,7 @@ const DB={
         {id:genId(),type:'inspiration',title:'灵感记录',visible:true,data:{}},
         {id:genId(),type:'collection',title:'收藏库',visible:true,data:{entries:[],filter:'all',categories:DEFAULT_COLLECTION_CATEGORIES.slice()}},
         {id:genId(),type:'changelog',title:'更新日志',visible:true,data:{
-          logs:[{id:genId(),date:todayStr(),version:'V8.4',changes:'V8.4 全面优化升级：\n• 修复查单词格式：英文部分依次显示释义→搭配→例句，中文部分可展开显示中文释义→搭配中文→例句中文\n• 修复复盘看板undefined错误，日历改为显示"已复盘"简洁标识\n• 复盘新增AI成长建议功能，基于本月复盘内容生成总结和行动建议（支持离线分析兜底）\n• 运动记录、冥想记录、阅读记录均新增年度趋势看板（SVG柱状图+月度趋势卡片）\n• 新增自定义导航板块功能：支持笔记记录/数据追踪/打卡清单/日志本四种样式\n• 设置页改为全屏布局，类似Kimi设置页体验\n• 全局Toast通知系统，保存成功显示"已保存"提示不受rerender影响\n• 修复阅读记录默认时长问题，未填写日期不再显示10分钟\n• 同步密钥默认提示改为2026**\n• 全面优化移动端UI自适应：周历卡片、行动总览、长期报告等板块布局优化\n• mini-field输入框在移动端使用更紧凑的字体和间距'},{id:genId(),date:todayStr(),version:'V8.2',changes:'V8.2 五大问题修复：\n• 修复睡眠记录日期错误（2025→2026），1-6月记录恢复正常显示，起床时间统一默认07:00\n• 修复月份视图每次加载跳回最新月份的问题，用户切换月份后不再被重置\n• 修复长期报告计算逻辑，确保本月/本季度/今年数据正确统计\n• 修复英语写作纠错：过去时态按句检查（不再全局误判）、be动词不误改形容词、缩写大小写敏感、a/an例外更完整、Native版本更保守\n• 查单词新增例句中文翻译（词包例句内置翻译+API例句自动翻译），常见搭配已含中文释义\n• 加入生词本按钮改为醒目样式\n• 修复热榜同步：工作流步骤ID修正、新增API连通性测试、占位数据识别、本地文件失败时自动回退直接抓取API'},{id:genId(),date:todayStr(),version:'V8.1',changes:'V8.1 功能修复与优化：\n• 修复英语写作纠错反馈表格无法正常渲染的问题（HTML转义bug）\n• 修复睡眠7月记录看板显示问题，优化月视图自动定位逻辑\n• 行动总览补填改为 ○/✓ 圆圈勾选模式，更简洁直观\n• 为睡眠/运动/冥想/复盘/阅读/英语6个板块增加撤回按钮，误操作可一键恢复\n• 优化热点同步机制，增加多URL回退策略\n• 修复睡眠周保存时备注被清空的问题\n• 修复每日复盘评分0被误判为空的问题\n• 修复正则表达式冗余、XML解析错误处理等多处代码健壮性问题\n• 优化写作反馈表格CSS样式'},{id:genId(),date:todayStr(),version:'v1.0',changes:'初始版本发布：\n• 创建每日计划、睡眠记录、运动记录、每日复盘、阅读、英语学习、技能提升、爆款话题、灵感记录、迭代更新共10个模块\n• 支持6种主题配色自选\n• 支持在线编辑，数据自动保存\n• 响应式设计，支持iPhone访问编辑\n• 支持模块增删管理\n• 支持数据导入导出备份'}]
+          logs:[{id:genId(),date:todayStr(),version:'V8.5',changes:'V8.5 数据保存逻辑与英语纠错修复：\n• 运动记录：未填写的日期不再保存默认30分钟到看板，仅保存实际填写的内容\n• 睡眠记录：默认入睡22:00/起床07:00仅作填写参考，未编辑的日期不自动保存到看板\n• 冥想记录改名为「正念冥想」，同样仅保存用户实际编辑过的日期\n• 阅读记录：未填写日期的默认值不再保存，添加编辑跟踪机制\n• 所有周历模块添加撤回快照功能（_undoSnapshot），误保存可一键恢复\n• 英语写作纠错：新增「缺少be动词」检测规则，能识别"I just lazy"等形容词前缺少be动词的错误并给出修正建议\n• 口语化版本新增"I am just lazy to"→"I just feel too lazy to"等地道改写\n• 未编辑的日期输入框显示灰色文字，区分默认值与实际记录'},{id:genId(),date:todayStr(),version:'V8.4',changes:'V8.4 全面优化升级：\n• 修复查单词格式：英文部分依次显示释义→搭配→例句，中文部分可展开显示中文释义→搭配中文→例句中文\n• 修复复盘看板undefined错误，日历改为显示"已复盘"简洁标识\n• 复盘新增AI成长建议功能，基于本月复盘内容生成总结和行动建议（支持离线分析兜底）\n• 运动记录、冥想记录、阅读记录均新增年度趋势看板（SVG柱状图+月度趋势卡片）\n• 新增自定义导航板块功能：支持笔记记录/数据追踪/打卡清单/日志本四种样式\n• 设置页改为全屏布局，类似Kimi设置页体验\n• 全局Toast通知系统，保存成功显示"已保存"提示不受rerender影响\n• 修复阅读记录默认时长问题，未填写日期不再显示10分钟\n• 同步密钥默认提示改为2026**\n• 全面优化移动端UI自适应：周历卡片、行动总览、长期报告等板块布局优化\n• mini-field输入框在移动端使用更紧凑的字体和间距'},{id:genId(),date:todayStr(),version:'V8.2',changes:'V8.2 五大问题修复：\n• 修复睡眠记录日期错误（2025→2026），1-6月记录恢复正常显示，起床时间统一默认07:00\n• 修复月份视图每次加载跳回最新月份的问题，用户切换月份后不再被重置\n• 修复长期报告计算逻辑，确保本月/本季度/今年数据正确统计\n• 修复英语写作纠错：过去时态按句检查（不再全局误判）、be动词不误改形容词、缩写大小写敏感、a/an例外更完整、Native版本更保守\n• 查单词新增例句中文翻译（词包例句内置翻译+API例句自动翻译），常见搭配已含中文释义\n• 加入生词本按钮改为醒目样式\n• 修复热榜同步：工作流步骤ID修正、新增API连通性测试、占位数据识别、本地文件失败时自动回退直接抓取API'},{id:genId(),date:todayStr(),version:'V8.1',changes:'V8.1 功能修复与优化：\n• 修复英语写作纠错反馈表格无法正常渲染的问题（HTML转义bug）\n• 修复睡眠7月记录看板显示问题，优化月视图自动定位逻辑\n• 行动总览补填改为 ○/✓ 圆圈勾选模式，更简洁直观\n• 为睡眠/运动/冥想/复盘/阅读/英语6个板块增加撤回按钮，误操作可一键恢复\n• 优化热点同步机制，增加多URL回退策略\n• 修复睡眠周保存时备注被清空的问题\n• 修复每日复盘评分0被误判为空的问题\n• 修复正则表达式冗余、XML解析错误处理等多处代码健壮性问题\n• 优化写作反馈表格CSS样式'},{id:genId(),date:todayStr(),version:'v1.0',changes:'初始版本发布：\n• 创建每日计划、睡眠记录、运动记录、每日复盘、阅读、英语学习、技能提升、爆款话题、灵感记录、迭代更新共10个模块\n• 支持6种主题配色自选\n• 支持在线编辑，数据自动保存\n• 响应式设计，支持iPhone访问编辑\n• 支持模块增删管理\n• 支持数据导入导出备份'}]
         }},
       ]
     };
@@ -2201,7 +2196,7 @@ const MODULE_TYPES={
           <button class="btn btn-ghost btn-sm dp-load-date">载入日期</button>
         </div>
         <div class="form-row">
-          <input type="text" class="dp-input" placeholder="${isToday?'添加今日计划...':'添加'+selDate+'的计划...'}" maxlength="100">
+          <input type="text" class="dp-input" placeholder="${isToday?'添加今日计划...':'添加'+selDate+'的计划...'}" maxlength="100" style="flex:1;min-width:0">
           <button class="btn btn-primary btn-sm dp-add">添加</button>
         </div>
         <div class="flex-between">
@@ -2731,11 +2726,13 @@ const MODULE_TYPES={
       // 用户手动切换月份后，不再自动跳转，尊重用户选择
       const sleepWeek=weekDates().map(day=>{
         const key=dateKey(day), r=findByDate(d.records,key)||{};
-        return `<div class="day-card ${key===todayStr()?'today':''}" data-date="${key}">
+        const bed=r.bedtime||'22:00', wake=r.wakeTime||'07:00';
+        const hasRecord=!!(r.bedtime||r.wakeTime);
+        return `<div class="day-card ${key===todayStr()?'today':''}" data-date="${key}" data-touched="${hasRecord?'1':'0'}">
           <div class="day-name">周${dayLabel(day)}</div><div class="day-num">${day.getDate()}</div>
-          <div class="mini-field"><label>入睡</label><input type="time" class="sl-week-bed" value="${esc(r.bedtime||'')}"></div>
-          <div class="mini-field"><label>起床</label><input type="time" class="sl-week-wake" value="${esc(r.wakeTime||'')}"></div>
-          <div class="mini-field sl-week-duration" style="font-size:12px;color:var(--text-sec);margin-top:2px">睡眠时长：--</div>
+          <div class="mini-field"><label>入睡</label><input type="time" class="sl-week-bed" value="${esc(bed)}" style="${hasRecord?'':'color:var(--text-sec)'}"></div>
+          <div class="mini-field"><label>起床</label><input type="time" class="sl-week-wake" value="${esc(wake)}" style="${hasRecord?'':'color:var(--text-sec)'}"></div>
+          <div class="mini-field sl-week-duration" style="font-size:12px;color:var(--text-sec);margin-top:2px">${hasRecord?'睡眠时长：'+sleepDurationText(r.bedtime,r.wakeTime,false):'睡眠时长：--'}</div>
           <div class="mini-field"><label>质量</label><select class="sl-week-quality">
             ${[1,2,3,4,5].map(n=>`<option value="${n}" ${(+r.quality||3)===n?'selected':''}>${n} 星</option>`).join('')}
           </select></div>
@@ -2950,8 +2947,8 @@ const MODULE_TYPES={
       body.querySelector('.sl-bed')?.addEventListener('input',updateDuration);
       body.querySelector('.sl-wake')?.addEventListener('input',updateDuration);
       body.querySelectorAll('.day-card').forEach(card=>{
-        card.querySelector('.sl-week-bed')?.addEventListener('input',()=>updateWeekDuration(card));
-        card.querySelector('.sl-week-wake')?.addEventListener('input',()=>updateWeekDuration(card));
+        card.querySelector('.sl-week-bed')?.addEventListener('input',()=>{card.dataset.touched='1';card.querySelector('.sl-week-bed').style.color='';updateWeekDuration(card);});
+        card.querySelector('.sl-week-wake')?.addEventListener('input',()=>{card.dataset.touched='1';card.querySelector('.sl-week-wake').style.color='';updateWeekDuration(card);});
         updateWeekDuration(card);
       });
       updateDuration();
@@ -2976,6 +2973,7 @@ const MODULE_TYPES={
         _undoSnapshot(mod);
         mod.data.records=mod.data.records||[];
         body.querySelectorAll('.day-card').forEach(card=>{
+          if(card.dataset.touched!=='1')return;
           const bedtime=card.querySelector('.sl-week-bed')?.value||'';
           const wakeTime=card.querySelector('.sl-week-wake')?.value||'';
           const quality=+(card.querySelector('.sl-week-quality')?.value||3);
@@ -3021,11 +3019,11 @@ const MODULE_TYPES={
         return names.length||min?`<span class="month-dot"></span>${esc([...new Set(names)].join('、')||'运动')}<br>${min||0}分钟${q.note?`<br>${esc(q.note)}`:''}`:'';
       },`<div class="small-text" style="margin:8px 0;text-align:center">本月运动 ${activeDays} 天 · ${monthMin} 分钟 · 日均 ${activeDays?Math.round(monthMin/activeDays):0} 分钟</div>`);
       const exerciseWeek=weekDates().map(day=>{
-        const key=dateKey(day), rec=d.quick[key]||{items:[],minutes:30,note:''};
+        const key=dateKey(day), rec=d.quick[key]||{items:[],minutes:0,note:''};
         return `<div class="day-card ${key===todayStr()?'today':''}" data-date="${key}">
           <div class="day-name">周${dayLabel(day)}</div><div class="day-num">${day.getDate()}</div>
           <div class="quick-chips">${options.map(o=>`<label class="chip"><input type="checkbox" value="${o}" ${rec.items?.includes(o)?'checked':''}>${o}</label>`).join('')}</div>
-          <div class="mini-field"><label>分钟</label><input type="number" class="ex-week-min" value="${rec.minutes||30}" min="0"></div>
+          <div class="mini-field"><label>分钟</label><input type="number" class="ex-week-min" value="${rec.minutes||''}" min="0" placeholder="30"></div>
           <div class="mini-field"><label>备注</label><input type="text" class="ex-week-note" value="${esc(rec.note||'')}" placeholder="如：上肢/5km"></div>
         </div>`;
       }).join('');
@@ -3091,7 +3089,7 @@ const MODULE_TYPES={
       const loadSelected=()=>{mod.data.selectedDate=dateInput.value||todayStr();save();rerender(mod);};
       dateInput.addEventListener('change',loadSelected);body.querySelector('.ex-load-date').addEventListener('click',loadSelected);
       body.querySelector('.ex-add').addEventListener('click',e=>{const date=dateInput.value||todayStr();mod.data.selectedDate=date;mod.data.records=upsertByDate(mod.data.records||[],date,{type:body.querySelector('.ex-type').value,duration:body.querySelector('.ex-dur').value,notes:body.querySelector('.ex-notes').value.trim()});saveAndRerenderWithConfirm(e.currentTarget,mod,save);});
-      body.querySelector('.ex-week-save')?.addEventListener('click',e=>{mod.data.quick=mod.data.quick||{};body.querySelectorAll('.day-card').forEach(card=>{const items=[...card.querySelectorAll('input[type=checkbox]:checked')].map(x=>x.value);const minutes=+(card.querySelector('.ex-week-min')?.value||0);const note=card.querySelector('.ex-week-note')?.value.trim()||'';if(items.length||minutes||note)mod.data.quick[card.dataset.date]={items,minutes,note};});saveAndRerenderWithConfirm(e.currentTarget,mod,save);});
+      body.querySelector('.ex-week-save')?.addEventListener('click',e=>{_undoSnapshot(mod);mod.data.quick=mod.data.quick||{};body.querySelectorAll('.day-card').forEach(card=>{const items=[...card.querySelectorAll('input[type=checkbox]:checked')].map(x=>x.value);const minutes=+(card.querySelector('.ex-week-min')?.value||0);const note=card.querySelector('.ex-week-note')?.value.trim()||'';if(items.length||minutes||note)mod.data.quick[card.dataset.date]={items,minutes,note};});saveAndRerenderWithConfirm(e.currentTarget,mod,save);});
       const exUndo=body.querySelector('.ex-week-undo');
       if(exUndo&&_undoStack[mod.id])exUndo.style.display='';
       if(exUndo)exUndo.addEventListener('click',()=>{if(_undoRestore(mod,save)){rerender(mod);}});
@@ -3100,20 +3098,20 @@ const MODULE_TYPES={
   },
 
 
-  /* ---- 冥想记录 ---- */
+  /* ---- 正念冥想 ---- */
   'meditation':{
-    title:'冥想记录',icon:'meditation',desc:'记录冥想分钟与感受',
+    title:'正念冥想',icon:'meditation',desc:'记录冥想分钟与感受',
     defaultData:{records:[],selectedDate:'',monthOffset:0},
     render(d){
       d.records=dedupeByDate(d.records||[]);d.selectedDate=d.selectedDate||todayStr();d.monthOffset=d.monthOffset||0;
       const ctx=monthContext(d.monthOffset);
       const monthRows=d.records.filter(r=>(r.date||'').slice(0,7)===ctx.monthKey);
       const monthMin=monthRows.reduce((s,r)=>s+(+r.minutes||0),0);
-      const monthBoard=renderMonthBoard('冥想看板',d.monthOffset,(day,key)=>{
+      const monthBoard=renderMonthBoard('正念冥想看板',d.monthOffset,(day,key)=>{
         const r=findByDate(d.records,key)||{};
         return r.minutes?`<span class="month-dot"></span>${r.minutes}分钟${r.feeling?`<br>${esc(r.feeling).slice(0,18)}`:''}`:'';
       },`<div class="small-text" style="margin:8px 0;text-align:center">本月冥想 ${monthRows.length} 天 · ${monthMin} 分钟 · 日均 ${monthRows.length?Math.round(monthMin/monthRows.length):0} 分钟</div>`);
-      const meditationWeek=weekDates().map(day=>{const key=dateKey(day), r=findByDate(d.records,key)||{};return `<div class="day-card ${key===todayStr()?'today':''}" data-date="${key}"><div class="day-name">周${dayLabel(day)}</div><div class="day-num">${day.getDate()}</div><div class="mini-field"><label>分钟</label><input type="number" class="md-week-min" value="${r.minutes||0}" min="0"></div><div class="mini-field"><label>感受</label><textarea class="md-week-feel" placeholder="放松/焦虑/清醒...">${esc(r.feeling||'')}</textarea></div></div>`;}).join('');
+      const meditationWeek=weekDates().map(day=>{const key=dateKey(day), r=findByDate(d.records,key)||{};const hasRecord=!!(r.minutes||r.feeling);return `<div class="day-card ${key===todayStr()?'today':''}" data-date="${key}" data-touched="${hasRecord?'1':'0'}"><div class="day-name">周${dayLabel(day)}</div><div class="day-num">${day.getDate()}</div><div class="mini-field"><label>分钟</label><input type="number" class="md-week-min" value="${r.minutes||''}" min="0" placeholder="5" style="${hasRecord?'':'color:var(--text-sec)'}"></div><div class="mini-field"><label>感受</label><textarea class="md-week-feel" placeholder="放松/焦虑/清醒...">${esc(r.feeling||'')}</textarea></div></div>`;}).join('');
       const selectedRec=findByDate(d.records,d.selectedDate)||{};const recent=d.records.slice(-8).reverse();
       // 年度冥想趋势
       const mdNow=new Date();
@@ -3150,20 +3148,35 @@ const MODULE_TYPES={
       </div>`;
       const mdTrendCards=mdYearSummary.map(m=>`<div class="trend-mini"><strong>${m.month}月</strong><span>${m.days}天</span><span style="color:#8b5cf6;font-size:11px">${m.minutes}分钟</span><em>${m.days?Math.round(m.minutes/m.days)+'分/天':'-'}</em></div>`).join('');
       const mdTrendHtml=`<div class="trend-panel"><div class="flex-between"><strong>${mdYear} 年度冥想趋势</strong><span class="small-text">冥想天数 / 总时长 / 日均</span></div><div class="trend-grid">${mdTrendCards}</div></div>`;
-      return`${monthBoard}${mdChart}${mdTrendHtml}${renderWeekShell('冥想日历',meditationWeek)}
-        <button class="btn btn-primary btn-sm btn-block md-week-save">保存本周冥想</button>
+      return`${monthBoard}${mdChart}${mdTrendHtml}${renderWeekShell('正念冥想日历',meditationWeek)}
+        <button class="btn btn-primary btn-sm btn-block md-week-save">保存本周正念冥想</button>
         <button class="btn btn-ghost btn-sm md-week-undo" style="display:none;width:100%;margin-top:4px">↩ 撤回本周保存</button>
         <div class="form-row"><div class="form-group" style="max-width:180px"><label>选择日期</label><input type="date" class="md-date" value="${esc(d.selectedDate)}"></div><button class="btn btn-ghost btn-sm md-load-date">载入选中日期</button></div>
-        <div class="form-row"><div class="form-group" style="max-width:120px"><label>冥想分钟</label><input type="number" class="md-min" value="${selectedRec.minutes||5}" min="0" max="300"></div><button class="btn btn-primary btn-sm md-save">保存选中日期冥想</button></div>
+        <div class="form-row"><div class="form-group" style="max-width:120px"><label>冥想分钟</label><input type="number" class="md-min" value="${selectedRec.minutes||5}" min="0" max="300"></div><button class="btn btn-primary btn-sm md-save">保存选中日期正念冥想</button></div>
         <div class="form-group"><label>冥想感受</label><textarea class="md-feeling" placeholder="冥想后的身体/情绪/念头变化">${esc(selectedRec.feeling||'')}</textarea></div>
-        <div class="record-list">${recent.length?recent.map(r=>`<div class="record-item"><div class="record-content"><strong>${esc(r.minutes)}分钟</strong>${r.feeling?`<div class="small-text">${esc(r.feeling)}</div>`:''}<div class="record-meta">${formatDate(r.date)}</div></div><button class="record-del md-del" data-id="${r.id}">✕</button></div>`).join(''):'<div class="empty-state">暂无冥想记录</div>'}</div>`;
+        <div class="record-list">${recent.length?recent.map(r=>`<div class="record-item"><div class="record-content"><strong>${esc(r.minutes)}分钟</strong>${r.feeling?`<div class="small-text">${esc(r.feeling)}</div>`:''}<div class="record-meta">${formatDate(r.date)}</div></div><button class="record-del md-del" data-id="${r.id}">✕</button></div>`).join(''):'<div class="empty-state">暂无正念冥想记录</div>'}</div>`;
     },
     bind(body,mod,save){
       bindMonthBoard(body,mod,save,'.md-date');
       const dateInput=body.querySelector('.md-date');const loadSelected=()=>{mod.data.selectedDate=dateInput.value||todayStr();save();rerender(mod);};
       dateInput.addEventListener('change',loadSelected);body.querySelector('.md-load-date').addEventListener('click',loadSelected);
       body.querySelector('.md-save').addEventListener('click',e=>{const date=dateInput.value||todayStr();mod.data.selectedDate=date;mod.data.records=upsertByDate(mod.data.records||[],date,{minutes:+(body.querySelector('.md-min')?.value||0),feeling:body.querySelector('.md-feeling')?.value.trim()||''});saveAndRerenderWithConfirm(e.currentTarget,mod,save);});
-      body.querySelector('.md-week-save')?.addEventListener('click',e=>{mod.data.records=mod.data.records||[];body.querySelectorAll('.day-card').forEach(card=>{const minutes=+(card.querySelector('.md-week-min')?.value||0);const feeling=card.querySelector('.md-week-feel')?.value.trim()||'';if(minutes||feeling)mod.data.records=upsertByDate(mod.data.records,card.dataset.date,{minutes,feeling});});saveAndRerenderWithConfirm(e.currentTarget,mod,save);});
+      // 周保存：仅保存用户交互过的日期（data-touched=1）
+      body.querySelectorAll('.day-card').forEach(card=>{
+        card.querySelector('.md-week-min')?.addEventListener('input',()=>{card.dataset.touched='1';card.querySelector('.md-week-min').style.color='';});
+        card.querySelector('.md-week-feel')?.addEventListener('input',()=>{card.dataset.touched='1';});
+      });
+      body.querySelector('.md-week-save')?.addEventListener('click',e=>{
+        _undoSnapshot(mod);
+        mod.data.records=mod.data.records||[];
+        body.querySelectorAll('.day-card').forEach(card=>{
+          if(card.dataset.touched!=='1')return;
+          const minutes=+(card.querySelector('.md-week-min')?.value||0);
+          const feeling=card.querySelector('.md-week-feel')?.value.trim()||'';
+          if(minutes||feeling)mod.data.records=upsertByDate(mod.data.records,card.dataset.date,{minutes,feeling});
+        });
+        saveAndRerenderWithConfirm(e.currentTarget,mod,save);
+      });
       const mdUndo=body.querySelector('.md-week-undo');
       if(mdUndo&&_undoStack[mod.id])mdUndo.style.display='';
       if(mdUndo)mdUndo.addEventListener('click',()=>{if(_undoRestore(mod,save)){rerender(mod);}});
@@ -3484,10 +3497,11 @@ const MODULE_TYPES={
       },`<div class="small-text" style="margin:8px 0;text-align:center">本月阅读 ${activeDays} 天 · ${monthMin} 分钟 · 日均 ${activeDays?Math.round(monthMin/activeDays):0} 分钟</div>`);
       const readingWeek=weekDates().map(day=>{
         const key=dateKey(day), rec=d.daily[key]||{};
-        return `<div class="day-card ${key===todayStr()?'today':''}" data-date="${key}">
+        const hasRecord=!!(rec.title||rec.minutes||rec.note);
+        return `<div class="day-card ${key===todayStr()?'today':''}" data-date="${key}" data-touched="${hasRecord?'1':'0'}">
           <div class="day-name">周${dayLabel(day)}</div><div class="day-num">${day.getDate()}</div>
           <div class="mini-field"><label>书名</label><input class="rd-week-title" value="${esc(rec.title||'')}" placeholder="${esc(currentTitles[0]||'今天读什么')}"></div>
-          <div class="mini-field"><label>分钟</label><input type="number" class="rd-week-min" value="${rec.minutes||0}" min="0" placeholder="0"></div>
+          <div class="mini-field"><label>分钟</label><input type="number" class="rd-week-min" value="${rec.minutes||''}" min="0" placeholder="0" style="${hasRecord?'':'color:var(--text-sec)'}"></div>
           <div class="mini-field"><label>页数/笔记</label><input class="rd-week-note" value="${esc(rec.note||'')}" placeholder="p12-20 / 感悟"></div>
         </div>`;
       }).join('');
@@ -3504,7 +3518,7 @@ const MODULE_TYPES={
               <div class="form-group" style="max-width:80px"><label>当前页</label><input type="number" class="rd-cur-page" value="${b.current||0}" min="0" data-id="${b.id}"></div>
               <div class="form-group" style="max-width:80px"><label>总页数</label><input type="number" class="rd-cur-total" value="${b.total||0}" min="0" data-id="${b.id}"></div>
               <div class="form-group" style="max-width:120px"><label>开始日期</label><input type="date" class="rd-cur-start" value="${esc(b.startDate||'')}" data-id="${b.id}"></div>
-              <button class="btn btn-primary btn-sm rd-save-book" data-id="${b.id}" style="align-self:flex-end">保存</button>
+              <button class="btn btn-primary btn-sm rd-save-book" data-id="${b.id}">保存</button>
             </div>
             <div class="book-progress">
               <div class="progress-bar"><div class="progress-fill" style="width:${prog}%"></div></div>
@@ -3618,10 +3632,18 @@ const MODULE_TYPES={
         mod.data.current=mod.data.current&&mod.data.current.title?[{id:genId(),...mod.data.current,startDate:todayStr()}]:[];
       }
       bindMonthBoard(body,mod,save,'.rd-date');
+      // 周保存：仅保存用户交互过的日期（data-touched=1）
+      body.querySelectorAll('.day-card').forEach(card=>{
+        card.querySelector('.rd-week-min')?.addEventListener('input',()=>{card.dataset.touched='1';card.querySelector('.rd-week-min').style.color='';});
+        card.querySelector('.rd-week-title')?.addEventListener('input',()=>{card.dataset.touched='1';});
+        card.querySelector('.rd-week-note')?.addEventListener('input',()=>{card.dataset.touched='1';});
+      });
       const weekSave=body.querySelector('.rd-week-save');
       if(weekSave)weekSave.addEventListener('click',()=>{
+        _undoSnapshot(mod);
         mod.data.daily=mod.data.daily||{};
         body.querySelectorAll('.day-card').forEach(card=>{
+          if(card.dataset.touched!=='1')return;
           const title=card.querySelector('.rd-week-title')?.value.trim()||'';
           const minutes=+(card.querySelector('.rd-week-min')?.value||0);
           const note=card.querySelector('.rd-week-note')?.value.trim()||'';
@@ -3734,7 +3756,7 @@ const MODULE_TYPES={
         <div class="form-group" style="margin-top:6px"><label style="font-size:12px">📷 上传/拖拽/粘贴（Ctrl+V）含英文单词的图片，自动识别文本</label><div class="en-ocr-drop" style="border:2px dashed var(--input-border);border-radius:10px;padding:12px;text-align:center;cursor:pointer;transition:all .2s;font-size:12px;color:var(--text-sec)" tabindex="0"><input type="file" class="en-ocr-file" accept="image/*" style="display:none"><div>📷 点击 / 拖拽 / 粘贴图片到此处</div><div style="font-size:11px;margin-top:4px">支持 PNG/JPG，Ctrl+V 直接粘贴截图</div></div></div>
         <div class="en-lookup-result" style="display:none;margin-top:10px;border:1.2px solid var(--card-border);border-radius:12px;padding:12px;background:#fff"></div>
         <div class="section-label">中英互译</div>
-        <div class="form-row" style="align-items:flex-end">
+        <div class="form-row">
           <div class="form-group" style="flex:1"><input type="text" class="en-translate-input" placeholder="输入中文或英文，自动检测方向..." style="font-size:14px"></div>
           <button class="btn btn-ghost btn-sm en-translate-dir" style="white-space:nowrap;padding:6px 10px" title="点击切换方向">中→英</button>
           <button class="btn btn-primary btn-sm en-translate-btn">翻译</button>
@@ -6120,6 +6142,12 @@ function migrateWorkbenchData(){
       changelog.data.logs.push({
         id:genId(),date:todayStr(),version:'V8.6',
         changes:'V8.6 移动端适配与功能增强（对应缓存版本 v39）：\n• 查单词格式重构：英文释义→搭配→例句依次显示，点击"显示中文释义"展开中文释义→搭配释义→例句翻译\n• 移动端UI全面适配：睡眠/运动/冥想/阅读周记录横向滚动，行动总览矩阵和长期报告表格自适应\n• 复盘看板修复：修复undefined显示问题，改为"已复盘"标签，新增AI成长建议功能（归纳复盘内容并给出行动建议）\n• 阅读记录修复：书名不再自动填充到所有日期，仅显示为placeholder，未填日期不保存\n• 保存确认统一：所有保存按钮点击后显示"已保存"悬浮提示\n• 趋势看板扩展：运动/冥想/阅读新增年度趋势看板，显示运动天数/总时长/日均等汇总数据\n• 自定义导航板块：支持添加自定义板块，可选笔记/清单/打卡/月历四种样式\n• 全屏设置页：设置改为全屏页面（类似Kimi），不再是卡片弹窗\n• 同步密钥默认显示优化：placeholder改为2026**格式\n• 设置页移动端适配：全屏设置页在手机上优化间距和字体'
+      });
+    }
+    if(!changelog.data.logs.some(l=>l.version==='V8.7')){
+      changelog.data.logs.push({
+        id:genId(),date:todayStr(),version:'V8.7',
+        changes:'V8.7 移动端布局修复与英语优化（对应缓存版本 v40）：\n• 修复移动端表单左侧空白：form-row在column模式下align-items:flex-end导致元素右偏，改为stretch并移除max-width限制\n• 移动端表单按钮全宽适配：form-row内按钮在移动端自动占满宽度\n• 英语写作反馈优化：移除不安全的词汇替换（very happy→thrilled等语义错误的替换）和短语动词替换（discover→find out等），仅保留缩写形式和安全的句式简化\n• 口语化版本重命名：从"Native地道表达"改为"口语化版本（缩写+简化）"，添加免责声明建议使用专业工具\n• 翻译API验证：翻译结果与原文相同时不显示，避免展示无效翻译\n• 每日计划输入框flex适配：dp-input在桌面端正确占据剩余空间\n• 阅读记录保存按钮移除align-self:flex-end：避免移动端布局异常'
       });
     }
   }
