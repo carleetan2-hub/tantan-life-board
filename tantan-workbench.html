@@ -315,6 +315,25 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
 .trend-mini{min-width:70px;border:1px solid var(--input-border);border-radius:12px;padding:8px;background:var(--input-bg);display:flex;flex-direction:column;gap:2px}
 .trend-mini strong{font-size:12px;color:var(--primary)}
 .trend-mini span,.trend-mini em{font-size:11px;color:var(--text-sec);font-style:normal}
+/* ========== 目标追踪 / 习惯打卡 自定义板块 ========== */
+.goal-tracker-item{border:1px solid var(--card-border);border-radius:14px;padding:12px;margin-bottom:10px;background:var(--card-bg)}
+.goal-tracker-item .gt-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.goal-tracker-item .gt-prog-num{font-weight:800;color:var(--primary);min-width:48px;text-align:right;font-size:14px}
+.goal-tracker-item .gt-ctrl{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.goal-tracker-item .gt-kr-row{display:flex;align-items:center;gap:6px;width:100%}
+.habit-grid-31{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:6px}
+.habit-cell-day{border:1px solid var(--card-border);border-radius:10px;padding:6px 2px;text-align:center;cursor:pointer;background:var(--card-bg);transition:all .2s;user-select:none}
+.habit-cell-day:hover{border-color:var(--primary);transform:translateY(-1px)}
+.habit-cell-day .habit-cell-date{font-size:12px;font-weight:700;color:var(--text)}
+.habit-cell-day .habit-cell-wd{font-size:10px;color:var(--text-light);margin-top:1px}
+.habit-cell-day .habit-cell-mark{font-size:15px;font-weight:800;color:var(--text-light);margin-top:2px;min-height:18px;line-height:18px}
+.habit-cell-day.done{background:linear-gradient(135deg,var(--primary),var(--primary-dark));border-color:var(--primary-dark)}
+.habit-cell-day.done .habit-cell-date,.habit-cell-day.done .habit-cell-wd,.habit-cell-day.done .habit-cell-mark{color:#fff}
+.habit-cell-day.today{box-shadow:inset 0 0 0 2px var(--primary)}
+/* ========== 回收站 ========== */
+.recycle-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--card-border);border-radius:10px;background:var(--input-bg);margin-bottom:6px;font-size:13px;flex-wrap:wrap}
+.recycle-item .ri-name{flex:1;min-width:120px;font-weight:600}
+.recycle-item .ri-meta{font-size:11px;color:var(--text-light);width:100%}
 .auto-hot-panel,.category-manager,.report-panel,.monthly-summary{border:1.2px solid var(--card-border);border-radius:12px;background:#fff;padding:10px;margin-bottom:10px}
 .auto-hot-list{display:flex;flex-direction:column;gap:6px;max-height:260px;overflow-y:auto}
 .auto-hot-item{border:1px solid var(--input-border);border-radius:10px;padding:8px;background:var(--input-bg);display:flex;gap:8px;align-items:flex-start}
@@ -534,7 +553,7 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
       <div><strong>关于本站</strong></div>
       <div>tantan的个人成长空间</div>
       <div>状态：<strong>迭代中</strong></div>
-      <div id="siteVersion">V8.7</div>
+      <div id="siteVersion">V9.0</div>
       <div style="font-size:11px;color:var(--text-light);margin-top:4px">小改动用小数点后一位（V8.2），大改动用V8.x、V9.x</div>
       <div style="margin-top:6px"><button class="btn btn-ghost btn-sm" id="moreChangelogBtn" style="padding:0;font-size:12px">更新日志</button></div>
     </div>
@@ -580,12 +599,14 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
               <option value="tracking">数据追踪</option>
               <option value="checklist">打卡清单</option>
               <option value="journal">日志本</option>
+              <option value="goal">目标追踪</option>
+              <option value="habit">习惯打卡</option>
             </select>
           </div>
           <button class="btn btn-primary btn-sm" id="addCustomNavBtn">添加</button>
         </div>
         <div class="small-text" style="margin-top:6px;color:var(--text-sec)">
-          笔记记录：自由文本记录 · 数据追踪：带数值的记录 · 打卡清单：每日打卡 · 日志本：日期+标题+内容
+          笔记记录：自由文本记录 · 数据追踪：带数值的记录 · 打卡清单：每日打卡 · 日志本：日期+标题+内容 · 目标追踪：OKR式目标与关键结果 · 习惯打卡：31天打卡日历与连续天数
         </div>
       </div>
       <h3 style="margin-top:14px">默认视图</h3>
@@ -598,6 +619,11 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
     <div class="modal-section">
       <h3>模块管理</h3>
       <div id="moduleMgmtList"></div>
+    </div>
+    <div class="modal-section">
+      <h3>♻️ 回收站</h3>
+      <div class="small-text" style="margin-bottom:8px;color:var(--text-sec)">删除的板块会暂存在这里，可恢复或彻底删除。</div>
+      <div id="recycleBinList"></div>
     </div>
     <div class="modal-section">
       <h3>数据管理</h3>
@@ -676,7 +702,7 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
 /* ============================================================
    应用版本与自动更新检测
 ============================================================ */
-const APP_VERSION = 'v41';
+const APP_VERSION = 'v43';
 const APP_BUILD_TIME = '2026-08-06';
 
 /**
@@ -960,7 +986,7 @@ function renderMonthBoard(title,offset,cellFn,summaryHtml=''){
     ${summaryHtml||''}
   </div>`;
 }
-function bindMonthBoard(body,mod,save,dateInputSelector){
+function bindMonthBoard(body,mod,save,dateInputSelector,onDateClick){
   body.querySelector('.month-prev')?.addEventListener('click',()=>{mod.data.monthOffset=(mod.data.monthOffset||0)-1;save();rerender(mod);});
   body.querySelector('.month-next')?.addEventListener('click',()=>{mod.data.monthOffset=(mod.data.monthOffset||0)+1;save();rerender(mod);});
   body.querySelectorAll('.month-day[data-date]').forEach(day=>{
@@ -991,6 +1017,8 @@ function bindMonthBoard(body,mod,save,dateInputSelector){
           const target=body.querySelector(dateInputSelector);
           if(target)target.scrollIntoView({behavior:'smooth',block:'center'});
         }
+        // 模块自定义：点击日期后的额外行为（如滚动到当天单词内容区域）
+        if(typeof onDateClick==='function')onDateClick(body,day.dataset.date);
       },150);
     });
   });
@@ -1018,7 +1046,7 @@ function markdownLite(text=''){
     return s||'<br>';
   }).join('\n');
 }
-function englishWritingFeedback(text='',packWords=[]){
+async function englishWritingFeedback(text='',packWords=[]){
   const raw=String(text||'').trim();
   if(!raw)return '';
   const used=packWords.filter(w=>new RegExp(`\\b${w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}\\b`,'i').test(raw));
@@ -1035,7 +1063,42 @@ function englishWritingFeedback(text='',packWords=[]){
   // 副词列表（常用于修饰形容词的副词）
   const adjAdv='just|very|so|too|really|quite|pretty|also|still|even|always|never|sometimes|often|usually|probably|definitely|actually|honestly|truly|simply|merely|barely|hardly|almost|nearly|quite|rather|fairly|somewhat|slightly|extremely|incredibly|remarkably|particularly|especially|specifically|obviously|clearly|apparently|evidently|undoubtedly|undeniably|unquestionably|certainly|surely|indeed|of course|not|no longer|no more';
 
-  // ========== 逐句检查 ==========
+  // ========== 在线语法检查（LanguageTool API，主要检测引擎）==========
+  let offlineMode=false;
+  let apiSuccess=false;
+  try{
+    const ltUrl=`https://api.languagetool.org/v2/check?text=${encodeURIComponent(raw)}&language=en-US`;
+    const ltRes=await fetch(ltUrl,{signal:AbortSignal.timeout(8000)});
+    if(ltRes.ok){
+      const ltData=await ltRes.json();
+      const ltMatches=Array.isArray(ltData&&ltData.matches)?ltData.matches:[];
+      if(ltMatches.length){
+        // 将 API 返回的错误转换为统一的 errors 结构（最多展示 20 条，避免过长）
+        ltMatches.slice(0,20).forEach(function(m){
+          var len=m.length||0;
+          // 通过 offset/length 从原句定位错误片段
+          var errText=len>0?raw.substring(m.offset,m.offset+len):((m.context&&m.context.text)||'');
+          // replacements 是建议数组，取第一个作为修正建议
+          var suggestion=(Array.isArray(m.replacements)&&m.replacements[0])?m.replacements[0].value:'';
+          errors.push({
+            line:1,
+            orig:errText||'…',
+            error:m.shortMessage||m.message||'语法问题',
+            fix:suggestion||'（参考下方规则说明）',
+            rule:(m.rule&&m.rule.description)?m.rule.description:(m.message||'')
+          });
+        });
+      }
+      apiSuccess=true;
+    }
+  }catch(e){
+    // API 不可用，回退到本地正则规则
+    offlineMode=true;
+  }
+
+  // ========== 本地规则检查（在线 API 不可用时的回退补充）==========
+  if(!apiSuccess){
+  // 逐句检查
   sentences.forEach((s,i)=>{
     const trimmed=s.trim();
     if(!trimmed)return;
@@ -1152,6 +1215,7 @@ function englishWritingFeedback(text='',packWords=[]){
       }
     }
   });
+  }
 
   // ========== 构建反馈 ==========
   // 1. 鼓励
@@ -1296,14 +1360,16 @@ function englishWritingFeedback(text='',packWords=[]){
 
   // 4. 构建错误分析表格
   let errorBlock='';
+  const offlineTag=offlineMode?'<span style="font-size:11px;color:var(--text-sec);font-weight:400">（离线模式：在线检查不可用，已使用本地规则）</span>':'';
   if(errors.length){
-    errorBlock=`\n\n<div style="margin-top:10px"></div>\n<strong style="font-size:14px;color:var(--text)">🔍 逐句纠错分析：</strong>\n<table class="en-feedback-table"><thead><tr><th style="width:20%">原句片段</th><th style="width:20%">问题</th><th style="width:60%">✓ 正确表达 & 规则</th></tr></thead><tbody>`;
+    errorBlock=`\n\n<div style="margin-top:10px"></div>\n<strong style="font-size:14px;color:var(--text)">🔍 逐句纠错分析：</strong>${offlineTag}\n<table class="en-feedback-table"><thead><tr><th style="width:20%">原句片段</th><th style="width:20%">问题</th><th style="width:60%">✓ 正确表达 & 规则</th></tr></thead><tbody>`;
     errors.forEach((e)=>{
       errorBlock+=`<tr><td style="color:#d64545">${esc(e.orig)}</td><td>${esc(e.error)}</td><td><strong style="color:#22a06b">${esc(e.fix)}</strong><br><small style="color:var(--text-sec)">${esc(e.rule)}</small></td></tr>`;
     });
     errorBlock+='</tbody></table>';
   }else{
-    errorBlock='\n\n<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:8px 12px;margin-top:8px;font-size:13px;color:#15803d">✅ 语法检查通过，没有发现明显错误！</div>';
+    const passMsg=offlineMode?'✅ 本地规则检查通过，没有发现明显错误！':'✅ 语法检查通过，没有发现明显错误！（LanguageTool 在线校验）';
+    errorBlock=`\n\n<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:8px 12px;margin-top:8px;font-size:13px;color:#15803d">${passMsg}</div>`;
   }
 
   // 5. 提升建议（始终显示）
@@ -1607,11 +1673,45 @@ async function translateExample(text){
 }
 // 中英互译：支持中→英和英→中
 async function translateBidirectional(text,from='zh',to='en'){
+  const sanitizeT=t=>(t||'').replace(/<x[^>]*\/>/g,'').replace(/<g[^>]*>(.*?)<\/g>/g,'$1').replace(/<ph[^>]*>.*?<\/ph>/g,'').replace(/<\/?[a-z][^>]*>/g,'').replace(/\s+/g,' ').trim();
+  // 1. 优先使用 Google Translate 非官方 API（翻译质量更高）
+  try{
+    const tl=to==='zh'?'zh-CN':'en';
+    const gUrl=`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${tl}&dt=t&q=${encodeURIComponent(text)}`;
+    const gRes=await fetch(gUrl,{signal:AbortSignal.timeout(8000)});
+    if(gRes.ok){
+      const gData=await gRes.json();
+      // 返回嵌套数组，译文片段在 gData[0][i][0]，多段拼接为完整译文
+      if(Array.isArray(gData)&&Array.isArray(gData[0])){
+        const main=sanitizeT(gData[0].filter(seg=>Array.isArray(seg)).map(seg=>seg[0]||'').join(''));
+        if(main){
+          // 尝试从 gData[5] 收集整句备选译法（部分查询会返回，格式不稳定，逐层防护）
+          let alts=[];
+          if(Array.isArray(gData[5])){
+            gData[5].forEach(function(item){
+              if(Array.isArray(item)&&Array.isArray(item[2])){
+                item[2].forEach(function(alt){
+                  if(Array.isArray(alt)&&alt[0]){
+                    const t=sanitizeT(alt[0]);
+                    if(t&&t!==main)alts.push(t);
+                  }
+                });
+              }
+            });
+          }
+          alts=alts.filter((v,i,a)=>a.indexOf(v)===i).slice(0,3);
+          return {main,alts,raw:gData};
+        }
+      }
+    }
+  }catch(e){
+    // Google API 失败，回退到 MyMemory
+  }
+  // 2. 回退到 MyMemory 翻译 API
   try{
     const url=`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${from}|${to}`;
     const res=await fetch(url,{signal:AbortSignal.timeout(8000)});
     const data=await res.json();
-    const sanitizeT=t=>(t||'').replace(/<x[^>]*\/>/g,'').replace(/<g[^>]*>(.*?)<\/g>/g,'$1').replace(/<ph[^>]*>.*?<\/ph>/g,'').replace(/<\/?[a-z][^>]*>/g,'').replace(/\s+/g,' ').trim();
     const main=sanitizeT(data?.responseData?.translatedText||'');
     // 收集备选翻译
     const matches=data?.matches||[];
@@ -1634,6 +1734,39 @@ async function lookupWord(word,resultEl){
   if(!word||!resultEl)return;
   resultEl.style.display='block';
   resultEl.innerHTML='<div class="small-text">正在查询...</div>';
+  // 中文输入：先反查对应的英文单词，再用英文查词典释义
+  if(/[\u4e00-\u9fa5]/.test(word)){
+    let enWord='';
+    // 1. 先在本地词包中搜索：找到中文释义包含输入中文的词条，取其英文单词
+    try{
+      const allPacks=[englishPackFor(''),englishPackFor('2026-01-15')].filter(p=>p&&p.words);
+      const zh=word.trim();
+      for(const pack of allPacks){
+        for(const w of pack.words){
+          const meaning=(w[1]||'');
+          if(meaning&&meaning.includes(zh)){enWord=w[0];break;}
+        }
+        if(enWord)break;
+      }
+    }catch(e){}
+    // 2. 本地词包未命中 → 调用翻译 API 把中文翻译成英文
+    if(!enWord){
+      try{
+        const tr=await translateBidirectional(word,'zh','en');
+        if(tr&&tr.main){
+          // 翻译结果可能含多词/标点，取首个英文单词
+          enWord=(tr.main.split(/[\s,，;；.。!！?？]+/)[0]||tr.main).replace(/[^a-zA-Z'-]/g,'');
+        }
+      }catch(e){}
+    }
+    if(!enWord){
+      resultEl.innerHTML=`<div style="color:var(--text-sec)">未找到「${esc(word)}」对应的英文单词，可尝试更精确的中文释义。</div>`;
+      return;
+    }
+    // 顶部提示 中文→英文 映射，随后用英文单词继续查询
+    resultEl.innerHTML=`<div class="small-text" style="margin-bottom:6px">「${esc(word)}」→ <strong style="color:var(--primary)">${esc(enWord)}</strong>，正在查询英文释义...</div>`;
+    word=enWord;
+  }
   // 搜索词包获取中文释义
   let packZh='',packExamples=[];
   try{
@@ -2010,6 +2143,7 @@ const DB={
       viewMode:'grid',
       defaultViewMode:'grid',
       navCustom:{pinned:[],hidden:[]},
+      recycledModules:[],
       modules:[
         {id:genId(),type:'daily-plan',title:'每日计划',visible:true,data:{routineTasks:DEFAULT_ROUTINE_TASKS.map(text=>({id:genId(),text}))}},
         {id:genId(),type:'overview',title:'行动总览',visible:true,data:{}},
@@ -2026,7 +2160,7 @@ const DB={
         {id:genId(),type:'inspiration',title:'灵感记录',visible:true,data:{}},
         {id:genId(),type:'collection',title:'收藏库',visible:true,data:{entries:[],filter:'all',categories:DEFAULT_COLLECTION_CATEGORIES.slice()}},
         {id:genId(),type:'changelog',title:'更新日志',visible:true,data:{
-          logs:[{id:genId(),date:todayStr(),version:'V8.5',changes:'V8.5 数据保存逻辑与英语纠错修复：\n• 运动记录：未填写的日期不再保存默认30分钟到看板，仅保存实际填写的内容\n• 睡眠记录：默认入睡22:00/起床07:00仅作填写参考，未编辑的日期不自动保存到看板\n• 冥想记录改名为「正念冥想」，同样仅保存用户实际编辑过的日期\n• 阅读记录：未填写日期的默认值不再保存，添加编辑跟踪机制\n• 所有周历模块添加撤回快照功能（_undoSnapshot），误保存可一键恢复\n• 英语写作纠错：新增「缺少be动词」检测规则，能识别"I just lazy"等形容词前缺少be动词的错误并给出修正建议\n• 口语化版本新增"I am just lazy to"→"I just feel too lazy to"等地道改写\n• 未编辑的日期输入框显示灰色文字，区分默认值与实际记录'},{id:genId(),date:todayStr(),version:'V8.4',changes:'V8.4 全面优化升级：\n• 修复查单词格式：英文部分依次显示释义→搭配→例句，中文部分可展开显示中文释义→搭配中文→例句中文\n• 修复复盘看板undefined错误，日历改为显示"已复盘"简洁标识\n• 复盘新增AI成长建议功能，基于本月复盘内容生成总结和行动建议（支持离线分析兜底）\n• 运动记录、冥想记录、阅读记录均新增年度趋势看板（SVG柱状图+月度趋势卡片）\n• 新增自定义导航板块功能：支持笔记记录/数据追踪/打卡清单/日志本四种样式\n• 设置页改为全屏布局，类似Kimi设置页体验\n• 全局Toast通知系统，保存成功显示"已保存"提示不受rerender影响\n• 修复阅读记录默认时长问题，未填写日期不再显示10分钟\n• 同步密钥默认提示改为2026**\n• 全面优化移动端UI自适应：周历卡片、行动总览、长期报告等板块布局优化\n• mini-field输入框在移动端使用更紧凑的字体和间距'},{id:genId(),date:todayStr(),version:'V8.2',changes:'V8.2 五大问题修复：\n• 修复睡眠记录日期错误（2025→2026），1-6月记录恢复正常显示，起床时间统一默认07:00\n• 修复月份视图每次加载跳回最新月份的问题，用户切换月份后不再被重置\n• 修复长期报告计算逻辑，确保本月/本季度/今年数据正确统计\n• 修复英语写作纠错：过去时态按句检查（不再全局误判）、be动词不误改形容词、缩写大小写敏感、a/an例外更完整、Native版本更保守\n• 查单词新增例句中文翻译（词包例句内置翻译+API例句自动翻译），常见搭配已含中文释义\n• 加入生词本按钮改为醒目样式\n• 修复热榜同步：工作流步骤ID修正、新增API连通性测试、占位数据识别、本地文件失败时自动回退直接抓取API'},{id:genId(),date:todayStr(),version:'V8.1',changes:'V8.1 功能修复与优化：\n• 修复英语写作纠错反馈表格无法正常渲染的问题（HTML转义bug）\n• 修复睡眠7月记录看板显示问题，优化月视图自动定位逻辑\n• 行动总览补填改为 ○/✓ 圆圈勾选模式，更简洁直观\n• 为睡眠/运动/冥想/复盘/阅读/英语6个板块增加撤回按钮，误操作可一键恢复\n• 优化热点同步机制，增加多URL回退策略\n• 修复睡眠周保存时备注被清空的问题\n• 修复每日复盘评分0被误判为空的问题\n• 修复正则表达式冗余、XML解析错误处理等多处代码健壮性问题\n• 优化写作反馈表格CSS样式'},{id:genId(),date:todayStr(),version:'v1.0',changes:'初始版本发布：\n• 创建每日计划、睡眠记录、运动记录、每日复盘、阅读、英语学习、技能提升、爆款话题、灵感记录、迭代更新共10个模块\n• 支持6种主题配色自选\n• 支持在线编辑，数据自动保存\n• 响应式设计，支持iPhone访问编辑\n• 支持模块增删管理\n• 支持数据导入导出备份'}]
+          logs:[{id:genId(),date:todayStr(),version:'V9.0',changes:'V9.0 定稿大版本升级：\n• 柱状图动态高度：所有年度趋势SVG图表根据最大值自动调整高度，数值超过20不再截断\n• 英语写作纠错重构：接入LanguageTool在线语法检查API作为主引擎，本地规则作为离线回退，大幅提升检测准确率\n• 翻译质量修复：优先使用Google翻译API，回退MyMemory，"人少景美"等复杂中文翻译更准确\n• 查单词支持中英文双向：输入中文可查对应英文单词的释义，自动通过本地词包或翻译API转换\n• 爆款话题平台修复：选择小红书不再返回B站内容，文件同步失败回退时仅抓取已选平台\n• 运动类型新增：有氧/无氧/八段锦，"其他"支持自定义输入运动名称\n• 收藏库分类"其他"支持自定义分类名称\n• 阅读板块修复：清理旧的空记录数据，确保未编辑日期不出现在看板\n• 英语学习：点击看板日期自动跳转并高亮当天单词内容区域\n• 灵感记录：按标签分组显示，支持折叠展开，标签筛选下拉框\n• 新增自定义板块类型：目标追踪(OKR式)和习惯打卡(31天日历)\n• 回收站功能：删除的板块可在设置中恢复，支持彻底删除和清空\n• bindMonthBoard新增回调参数，支持模块自定义点击日期行为'},{id:genId(),date:todayStr(),version:'V8.5',changes:'V8.5 数据保存逻辑与英语纠错修复：\n• 运动记录：未填写的日期不再保存默认30分钟到看板，仅保存实际填写的内容\n• 睡眠记录：默认入睡22:00/起床07:00仅作填写参考，未编辑的日期不自动保存到看板\n• 冥想记录改名为「正念冥想」，同样仅保存用户实际编辑过的日期\n• 阅读记录：未填写日期的默认值不再保存，添加编辑跟踪机制\n• 所有周历模块添加撤回快照功能（_undoSnapshot），误保存可一键恢复\n• 英语写作纠错：新增「缺少be动词」检测规则，能识别"I just lazy"等形容词前缺少be动词的错误并给出修正建议\n• 口语化版本新增"I am just lazy to"→"I just feel too lazy to"等地道改写\n• 未编辑的日期输入框显示灰色文字，区分默认值与实际记录'},{id:genId(),date:todayStr(),version:'V8.4',changes:'V8.4 全面优化升级：\n• 修复查单词格式：英文部分依次显示释义→搭配→例句，中文部分可展开显示中文释义→搭配中文→例句中文\n• 修复复盘看板undefined错误，日历改为显示"已复盘"简洁标识\n• 复盘新增AI成长建议功能，基于本月复盘内容生成总结和行动建议（支持离线分析兜底）\n• 运动记录、冥想记录、阅读记录均新增年度趋势看板（SVG柱状图+月度趋势卡片）\n• 新增自定义导航板块功能：支持笔记记录/数据追踪/打卡清单/日志本四种样式\n• 设置页改为全屏布局，类似Kimi设置页体验\n• 全局Toast通知系统，保存成功显示"已保存"提示不受rerender影响\n• 修复阅读记录默认时长问题，未填写日期不再显示10分钟\n• 同步密钥默认提示改为2026**\n• 全面优化移动端UI自适应：周历卡片、行动总览、长期报告等板块布局优化\n• mini-field输入框在移动端使用更紧凑的字体和间距'},{id:genId(),date:todayStr(),version:'V8.2',changes:'V8.2 五大问题修复：\n• 修复睡眠记录日期错误（2025→2026），1-6月记录恢复正常显示，起床时间统一默认07:00\n• 修复月份视图每次加载跳回最新月份的问题，用户切换月份后不再被重置\n• 修复长期报告计算逻辑，确保本月/本季度/今年数据正确统计\n• 修复英语写作纠错：过去时态按句检查（不再全局误判）、be动词不误改形容词、缩写大小写敏感、a/an例外更完整、Native版本更保守\n• 查单词新增例句中文翻译（词包例句内置翻译+API例句自动翻译），常见搭配已含中文释义\n• 加入生词本按钮改为醒目样式\n• 修复热榜同步：工作流步骤ID修正、新增API连通性测试、占位数据识别、本地文件失败时自动回退直接抓取API'},{id:genId(),date:todayStr(),version:'V8.1',changes:'V8.1 功能修复与优化：\n• 修复英语写作纠错反馈表格无法正常渲染的问题（HTML转义bug）\n• 修复睡眠7月记录看板显示问题，优化月视图自动定位逻辑\n• 行动总览补填改为 ○/✓ 圆圈勾选模式，更简洁直观\n• 为睡眠/运动/冥想/复盘/阅读/英语6个板块增加撤回按钮，误操作可一键恢复\n• 优化热点同步机制，增加多URL回退策略\n• 修复睡眠周保存时备注被清空的问题\n• 修复每日复盘评分0被误判为空的问题\n• 修复正则表达式冗余、XML解析错误处理等多处代码健壮性问题\n• 优化写作反馈表格CSS样式'},{id:genId(),date:todayStr(),version:'v1.0',changes:'初始版本发布：\n• 创建每日计划、睡眠记录、运动记录、每日复盘、阅读、英语学习、技能提升、爆款话题、灵感记录、迭代更新共10个模块\n• 支持6种主题配色自选\n• 支持在线编辑，数据自动保存\n• 响应式设计，支持iPhone访问编辑\n• 支持模块增删管理\n• 支持数据导入导出备份'}]
         }},
       ]
     };
@@ -2037,6 +2171,7 @@ const DB={
       if(best?.data){
         this.data=best.data;
         this.data.modules=this.data.modules||[];
+        this.data.recycledModules=this.data.recycledModules||[];
         this.data.recoveredFrom=best.key!==this.KEY?best.key:(this.data.recoveredFrom||'');
         localStorage.setItem(this.KEY,JSON.stringify(this.data));
       }else{
@@ -2069,7 +2204,35 @@ const DB={
     return mod;
   },
   removeModule(id){
-    this.data.modules=this.data.modules.filter(m=>m.id!==id);
+    // 不直接删除，而是移入回收站，便于误删恢复
+    const mod=this.data.modules.find(m=>m.id===id);
+    if(mod){
+      this.data.recycledModules=this.data.recycledModules||[];
+      this.data.recycledModules.push(Object.assign({},mod,{recycledAt:new Date().toISOString()}));
+      this.data.modules=this.data.modules.filter(m=>m.id!==id);
+      this.save();
+    }
+  },
+  // 从回收站恢复模块
+  restoreModule(id){
+    this.data.recycledModules=this.data.recycledModules||[];
+    const idx=this.data.recycledModules.findIndex(m=>m.id===id);
+    if(idx<0)return;
+    const mod=this.data.recycledModules[idx];
+    delete mod.recycledAt;
+    mod.visible=true; // 恢复后默认显示
+    this.data.modules.push(mod);
+    this.data.recycledModules.splice(idx,1);
+    this.save();
+  },
+  // 彻底删除单个回收站模块
+  purgeModule(id){
+    this.data.recycledModules=(this.data.recycledModules||[]).filter(m=>m.id!==id);
+    this.save();
+  },
+  // 清空回收站
+  emptyRecycleBin(){
+    this.data.recycledModules=[];
     this.save();
   },
   toggleModule(id){
@@ -2793,7 +2956,8 @@ const MODULE_TYPES={
       });
       // 年度早睡趋势折线图（SVG）
       const maxEarly=Math.max(...yearSummary.map(m=>m.earlyDays),1);
-      const chartW=340,chartH=120,padL=20,padB=18,padT=8;
+      const chartW=340,padL=20,padB=18,padT=8;
+      const chartH=Math.max(120,maxEarly*8+padB+padT+15);
       const barW=(chartW-padL-8)/12*0.6;
       const gap=(chartW-padL-8)/12*0.4;
       const chartBars=yearSummary.map((m,i)=>{
@@ -2809,7 +2973,7 @@ const MODULE_TYPES={
       const yearTotalEarly=yearSummary.reduce((s,m)=>s+m.earlyDays,0);
       const sleepChart=`<div style="background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:12px;margin-bottom:8px">
         <div class="flex-between" style="margin-bottom:6px"><strong style="font-size:13px">${year} 年度睡眠趋势</strong><span class="small-text">早睡天数 / 记录天数 · 早睡率${yearTotalDays?Math.round(yearTotalEarly/yearTotalDays*100):0}%</span></div>
-        <div style="overflow-x:auto"><svg width="${chartW}" height="${chartH+4}" viewBox="0 0 ${chartW} ${chartH+4}" style="max-width:100%">
+        <div style="overflow-x:auto"><svg width="${chartW}" height="${chartH+4}" viewBox="0 0 ${chartW} ${chartH+4}" style="max-width:100%;overflow:visible">
           <line x1="${padL}" y1="${chartH-padB}" x2="${chartW-4}" y2="${chartH-padB}" stroke="var(--card-border)" stroke-width="1"/>
           ${chartBars}
         </svg></div>
@@ -3041,7 +3205,8 @@ const MODULE_TYPES={
         return {month:i+1,days,minutes};
       });
       const exMaxDays=Math.max(...exYearSummary.map(m=>m.days),1);
-      const exChartW=340,exChartH=120,exPadL=20,exPadB=18,exPadT=8;
+      const exChartW=340,exPadL=20,exPadB=18,exPadT=8;
+      const exChartH=Math.max(120,exMaxDays*8+exPadB+exPadT+15);
       const exBarW=(exChartW-exPadL-8)/12*0.6,exGap=(exChartW-exPadL-8)/12*0.4;
       const exChartBars=exYearSummary.map((m,i)=>{
         const x=exPadL+i*((exChartW-exPadL-8)/12)+exGap/2;
@@ -3056,7 +3221,7 @@ const MODULE_TYPES={
       const exYearTotalMin=exYearSummary.reduce((s,m)=>s+m.minutes,0);
       const exChart=`<div style="background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:12px;margin-bottom:8px">
         <div class="flex-between" style="margin-bottom:6px"><strong style="font-size:13px">${exYear} 年度运动趋势</strong><span class="small-text">运动${exYearTotalDays}天 · ${exYearTotalMin}分钟 · 日均${exYearTotalDays?Math.round(exYearTotalMin/exYearTotalDays):0}分钟</span></div>
-        <div style="overflow-x:auto"><svg width="${exChartW}" height="${exChartH+4}" viewBox="0 0 ${exChartW} ${exChartH+4}" style="max-width:100%">
+        <div style="overflow-x:auto"><svg width="${exChartW}" height="${exChartH+4}" viewBox="0 0 ${exChartW} ${exChartH+4}" style="max-width:100%;overflow:visible">
           <line x1="${exPadL}" y1="${exChartH-exPadB}" x2="${exChartW-4}" y2="${exChartH-exPadB}" stroke="var(--card-border)" stroke-width="1"/>
           ${exChartBars}
         </svg></div>
@@ -3076,7 +3241,13 @@ const MODULE_TYPES={
           <button class="btn btn-ghost btn-sm ex-load-date">载入选中日期</button>
         </div>
         <div class="form-row">
-          <div class="form-group"><label>类型</label><select class="ex-type">${['跑步','健身','瑜伽','游泳','骑行','球类','快走','拉伸','其他'].map(t=>`<option value="${t}" ${selectedRec.type===t?'selected':''}>${t}</option>`).join('')}</select></div>
+          <div class="form-group"><label>类型</label><select class="ex-type">${(()=>{
+            const types=['跑步','健身','瑜伽','游泳','骑行','球类','快走','拉伸','有氧','无氧','八段锦','其他'];
+            const cur=selectedRec.type||'';
+            // 若当前记录的类型不在预设列表中（自定义类型），将其添加为选项以便回显
+            const list=cur&&!types.includes(cur)?[...types.slice(0,-1),cur,'其他']:types;
+            return list.map(t=>`<option value="${t}" ${cur===t?'selected':''}>${t}</option>`).join('');
+          })()}</select></div>
           <div class="form-group" style="max-width:100px"><label>时长(分)</label><input type="number" class="ex-dur" value="${selectedRec.duration||30}" min="1" max="600"></div>
         </div>
         <div class="form-group"><label>备注</label><input type="text" class="ex-notes" value="${esc(selectedRec.notes||'')}" placeholder="如：5km、上肢训练等" maxlength="80"></div>
@@ -3088,6 +3259,30 @@ const MODULE_TYPES={
       const dateInput=body.querySelector('.ex-date');
       const loadSelected=()=>{mod.data.selectedDate=dateInput.value||todayStr();save();rerender(mod);};
       dateInput.addEventListener('change',loadSelected);body.querySelector('.ex-load-date').addEventListener('click',loadSelected);
+      // 运动类型"其他"自定义：选择"其他"时弹出输入框让用户自定义类型名称
+      const exTypeSelect=body.querySelector('.ex-type');
+      if(exTypeSelect){
+        let exPrevType=exTypeSelect.value;
+        exTypeSelect.addEventListener('change',()=>{
+          if(exTypeSelect.value==='其他'){
+            const custom=prompt('请输入自定义运动类型名称：');
+            if(custom&&custom.trim()){
+              const name=custom.trim();
+              // 若不存在该选项，则新建并插在"其他"之前
+              if(![...exTypeSelect.options].some(o=>o.value===name)){
+                const opt=document.createElement('option');
+                opt.value=name;opt.textContent=name;
+                exTypeSelect.insertBefore(opt,exTypeSelect.lastElementChild);
+              }
+              exTypeSelect.value=name;
+            }else{
+              // 用户取消则恢复为之前选中的类型
+              exTypeSelect.value=exPrevType;
+            }
+          }
+          exPrevType=exTypeSelect.value;
+        });
+      }
       body.querySelector('.ex-add').addEventListener('click',e=>{const date=dateInput.value||todayStr();mod.data.selectedDate=date;mod.data.records=upsertByDate(mod.data.records||[],date,{type:body.querySelector('.ex-type').value,duration:body.querySelector('.ex-dur').value,notes:body.querySelector('.ex-notes').value.trim()});saveAndRerenderWithConfirm(e.currentTarget,mod,save);});
       body.querySelector('.ex-week-save')?.addEventListener('click',e=>{_undoSnapshot(mod);mod.data.quick=mod.data.quick||{};body.querySelectorAll('.day-card').forEach(card=>{const items=[...card.querySelectorAll('input[type=checkbox]:checked')].map(x=>x.value);const minutes=+(card.querySelector('.ex-week-min')?.value||0);const note=card.querySelector('.ex-week-note')?.value.trim()||'';if(items.length||minutes||note)mod.data.quick[card.dataset.date]={items,minutes,note};});saveAndRerenderWithConfirm(e.currentTarget,mod,save);});
       const exUndo=body.querySelector('.ex-week-undo');
@@ -3125,7 +3320,8 @@ const MODULE_TYPES={
         return {month:i+1,days,minutes};
       });
       const mdMaxMin=Math.max(...mdYearSummary.map(m=>m.minutes),1);
-      const mdChartW=340,mdChartH=120,mdPadL=20,mdPadB=18,mdPadT=8;
+      const mdChartW=340,mdPadL=20,mdPadB=18,mdPadT=8;
+      const mdChartH=Math.max(120,mdMaxMin*8+mdPadB+mdPadT+15);
       const mdBarW=(mdChartW-mdPadL-8)/12*0.6,mdGap=(mdChartW-mdPadL-8)/12*0.4;
       const mdChartBars=mdYearSummary.map((m,i)=>{
         const x=mdPadL+i*((mdChartW-mdPadL-8)/12)+mdGap/2;
@@ -3140,7 +3336,7 @@ const MODULE_TYPES={
       const mdYearTotalMin=mdYearSummary.reduce((s,m)=>s+m.minutes,0);
       const mdChart=`<div style="background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:12px;margin-bottom:8px">
         <div class="flex-between" style="margin-bottom:6px"><strong style="font-size:13px">${mdYear} 年度冥想趋势</strong><span class="small-text">冥想${mdYearTotalDays}天 · ${mdYearTotalMin}分钟 · 日均${mdYearTotalDays?Math.round(mdYearTotalMin/mdYearTotalDays):0}分钟</span></div>
-        <div style="overflow-x:auto"><svg width="${mdChartW}" height="${mdChartH+4}" viewBox="0 0 ${mdChartW} ${mdChartH+4}" style="max-width:100%">
+        <div style="overflow-x:auto"><svg width="${mdChartW}" height="${mdChartH+4}" viewBox="0 0 ${mdChartW} ${mdChartH+4}" style="max-width:100%;overflow:visible">
           <line x1="${mdPadL}" y1="${mdChartH-mdPadB}" x2="${mdChartW-4}" y2="${mdChartH-mdPadB}" stroke="var(--card-border)" stroke-width="1"/>
           ${mdChartBars}
         </svg></div>
@@ -3475,6 +3671,11 @@ const MODULE_TYPES={
         d.current=d.current&&d.current.title?[{id:genId(),...d.current,startDate:todayStr()}]:[];
       }
       d.current=d.current||[];d.books=d.books||[];d.daily=d.daily||{};d.wishlist=d.wishlist||[];
+      // 清理旧数据：删除 minutes 为 0 且无 title 和 note 的空记录，避免看板残留无效数据
+      Object.keys(d.daily).forEach(k=>{
+        const r=d.daily[k]||{};
+        if(!r.minutes&&!r.title&&!r.note)delete d.daily[k];
+      });
       d.monthOffset=d.monthOffset||0;d.selectedDate=d.selectedDate||todayStr();
       d.current.forEach(b=>{b.id=b.id||genId();b.startDate=b.startDate||todayStr();});
       const weekKeys=weekDates().map(dateKey);
@@ -3544,7 +3745,8 @@ const MODULE_TYPES={
         return {month:i+1,days,minutes,books:books.length};
       });
       const rdMaxMin=Math.max(...rdYearSummary.map(m=>m.minutes),1);
-      const rdChartW=340,rdChartH=120,rdPadL=20,rdPadB=18,rdPadT=8;
+      const rdChartW=340,rdPadL=20,rdPadB=18,rdPadT=8;
+      const rdChartH=Math.max(120,rdMaxMin*8+rdPadB+rdPadT+15);
       const rdBarW=(rdChartW-rdPadL-8)/12*0.6,rdGap=(rdChartW-rdPadL-8)/12*0.4;
       const rdChartBars=rdYearSummary.map((m,i)=>{
         const x=rdPadL+i*((rdChartW-rdPadL-8)/12)+rdGap/2;
@@ -3559,7 +3761,7 @@ const MODULE_TYPES={
       const rdYearTotalMin=rdYearSummary.reduce((s,m)=>s+m.minutes,0);
       const rdChart=`<div style="background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:12px;margin-bottom:8px">
         <div class="flex-between" style="margin-bottom:6px"><strong style="font-size:13px">${rdYear} 年度阅读趋势</strong><span class="small-text">阅读${rdYearTotalDays}天 · ${rdYearTotalMin}分钟 · 日均${rdYearTotalDays?Math.round(rdYearTotalMin/rdYearTotalDays):0}分钟</span></div>
-        <div style="overflow-x:auto"><svg width="${rdChartW}" height="${rdChartH+4}" viewBox="0 0 ${rdChartW} ${rdChartH+4}" style="max-width:100%">
+        <div style="overflow-x:auto"><svg width="${rdChartW}" height="${rdChartH+4}" viewBox="0 0 ${rdChartW} ${rdChartH+4}" style="max-width:100%;overflow:visible">
           <line x1="${rdPadL}" y1="${rdChartH-rdPadB}" x2="${rdChartW-4}" y2="${rdChartH-rdPadB}" stroke="var(--card-border)" stroke-width="1"/>
           ${rdChartBars}
         </svg></div>
@@ -3752,7 +3954,7 @@ const MODULE_TYPES={
         <div class="section-label">生词本 (${d.words.length})</div><div class="form-row"><div class="form-group"><input type="text" class="en-word" placeholder="单词"></div><div class="form-group"><input type="text" class="en-meaning" placeholder="释义"></div><button class="btn btn-primary btn-sm en-add-word">添加</button></div><div class="record-list" style="max-height:200px">${d.words.length?d.words.slice().reverse().map(w=>{const statusLabels={known:'已认识',fuzzy:'模糊',unknown:'不认识'};const statusColors={known:'#22a06b',fuzzy:'#f5b42f',unknown:'#d64545'};const st=w.status||'unknown';return `<div class="word-card"><div class="flex-between" style="align-items:center"><span class="word">${esc(w.word)}</span><div style="display:flex;gap:4px;align-items:center"><select class="en-vocab-status" data-id="${w.id}" style="font-size:11px;padding:2px 6px;border-radius:6px;border:1px solid ${statusColors[st]}40;background:${statusColors[st]}15;color:${statusColors[st]};width:auto">${['unknown','fuzzy','known'].map(s=>`<option value="${s}" ${st===s?'selected':''}>${statusLabels[s]}</option>`).join('')}</select><button class="record-del en-del-word" data-id="${w.id}">✕</button></div></div><div class="meaning">${esc(w.meaning)}</div></div>`;}).join(''):'<div class="empty-state">暂无生词，点击上方英语包单词旁的「+生词本」快速添加</div>'}</div>
         <div class="section-label">例句 (${d.sentences.length})</div><div class="form-row"><div class="form-group"><input type="text" class="en-sentence" placeholder="英文句子"></div><button class="btn btn-primary btn-sm en-add-sent">添加</button></div><div class="record-list" style="max-height:100px">${d.sentences.length?d.sentences.slice(-5).reverse().map(s=>`<div class="record-item"><div class="record-content">${esc(s.text)}</div><button class="record-del en-del-sent" data-id="${s.id}">✕</button></div>`).join(''):'<div class="empty-state">暂无例句</div>'}</div>
         <div class="section-label">查单词</div>
-        <div class="form-row"><div class="form-group"><input type="text" class="en-lookup-input" placeholder="输入英文单词查询..." style="font-size:14px"></div><button class="btn btn-primary btn-sm en-lookup-btn">查询</button></div>
+        <div class="form-row"><div class="form-group"><input type="text" class="en-lookup-input" placeholder="输入英文单词或中文查询..." style="font-size:14px"></div><button class="btn btn-primary btn-sm en-lookup-btn">查询</button></div>
         <div class="form-group" style="margin-top:6px"><label style="font-size:12px">📷 上传/拖拽/粘贴（Ctrl+V）含英文单词的图片，自动识别文本</label><div class="en-ocr-drop" style="border:2px dashed var(--input-border);border-radius:10px;padding:12px;text-align:center;cursor:pointer;transition:all .2s;font-size:12px;color:var(--text-sec)" tabindex="0"><input type="file" class="en-ocr-file" accept="image/*" style="display:none"><div>📷 点击 / 拖拽 / 粘贴图片到此处</div><div style="font-size:11px;margin-top:4px">支持 PNG/JPG，Ctrl+V 直接粘贴截图</div></div></div>
         <div class="en-lookup-result" style="display:none;margin-top:10px;border:1.2px solid var(--card-border);border-radius:12px;padding:12px;background:#fff"></div>
         <div class="section-label">中英互译</div>
@@ -3764,7 +3966,16 @@ const MODULE_TYPES={
         <div class="en-translate-result" style="display:none;margin-top:8px;border:1.2px solid var(--card-border);border-radius:12px;padding:12px;background:var(--card)"></div>`;
     },
     bind(body,mod,save){
-      bindMonthBoard(body,mod,save,'.en-date');
+      bindMonthBoard(body,mod,save,'.en-date',(b,date)=>{
+        // 点击月历日期后，滚动到当天单词内容区域（english-pack）并高亮
+        const pack=b.querySelector('.english-pack');
+        if(pack){
+          pack.scrollIntoView({behavior:'smooth',block:'start'});
+          pack.style.transition='box-shadow .4s ease';
+          pack.style.boxShadow='0 0 0 2px var(--primary)';
+          setTimeout(()=>{pack.style.boxShadow='';},2500);
+        }
+      });
       const addWord=()=>{const w=body.querySelector('.en-word').value.trim();const m=body.querySelector('.en-meaning').value.trim();if(!w||!m)return;mod.data.words.push({id:genId(),word:w,meaning:m});save();rerender(mod);};
       body.querySelector('.en-add-word')?.addEventListener('click',addWord);body.querySelector('.en-meaning')?.addEventListener('keydown',e=>{if(e.key==='Enter')addWord();});
       const addSent=()=>{const s=body.querySelector('.en-sentence').value.trim();if(!s)return;mod.data.sentences.push({id:genId(),text:s});save();rerender(mod);};
@@ -3777,7 +3988,7 @@ const MODULE_TYPES={
       if(enUndo&&_undoStack[mod.id])enUndo.style.display='';
       if(enUndo)enUndo.addEventListener('click',()=>{if(_undoRestore(mod,save)){rerender(mod);}});
       body.querySelector('.en-import-pack')?.addEventListener('click',()=>{const date=dateInput.value||todayStr();const pack=englishPackFor(date);pack.words.forEach(([word,meaning])=>{if(!mod.data.words.some(w=>w.word===word))mod.data.words.push({id:genId(),word,meaning});});mod.data.sentences.push({id:genId(),text:pack.chunks.filter((_,i)=>i%2===0).join(' / ')});mod.data.studyLog=upsertByDate(mod.data.studyLog||[],date,{minutes:+body.querySelector('.en-min').value||10,pack:true});mod.data.daily[date]={...(mod.data.daily[date]||{}),words10:true,chunk1:true,pattern1:true};mod.data.selectedDate=date;save();rerender(mod);});
-      body.querySelector('.en-writing-save')?.addEventListener('click',()=>{
+      body.querySelector('.en-writing-save')?.addEventListener('click',async()=>{
         const btn=body.querySelector('.en-writing-save');
         const date=dateInput.value||todayStr();
         const text=body.querySelector('.en-writing')?.value.trim()||'';
@@ -3785,7 +3996,7 @@ const MODULE_TYPES={
         try{
           btn.disabled=true;btn.textContent='正在生成反馈...';
           const pack=englishPackFor(date);
-          const feedback=englishWritingFeedback(text,pack.words.map(w=>w[0]));
+          const feedback=await englishWritingFeedback(text,pack.words.map(w=>w[0]));
           const updatedAt=nowStr();
           mod.data.writing=mod.data.writing||{};
           const old=mod.data.writing[date]||{};
@@ -4222,18 +4433,20 @@ const MODULE_TYPES={
           }
           // 策略3：本地文件不可用 / 为空 / 同步失败时，直接从 DailyHot API 抓取（含CORS代理回退）
           if(!list||!list.length){
-            if(status)status.textContent=placeholderHit?'本地文件为空，正在直接抓取各平台热榜...':'文件同步失败，尝试直接抓取各平台热榜...';
+            // 仅抓取用户已选平台（避免忽略平台选择，也避免把"小红书"等请求误解析为其他平台如B站）
+            const sel=mod.data.hotSource||'weibo';
+            const selName={weibo:'微博',zhihu:'知乎',douyin:'抖音',baidu:'百度',xiaohongshu:'小红书','ai-news':'AI新闻',bilibili:'B站',toutiao:'今日头条'}[sel]||sel;
+            if(status)status.textContent=placeholderHit?`本地文件为空，正在直接抓取「${selName}」热榜...`:`文件同步失败，尝试直接抓取「${selName}」热榜...`;
             const apiBases=['https://dailyhot.cmcq.xyz','https://api-hot.imsyy.top','https://api-hot.cricnep.tech','https://hot.cricnep.tech'];
-            const altApis=[
-              {base:'https://api.vvhan.com/api/hotlist',type:'vvhan'},
-              {base:'https://api.oioweb.cn/api/common/HotList',type:'oioweb'},
-            ];
+            // 不再回退到 vvhan/oioweb：其参数体系与 DailyHot 不同，对"小红书"等不支持的平台会误返回其他平台（如B站）数据
+            const altApis=[];
             const corsProxies=[
               (url)=>`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
               (url)=>`https://corsproxy.io/?url=${encodeURIComponent(url)}`,
               (url)=>`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
             ];
-            const platforms=[['weibo','微博'],['zhihu','知乎'],['douyin','抖音'],['baidu','百度'],['xiaohongshu','小红书'],['bilibili','B站'],['toutiao','今日头条'],['36kr','AI科技'],['ithome','IT之家']];
+            // 已选平台的 DailyHot 别名（小红书→xiaohongshu/xhs；其余平台直接用原值）
+            const platforms=sel==='xiaohongshu'?[['xiaohongshu',selName],['xhs',selName]]:sel==='ai-news'?[['ai-news',selName],['36kr',selName],['ithome',selName]]:[[sel,selName]];
             list=[];
             let platformSuccess=0;
             for(const [key,name] of platforms){
@@ -4322,7 +4535,7 @@ const MODULE_TYPES={
                 }
               }
             }
-            if(status&&list.length)status.textContent=`直抓完成：成功 ${platformSuccess}/${platforms.length} 个平台，共 ${list.length} 条`;
+            if(status&&list.length)status.textContent=`直抓完成：已获取 ${list.length} 条「${selName}」热点`;
           }
           if(!list||!list.length){
             // 所有来源均失败：给出友好提示，不抛错以免吓到用户
@@ -4363,15 +4576,15 @@ const MODULE_TYPES={
         const status=body.querySelector('.tr-hot-status');
         if(status)status.textContent='正在抓取热榜...';
         const source=mod.data.hotSource;
-        const sourceAliases=source==='xiaohongshu'?['xiaohongshu','xhs','rednote']:source==='ai-news'?['ai-news','36kr','ithome']: [source];
+        // DailyHot 平台别名映射：小红书→xiaohongshu/xhs（rednote 非有效路由，会导致接口返回默认平台数据，已移除）
+        const sourceAliases=source==='xiaohongshu'?['xiaohongshu','xhs']:source==='ai-news'?['ai-news','36kr','ithome']:[source];
+        // 仅使用 DailyHot 风格（路径式 /{platform}）接口源；vvhan/oioweb 参数体系不同，混用会把"小红书"请求误解析为其他平台（如B站），故不放入此循环
         const baseUrls=[
           mod.data.hotBase,
           'https://api-hot.imsyy.top',
           'https://api-hot.cricnep.tech',
           'https://hot.cricnep.tech',
-          'https://dailyhot.cmcq.xyz',
-          'https://api.vvhan.com/api/hotlist',
-          'https://api.oioweb.cn/api/common/HotList'
+          'https://dailyhot.cmcq.xyz'
         ].filter((v,i,a)=>v&&a.indexOf(v)===i);
         const corsProxies=['','https://api.allorigins.win/raw?url=','https://corsproxy.io/?url=','https://api.codetabs.com/v1/proxy?quest='];
         let lastErr=null;
@@ -4452,19 +4665,33 @@ const MODULE_TYPES={
   /* ---- 灵感记录 ---- */
   'inspiration':{
     title:'灵感记录',icon:'inspiration',desc:'随时捕捉灵感想法',
-    defaultData:{ideas:[],tags:['生活','工作','写作','成长','其他'],filter:'all'},
+    defaultData:{ideas:[],tags:['生活','工作','写作','成长','其他'],filter:'all',collapsedTags:[]},
     render(d){
       d.ideas=d.ideas||[];
       d.tags=Array.isArray(d.tags)&&d.tags.length?d.tags:['生活','工作','写作','成长','其他'];
       d.filter=d.filter||'all';
-      const rows=(d.filter==='all'?d.ideas:d.ideas.filter(i=>i.tag===d.filter)).slice().reverse();
+      d.collapsedTags=Array.isArray(d.collapsedTags)?d.collapsedTags:[];
+      // 按筛选条件过滤记录
+      const filtered=d.filter==='all'?d.ideas:d.ideas.filter(i=>(i.tag||'其他')===d.filter);
+      // 按标签分组
+      const groupMap={};
+      d.tags.forEach(t=>{groupMap[t]=[];});
+      filtered.forEach(i=>{const tag=i.tag||'其他';if(!groupMap[tag])groupMap[tag]=[];groupMap[tag].push(i);});
+      const groups=Object.entries(groupMap).filter(([t,arr])=>arr.length>0);
       return`
         <div class="category-manager">
           <div class="quick-chips">
             <span class="tab ${d.filter==='all'?'active':''}" data-filter="all">全部</span>
             ${d.tags.map(t=>`<span class="tab ${d.filter===t?'active':''}" data-filter="${esc(t)}">${esc(t)}</span>`).join('')}
           </div>
-          <div class="form-row" style="margin-top:8px">
+          <div class="form-row" style="margin-top:8px;align-items:flex-end">
+            <div class="form-group" style="max-width:200px">
+              <label>标签筛选</label>
+              <select class="in-filter-select">
+                <option value="all" ${d.filter==='all'?'selected':''}>全部</option>
+                ${d.tags.map(t=>`<option value="${esc(t)}" ${d.filter===t?'selected':''}>${esc(t)}</option>`).join('')}
+              </select>
+            </div>
             <div class="form-group"><input type="text" class="in-new-tag" placeholder="新增标签，如：生活、工作、内容创作"></div>
             <button class="btn btn-ghost btn-sm in-tag-add">新增标签</button>
           </div>
@@ -4476,15 +4703,26 @@ const MODULE_TYPES={
         <div class="form-group"><label>正文（支持简单 Markdown：# 标题、- 列表）</label><textarea class="in-text" placeholder="# 今天的灵感\n\n记录正文..." style="min-height:120px"></textarea></div>
         <button class="btn btn-primary btn-sm btn-block in-add">保存灵感</button>
         <div class="record-list" style="max-height:520px">
-          ${rows.length?rows.map(i=>`
-            <div class="idea-card">
-              <div class="record-content">
-                <div class="flex-between"><span class="tag">${esc(i.tag||'其他')}</span><span class="record-meta">${formatDate(i.date||i.timestamp)}</span></div>
-                <div class="idea-body">${markdownLite(i.text)}</div>
+          ${groups.length?groups.map(([tag,arr])=>{
+            const collapsed=d.collapsedTags.includes(tag);
+            return `<div class="in-tag-group" data-tag="${esc(tag)}" style="margin-bottom:10px">
+              <div class="in-group-header" data-tag="${esc(tag)}" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--input-bg);border-radius:8px;cursor:pointer;margin-bottom:6px;font-weight:600;user-select:none">
+                <span>${esc(tag)} <span class="small-text" style="font-weight:400">${arr.length} 条</span></span>
+                <span class="in-collapse-icon">${collapsed?'▶':'▼'}</span>
               </div>
-              <button class="record-del in-del" data-id="${i.id}">✕</button>
-            </div>
-          `).join(''):'<div class="empty-state">灵感稍纵即逝，抓住它！</div>'}
+              <div class="in-group-body" style="${collapsed?'display:none':''}">
+                ${arr.slice().reverse().map(i=>`
+                  <div class="idea-card">
+                    <div class="record-content">
+                      <div class="flex-between"><span class="tag">${esc(i.tag||'其他')}</span><span class="record-meta">${formatDate(i.date||i.timestamp)}</span></div>
+                      <div class="idea-body">${markdownLite(i.text)}</div>
+                    </div>
+                    <button class="record-del in-del" data-id="${i.id}">✕</button>
+                  </div>
+                `).join('')}
+              </div>
+            </div>`;
+          }).join(''):'<div class="empty-state">灵感稍纵即逝，抓住它！</div>'}
         </div>
       `;
     },
@@ -4502,9 +4740,31 @@ const MODULE_TYPES={
       };
       body.querySelector('.in-add').addEventListener('click',addIdea);
       body.querySelectorAll('.tab[data-filter]').forEach(tab=>tab.addEventListener('click',()=>{mod.data.filter=tab.dataset.filter;save();rerender(mod);}));
+      // 标签筛选下拉框
+      body.querySelector('.in-filter-select')?.addEventListener('change',e=>{mod.data.filter=e.target.value;save();rerender(mod);});
       body.querySelector('.in-tag-add')?.addEventListener('click',()=>{const v=body.querySelector('.in-new-tag').value.trim();if(!v)return;mod.data.tags=mod.data.tags||[];if(!mod.data.tags.includes(v))mod.data.tags.push(v);save();rerender(mod);});
       body.querySelectorAll('.in-del').forEach(b=>{
         b.addEventListener('click',()=>{mod.data.ideas=mod.data.ideas.filter(x=>x.id!==b.dataset.id);save();rerender(mod);});
+      });
+      // 标签分组折叠/展开（直接切换 DOM，保存状态但不重渲染）
+      body.querySelectorAll('.in-group-header').forEach(header=>{
+        header.addEventListener('click',()=>{
+          const tag=header.dataset.tag;
+          mod.data.collapsedTags=mod.data.collapsedTags||[];
+          const idx=mod.data.collapsedTags.indexOf(tag);
+          const groupBody=header.nextElementSibling;
+          const icon=header.querySelector('.in-collapse-icon');
+          if(idx>=0){
+            mod.data.collapsedTags.splice(idx,1);
+            if(groupBody)groupBody.style.display='';
+            if(icon)icon.textContent='▼';
+          }else{
+            mod.data.collapsedTags.push(tag);
+            if(groupBody)groupBody.style.display='none';
+            if(icon)icon.textContent='▶';
+          }
+          save();
+        });
       });
     }
   },
@@ -4704,7 +4964,7 @@ const MODULE_TYPES={
           <div style="font-size:12px;color:var(--text-sec);margin-top:4px">缓存版本号用于自动更新检测，功能版本号记录每次更新的内容变化</div>
         </div>
         <div class="form-row">
-          <div class="form-group" style="max-width:100px"><input type="text" class="cl-version" placeholder="V8.3" value="V8.3"></div>
+          <div class="form-group" style="max-width:100px"><input type="text" class="cl-version" placeholder="V9.0" value="V9.0"></div>
           <div class="form-group" style="max-width:140px"><input type="date" class="cl-date" value="${todayStr()}"></div>
         </div>
         <div class="form-group"><textarea class="cl-changes" placeholder="更新内容，每行一个要点..." style="min-height:80px"></textarea></div>
@@ -4857,6 +5117,24 @@ const MODULE_TYPES={
     bind(body,mod,save){
       mod.data.entries=Array.isArray(mod.data.entries)?mod.data.entries:[];
       mod.data.openCats=mod.data.openCats||{};
+      // 分类"其他"自定义：选择"其他"时弹出输入框让用户自定义分类名称
+      const clCatSelect=body.querySelector('.cl-cat');
+      if(clCatSelect){
+        clCatSelect.addEventListener('change',()=>{
+          if(clCatSelect.value!=='其他')return;
+          const custom=prompt('请输入自定义分类名称（直接确定则使用"其他"）：','其他');
+          if(custom===null)return; // 取消则保持"其他"选中
+          const name=custom.trim();
+          if(name&&name!=='其他'){
+            if(!mod.data.categories.includes(name)){
+              mod.data.categories.push(name);
+              mod.data.openCats[name]=true;
+            }
+            clCatSelect.value=name;
+            save();rerender(mod);
+          }
+        });
+      }
       body.querySelectorAll('.tab').forEach(tab=>{
         tab.addEventListener('click',()=>{mod.data.filter=tab.dataset.cat;save();rerender(mod);});
       });
@@ -4956,8 +5234,104 @@ const MODULE_TYPES={
     defaultData:{records:[],style:'notes',selectedDate:'',monthOffset:0},
     render(d){
       d.records=d.records||[];d.style=d.style||'notes';d.selectedDate=d.selectedDate||todayStr();d.monthOffset=d.monthOffset||0;
-      const styleLabels={notes:'笔记记录',tracking:'数据追踪',checklist:'打卡清单',journal:'日志本'};
+      const styleLabels={notes:'笔记记录',tracking:'数据追踪',checklist:'打卡清单',journal:'日志本',goal:'目标追踪',habit:'习惯打卡'};
       const styleLabel=styleLabels[d.style]||'笔记记录';
+
+      /* ---- 目标追踪（OKR 式：目标 + 关键结果） ---- */
+      if(d.style==='goal'){
+        d.goals=d.goals||[];
+        // 计算单个目标进度：有 KR 时取 KR 平均值，否则取手动进度
+        const goalProgress=g=>{
+          g.krs=g.krs||[];
+          if(g.krs.length)return Math.round(g.krs.reduce((s,k)=>s+(+k.progress||0),0)/g.krs.length);
+          return Math.max(0,Math.min(100,+g.progress||0));
+        };
+        const overall=d.goals.length?Math.round(d.goals.reduce((s,g)=>s+goalProgress(g),0)/d.goals.length):0;
+        const goalsHtml=d.goals.length?d.goals.map(g=>{
+          g.krs=g.krs||[];
+          const prog=goalProgress(g);
+          return `<div class="goal-tracker-item" data-id="${g.id}">
+            <div class="gt-head">
+              <input type="text" class="gt-goal-name" value="${esc(g.name)}" placeholder="目标名称（如：每月读完 4 本书）" style="flex:1;font-weight:700;border:1px solid var(--input-border);border-radius:6px;padding:6px 8px;background:var(--input-bg)">
+              <span class="gt-prog-num">${prog}%</span>
+              <button class="record-del gt-goal-del" data-id="${g.id}" title="删除目标">✕</button>
+            </div>
+            <div class="progress-bar" style="margin-bottom:8px"><div class="progress-fill gt-goal-fill" style="width:${prog}%"></div></div>
+            <div class="gt-ctrl">
+              <span class="small-text" style="white-space:nowrap">目标进度</span>
+              <input type="range" class="gt-goal-range" min="0" max="100" value="${prog}" style="flex:1"${g.krs.length?' disabled title="已有关键结果，进度自动计算':''}">
+              <input type="number" class="gt-goal-input" min="0" max="100" value="${prog}" style="width:60px"${g.krs.length?' disabled':''}>
+            </div>
+            <div class="section-label" style="margin-top:8px">关键结果 (KR)${g.krs.length?'':' · 添加后目标进度自动按 KR 平均计算'}</div>
+            <div class="record-list">
+              ${g.krs.length?g.krs.map(k=>`
+                <div class="record-item" data-kr-id="${k.id}" style="flex-direction:column;align-items:stretch">
+                  <div class="gt-kr-row">
+                    <input type="text" class="gt-kr-name" value="${esc(k.name)}" placeholder="关键结果（如：读完第 1 本）" style="flex:1;border:1px solid var(--input-border);border-radius:6px;padding:4px 8px;background:var(--input-bg)">
+                    <input type="number" class="gt-kr-input" min="0" max="100" value="${+k.progress||0}" style="width:56px">
+                    <button class="record-del gt-kr-del" data-id="${k.id}" title="删除 KR">✕</button>
+                  </div>
+                  <div class="progress-bar" style="margin-top:4px"><div class="progress-fill gt-kr-fill" style="width:${+k.progress||0}%"></div></div>
+                </div>
+              `).join(''):'<div class="empty-state">暂无关键结果，可直接调整上方目标进度</div>'}
+            </div>
+            <button class="btn btn-ghost btn-sm gt-kr-add" data-id="${g.id}" style="margin-top:6px">+ 添加关键结果</button>
+          </div>`;
+        }).join(''):'<div class="empty-state">还没有目标，添加一个开始追踪吧～</div>';
+        return `
+          <div class="trend-panel">
+            <div class="flex-between">
+              <strong>整体目标进度</strong>
+              <span class="small-text">共 ${d.goals.length} 个目标 · 平均 ${overall}%</span>
+            </div>
+            <div class="progress-bar" style="margin-top:6px;height:10px"><div class="progress-fill" style="width:${overall}%"></div></div>
+          </div>
+          ${goalsHtml}
+          <button class="btn btn-primary btn-sm btn-block gt-goal-add">+ 添加目标</button>
+          <div class="small-text" style="margin-top:8px;text-align:center;color:var(--text-sec)">提示：添加关键结果(KR)后，目标进度将自动按 KR 平均值计算</div>
+        `;
+      }
+
+      /* ---- 习惯打卡（31 天打卡日历） ---- */
+      if(d.style==='habit'){
+        d.days=d.days||{};
+        // 最近 31 天（今天往前 30 天 + 今天）
+        const today=new Date();
+        const days=[];
+        for(let i=30;i>=0;i--){
+          const dt=addDays(today,-i);
+          const key=dateKey(dt);
+          days.push({key,dt,done:!!d.days[key],isToday:key===todayStr()});
+        }
+        const doneCount=days.filter(x=>x.done).length;
+        const rate=Math.round(doneCount/31*100);
+        // 连续打卡天数：从今天往前数连续完成；今天未完成则宽容跳过今天
+        let streak=0;
+        for(let i=days.length-1;i>=0;i--){
+          if(days[i].done)streak++;
+          else if(i===days.length-1)continue; // 今天未打卡，不中断连续天数
+          else break;
+        }
+        const cellsHtml=days.map(x=>`
+          <div class="habit-cell-day ${x.done?'done':''} ${x.isToday?'today':''}" data-date="${x.key}" title="${x.key} 点击切换">
+            <div class="habit-cell-date">${x.dt.getMonth()+1}/${x.dt.getDate()}</div>
+            <div class="habit-cell-wd">周${dayLabel(x.dt)}</div>
+            <div class="habit-cell-mark">${x.done?'✓':''}</div>
+          </div>`).join('');
+        return `
+          <div class="trend-panel">
+            <div class="flex-between">
+              <strong>连续打卡 <span style="color:var(--primary);font-size:20px;font-weight:900">${streak}</span> 天</strong>
+              <span class="small-text">完成率 ${rate}% (${doneCount}/31)</span>
+            </div>
+            <div class="progress-bar" style="margin-top:6px;height:10px"><div class="progress-fill" style="width:${rate}%"></div></div>
+          </div>
+          <div class="section-label">最近 31 天打卡日历（点击切换完成状态）</div>
+          <div class="habit-grid-31">${cellsHtml}</div>
+          <div class="small-text" style="margin-top:8px;color:var(--text-sec)">提示：今天暂未打卡也不会中断连续天数。坚持每天打卡，保持好习惯～</div>
+        `;
+      }
+
       // 月度看板
       const ctx=monthContext(d.monthOffset);
       const monthKey=ctx.monthKey;
@@ -5020,6 +5394,94 @@ const MODULE_TYPES={
       `;
     },
     bind(body,mod,save){
+      const d=mod.data;
+
+      /* ---- 目标追踪 bind ---- */
+      if(d.style==='goal'){
+        d.goals=d.goals||[];
+        // 同步目标进度：有 KR 时取平均，否则保留手动进度
+        const syncGoal=g=>{
+          if(g.krs&&g.krs.length){
+            g.progress=Math.round(g.krs.reduce((s,k)=>s+(+k.progress||0),0)/g.krs.length);
+          }
+        };
+        const refreshGoalView=item=>{
+          const g=(d.goals||[]).find(x=>x.id===item.dataset.id);if(!g)return;
+          const prog=g.krs&&g.krs.length?Math.round(g.krs.reduce((s,k)=>s+(+k.progress||0),0)/g.krs.length):Math.max(0,Math.min(100,+g.progress||0));
+          const num=item.querySelector('.gt-prog-num');if(num)num.textContent=prog+'%';
+          const fill=item.querySelector('.gt-goal-fill');if(fill)fill.style.width=prog+'%';
+          const range=item.querySelector('.gt-goal-range');if(range)range.value=prog;
+          const inp=item.querySelector('.gt-goal-input');if(inp)inp.value=prog;
+        };
+        // 添加目标
+        body.querySelector('.gt-goal-add')?.addEventListener('click',()=>{
+          d.goals.push({id:genId(),name:'',progress:0,krs:[]});
+          save();rerender(mod);
+        });
+        // 删除目标
+        body.querySelectorAll('.gt-goal-del').forEach(b=>b.addEventListener('click',()=>{
+          d.goals=d.goals.filter(g=>g.id!==b.dataset.id);save();rerender(mod);
+        }));
+        // 每个目标的交互
+        body.querySelectorAll('.goal-tracker-item').forEach(item=>{
+          const gid=item.dataset.id;
+          const g=d.goals.find(x=>x.id===gid);if(!g)return;
+          const nameInput=item.querySelector('.gt-goal-name');
+          nameInput?.addEventListener('change',()=>{g.name=nameInput.value.trim();save();});
+          // 手动调整目标进度（仅在没有 KR 时生效）
+          const range=item.querySelector('.gt-goal-range');
+          const numInput=item.querySelector('.gt-goal-input');
+          const setGoalProg=val=>{
+            val=Math.max(0,Math.min(100,+val||0));
+            if(!g.krs||!g.krs.length){g.progress=val;}
+            if(range)range.value=val;if(numInput)numInput.value=val;
+            const num=item.querySelector('.gt-prog-num');if(num)num.textContent=val+'%';
+            const fill=item.querySelector('.gt-goal-fill');if(fill)fill.style.width=val+'%';
+            save();
+          };
+          range?.addEventListener('input',()=>setGoalProg(range.value));
+          numInput?.addEventListener('change',()=>setGoalProg(numInput.value));
+          // 添加 KR
+          item.querySelector('.gt-kr-add')?.addEventListener('click',()=>{
+            g.krs=g.krs||[];g.krs.push({id:genId(),name:'',progress:0});
+            syncGoal(g);save();rerender(mod);
+          });
+          // 每个 KR 的交互
+          item.querySelectorAll('.record-item[data-kr-id]').forEach(kItem=>{
+            const kid=kItem.dataset.krId;
+            const kr=(g.krs||[]).find(x=>x.id===kid);if(!kr)return;
+            const krName=kItem.querySelector('.gt-kr-name');
+            krName?.addEventListener('change',()=>{kr.name=krName.value.trim();save();});
+            const krInput=kItem.querySelector('.gt-kr-input');
+            const setKr=val=>{
+              val=Math.max(0,Math.min(100,+val||0));kr.progress=val;
+              if(krInput)krInput.value=val;
+              const fill=kItem.querySelector('.gt-kr-fill');if(fill)fill.style.width=val+'%';
+              syncGoal(g);refreshGoalView(item);save();
+            };
+            krInput?.addEventListener('change',()=>setKr(krInput.value));
+          });
+          // 删除 KR
+          item.querySelectorAll('.gt-kr-del').forEach(b=>b.addEventListener('click',()=>{
+            g.krs=(g.krs||[]).filter(k=>k.id!==b.dataset.id);syncGoal(g);save();rerender(mod);
+          }));
+        });
+        return;
+      }
+
+      /* ---- 习惯打卡 bind ---- */
+      if(d.style==='habit'){
+        d.days=d.days||{};
+        body.querySelectorAll('.habit-cell-day').forEach(cell=>{
+          cell.addEventListener('click',()=>{
+            const key=cell.dataset.date;
+            if(d.days[key])delete d.days[key];else d.days[key]=1;
+            save();rerender(mod);
+          });
+        });
+        return;
+      }
+
       bindMonthBoard(body,mod,save,'.cu-date');
       const dateInput=body.querySelector('.cu-date');
       const loadSelected=()=>{mod.data.selectedDate=dateInput.value||todayStr();save();rerender(mod);};
@@ -5100,8 +5562,8 @@ function renderDashboard(){
     card.querySelector('.mod-down').addEventListener('click',()=>{DB.moveModule(mod.id,1);renderDashboard();renderSideNav();});
     card.querySelector('.mod-hide').addEventListener('click',()=>{DB.toggleModule(mod.id);renderDashboard();renderModuleMgmt();renderNavSettings();renderSideNav();});
     card.querySelector('.mod-del').addEventListener('click',()=>{
-      if(confirm(`确定删除「${mod.title}」模块吗？\n该模块的所有数据将被清除。`)){
-        DB.removeModule(mod.id);renderDashboard();renderModuleMgmt();renderNavSettings();renderSideNav();
+      if(confirm(`确定删除「${mod.title}」模块吗？\n删除后可在「设置 → 回收站」中恢复。`)){
+        DB.removeModule(mod.id);renderDashboard();renderModuleMgmt();renderNavSettings();renderSideNav();renderRecycleBin();
       }
     });
   });
@@ -5324,6 +5786,64 @@ function renderModuleMgmt(){
       renderNavSettings();
       renderSideNav();
     });
+  });
+}
+
+/* ============================================================
+   回收站渲染
+============================================================ */
+function renderRecycleBin(){
+  const list=document.getElementById('recycleBinList');
+  if(!list)return;
+  const recycled=DB.data.recycledModules||[];
+  if(!recycled.length){
+    list.innerHTML='<div class="empty-state">回收站为空</div>';
+    return;
+  }
+  // 按删除时间倒序展示
+  const sorted=[...recycled].sort((a,b)=>(b.recycledAt||'').localeCompare(a.recycledAt||''));
+  list.innerHTML=sorted.map(m=>{
+    const def=MODULE_TYPES[m.type]||{icon:'custom',title:'未知'};
+    const styleLabel=(m.data&&m.data.style)?({notes:'笔记记录',tracking:'数据追踪',checklist:'打卡清单',journal:'日志本',goal:'目标追踪',habit:'习惯打卡'}[m.data.style]||''):'';
+    const typeText=def.title+(styleLabel?` · ${styleLabel}`:'');
+    const when=m.recycledAt?formatDateTime(m.recycledAt):'';
+    return`<div class="recycle-item">
+      <span class="ri-icon">${iconSvg(def.icon)}</span>
+      <span class="ri-name">${esc(m.title)}</span>
+      <span class="tag">${esc(typeText)}</span>
+      <button class="btn btn-primary btn-sm ri-restore" data-id="${m.id}">恢复</button>
+      <button class="btn btn-danger btn-sm ri-purge" data-id="${m.id}">彻底删除</button>
+      <span class="ri-meta">删除时间：${when}</span>
+    </div>`;
+  }).join('')+'<button class="btn btn-ghost btn-sm btn-block ri-empty" style="margin-top:6px">清空回收站</button>';
+  // 恢复
+  list.querySelectorAll('.ri-restore').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const id=btn.dataset.id;
+      const mod=(DB.data.recycledModules||[]).find(m=>m.id===id);
+      DB.restoreModule(id);
+      renderRecycleBin();
+      renderDashboard();renderModuleMgmt();renderNavSettings();renderSideNav();
+      showToast(`已恢复「${mod?mod.title:'板块'}」`);
+    });
+  });
+  // 彻底删除
+  list.querySelectorAll('.ri-purge').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const id=btn.dataset.id;
+      const mod=(DB.data.recycledModules||[]).find(m=>m.id===id);
+      if(!confirm(`确定彻底删除「${mod?mod.title:'该板块'}」吗？\n此操作不可恢复，所有数据将被清除。`))return;
+      DB.purgeModule(id);
+      renderRecycleBin();
+      showToast('已彻底删除');
+    });
+  });
+  // 清空回收站
+  list.querySelector('.ri-empty')?.addEventListener('click',()=>{
+    if(!confirm('确定清空回收站吗？\n所有已删除的板块将被彻底清除，不可恢复。'))return;
+    DB.emptyRecycleBin();
+    renderRecycleBin();
+    showToast('回收站已清空');
   });
 }
 
@@ -5918,6 +6438,7 @@ function ensureWorkbenchModule(type,afterType){
 }
 function migrateWorkbenchData(){
   DB.data.modules=DB.data.modules||[];
+  DB.data.recycledModules=DB.data.recycledModules||[];
   ensureWorkbenchModule('overview','daily-plan');
   ensureWorkbenchModule('report','overview');
   ensureWorkbenchModule('goals','overview');
@@ -6150,6 +6671,12 @@ function migrateWorkbenchData(){
         changes:'V8.7 移动端布局修复与英语优化（对应缓存版本 v40）：\n• 修复移动端表单左侧空白：form-row在column模式下align-items:flex-end导致元素右偏，改为stretch并移除max-width限制\n• 移动端表单按钮全宽适配：form-row内按钮在移动端自动占满宽度\n• 英语写作反馈优化：移除不安全的词汇替换（very happy→thrilled等语义错误的替换）和短语动词替换（discover→find out等），仅保留缩写形式和安全的句式简化\n• 口语化版本重命名：从"Native地道表达"改为"口语化版本（缩写+简化）"，添加免责声明建议使用专业工具\n• 翻译API验证：翻译结果与原文相同时不显示，避免展示无效翻译\n• 每日计划输入框flex适配：dp-input在桌面端正确占据剩余空间\n• 阅读记录保存按钮移除align-self:flex-end：避免移动端布局异常'
       });
     }
+    if(!changelog.data.logs.some(l=>l.version==='V9.0')){
+      changelog.data.logs.push({
+        id:genId(),date:todayStr(),version:'V9.0',
+        changes:'V9.0 全面升级与数据安全增强（对应缓存版本 v43）：\n• 图表动态高度：所有柱状图（睡眠/运动/冥想/阅读）根据实际数据动态调整高度，不再截断\n• 英语语法检查重构：集成LanguageTool API在线检测引擎，支持be动词缺失、时态、主谓一致等全面语法检查，API失败时自动回退本地规则\n• 翻译质量提升：优先使用Google翻译API，MyMemory作为备用，修复"人少景美"等翻译不准确问题\n• 中英双向查词：支持输入中文查询对应英文单词，先本地匹配再调翻译API兜底\n• 爆款话题平台修复：修复选择小红书返回B站内容的问题，严格映射平台别名（xiaohongshu/xhs），确保数据源正确\n• 运动类型扩展：新增有氧、无氧、八段锦类型，"其他"支持自定义输入弹框\n• 收藏库"其他"自定义：收藏库分类"其他"同样支持自定义输入\n• 阅读模块保存修复：仅保存编辑过的日期数据，未编辑日期自动清除不显示在看板上\n• 英语看板日期跳转：点击月历日期自动跳转并高亮当天单词内容区域\n• 灵感记录标签分组：按标签分类显示，支持折叠/展开，内容多时更整洁\n• 自定义模块扩展：新增"目标追踪"（OKR式）和"习惯打卡"（31天日历）两种模块类型\n• 回收站功能：删除的模块移入回收站，可随时恢复，支持清空\n• 撤回按钮：各模块周保存支持撤回，恢复上次保存前的数据\n• 数据安全：版本更新自动备份、本地多重备份机制、数据导出导入确保数据不丢失'
+      });
+    }
   }
   DB.save();
 }
@@ -6234,6 +6761,7 @@ function init(){
     renderThemeGrid();
     renderNavSettings();
     renderModuleMgmt();
+    renderRecycleBin();
     openModal('settingsModal');
   });
 
@@ -6250,7 +6778,11 @@ function init(){
     const name=nameInput?.value.trim();
     if(!name){alert('请输入板块名称');return;}
     const style=styleInput?.value||'notes';
-    const newMod={id:genId(),type:'custom',title:name,visible:true,data:{records:[],style,selectedDate:todayStr(),monthOffset:0}};
+    // 根据样式初始化对应数据结构
+    const baseData={records:[],style,selectedDate:todayStr(),monthOffset:0};
+    if(style==='goal')Object.assign(baseData,{goals:[]});
+    if(style==='habit')Object.assign(baseData,{days:{}});
+    const newMod={id:genId(),type:'custom',title:name,visible:true,data:baseData};
     DB.data.modules.push(newMod);
     DB.save();
     nameInput.value='';
