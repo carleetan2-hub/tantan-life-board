@@ -13,7 +13,14 @@ const app = express();
 const PORT = process.env.PORT || 3456;
 
 // 中间件
-app.use(cors());
+app.use(cors({
+  origin: true,
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+  allowedHeaders: 'Content-Type,Authorization',
+  credentials: true,
+  preflightContinue: false,
+  optionsSuccessStatus: 204
+}));
 app.use(express.json({ limit: '50mb' }));
 
 // ============ 数据存储（JSON 文件） ============
@@ -50,6 +57,9 @@ let store = loadData();
 /**
  * 健康检查
  */
+app.get('/', (req, res) => {
+  res.redirect('/api/health');
+});
 app.get('/api/health', (req, res) => {
   res.json({ ok: true, service: 'tantan-sync', version: '2.0.0', time: new Date().toISOString() });
 });
@@ -204,5 +214,9 @@ app.listen(PORT, () => {
   console.log(`  Tantan Sync Server 已启动`);
   console.log(`  端口: ${PORT}`);
   console.log(`  健康检查: /api/health`);
+  console.log(`  数据持久化: ${DATA_FILE}`);
   console.log(`========================================\n`);
 });
+
+// 定时持久化（每 5 分钟写一次，防止意外退出丢数据）
+setInterval(() => { saveData(store); }, 300000);

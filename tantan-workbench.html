@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="zh-CN"><head>
+<html lang="zh-CN">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -105,6 +106,12 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--primary)
 .side-nav-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .more-panel{margin-top:auto;padding:14px 18px;border-top:1px solid var(--card-border);font-size:12px;color:var(--text-sec);line-height:1.7;display:none}
 .more-panel strong{color:var(--primary)}
+.more-section{margin-bottom:4px}
+.more-section-head{display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:4px 0;user-select:none}
+.more-section-head:hover{opacity:.8}
+.more-section-icon{font-size:10px;color:var(--text-sec);transition:transform .2s}
+.more-section-head.expanded .more-section-icon{transform:rotate(90deg)}
+.more-section-body{padding:4px 0 8px}
 .more-toggle{color:var(--text-sec)!important}
 .content-area{min-width:0}
 .content-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
@@ -358,7 +365,7 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
 .idea-body{white-space:pre-wrap;line-height:1.75;margin-top:6px}
 .idea-body h4{margin:8px 0 4px;color:var(--primary)}
 .idea-body ul{margin:6px 0 6px 18px}
-.writing-feedback{white-space:pre-wrap;line-height:1.7;background:var(--primary-light);border:1px dashed var(--primary);border-radius:12px;padding:10px;margin-top:8px;font-size:13px;color:var(--text-sec)}
+.writing-feedback{line-height:1.7;background:var(--primary-light);border:1px dashed var(--primary);border-radius:12px;padding:10px;margin-top:8px;font-size:13px;color:var(--text-sec)}
 .en-feedback-table{width:100%;border-collapse:collapse;margin:8px 0;font-size:13px}
 .en-feedback-table th{background:var(--primary);color:#fff;padding:6px 10px;text-align:left;font-weight:700}
 .en-feedback-table td{padding:6px 10px;border-bottom:1px solid var(--card-border);vertical-align:top}
@@ -525,7 +532,7 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
 
 <header class="header">
   <div class="header-left">
-    <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12c4-8 12-8 16 0-4 8-12 8-16 0z" fill="none" stroke="currentColor" stroke-width="2"></path><path d="M8 12c2-3 6-3 8 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+    <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12c4-8 12-8 16 0-4 8-12 8-16 0z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 12c2-3 6-3 8 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
     <h1>Tantan Life Board</h1>
     <span class="date-display" id="dateDisplay"></span>
     <span class="daily-quote" id="dailyQuote"></span>
@@ -545,17 +552,29 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
           <div class="sidebar-name">Tantan</div>
           <div class="sidebar-subtitle">Life Board</div>
         </div>
-        <button class="mobile-menu-close" id="sidebarCloseBtn" aria-label="关闭导航">×</button>
+        <button class="mobile-menu-close" id="sidebarCloseBtn" aria-label="关闭导航">&times;</button>
       </div>
     </div>
     <nav class="side-nav" id="sideNav"></nav>
     <div class="more-panel" id="morePanel">
-      <div><strong>关于本站</strong></div>
-      <div>tantan的个人成长空间</div>
-      <div>状态：<strong>迭代中</strong></div>
-      <div id="siteVersion">V9.0</div>
-      <div style="font-size:11px;color:var(--text-light);margin-top:4px">小改动用小数点后一位（V8.2），大改动用V8.x、V9.x</div>
-      <div style="margin-top:6px"><button class="btn btn-ghost btn-sm" id="moreChangelogBtn" style="padding:0;font-size:12px">更新日志</button></div>
+      <div class="more-section">
+        <div class="more-section-head" id="aboutToggle">
+          <strong>关于本站</strong>
+          <span class="more-section-icon">▸</span>
+        </div>
+        <div class="more-section-body" id="aboutBody" style="display:none">
+          <div>tantan的个人成长空间</div>
+          <div>状态：<strong>迭代中</strong></div>
+          <div id="siteVersion">V9.4</div>
+          <div style="font-size:11px;color:var(--text-light);margin-top:4px">小改动用小数点后一位（V8.2），大改动用V8.x、V9.x</div>
+        </div>
+      </div>
+      <div class="more-section">
+        <div class="more-section-head" id="moreChangelogBtn">
+          <strong>更新日志</strong>
+          <span class="more-section-icon">▸</span>
+        </div>
+      </div>
     </div>
   </aside>
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -577,7 +596,7 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
 <!-- 设置弹窗 -->
 <div class="modal-overlay" id="settingsModal">
   <div class="modal">
-    <h2><span>设置</span><button class="modal-close" data-close="settingsModal">×</button></h2>
+    <h2><span>设置</span><button class="modal-close" data-close="settingsModal">&times;</button></h2>
     <div class="settings-content">
     <div class="modal-section">
       <h3>主题配色</h3>
@@ -646,8 +665,30 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
         <div style="margin-bottom:6px"><strong>✓ 本地优先存储：</strong>你的所有记录（计划、睡眠、运动、英语、复盘等）仅保存在浏览器本地（localStorage），不会自动上传到任何服务器。</div>
         <div style="margin-bottom:6px"><strong>✓ 同步可选加密：</strong>仅在你主动配置云端同步时，数据才会在你的服务器和设备间传输。同步使用你设置的密钥标识，请妥善保管。</div>
         <div style="margin-bottom:6px"><strong>✓ 不收集个人信息：</strong>本应用不包含任何分析追踪代码（无 Google Analytics、无埋点统计），不会收集你的使用行为或个人数据。</div>
-        <div style="margin-bottom:6px"><strong>✓ 外部API说明：</strong>仅查单词（dictionaryapi.dev）和爆款话题抓取功能会调用公共API，且只发送查询关键词，不含任何个人记录数据。</div>
+        <div style="margin-bottom:6px"><strong>✓ 外部API说明：</strong>仅查单词（dictionaryapi.dev）、翻译API、语法检查（LanguageTool）、收藏库网页提取（Jina Reader）和AI学习计划（Gemini，需你主动配置密钥）会调用外部API，且只发送查询内容，不含任何个人记录数据。</div>
         <div><strong>✓ 完全离线可用：</strong>不使用同步功能时，所有核心功能完全离线运行，数据不离开你的设备。</div>
+      </div>
+    </div>
+    <div class="modal-section">
+      <h3>🤖 AI 助手设置</h3>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="small-text" style="color:var(--text-sec);line-height:1.6">
+          配置 Gemini API 密钥后，技能板块可使用 AI 自动生成个性化学习计划。<br>
+          <strong>免费获取：</strong>访问 <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--primary)">Google AI Studio</a> → 创建 API Key → 粘贴到下方
+        </div>
+        <div class="form-group">
+          <label>Gemini API 密钥</label>
+          <input type="password" id="geminiApiKey" placeholder="粘贴你的 Gemini API Key..." style="font-size:13px">
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-primary btn-sm" id="saveApiKeyBtn">保存密钥</button>
+          <button class="btn btn-ghost btn-sm" id="clearApiKeyBtn">清除密钥</button>
+          <button class="btn btn-ghost btn-sm" id="testApiKeyBtn">测试连接</button>
+        </div>
+        <div id="apiKeyStatus" class="small-text" style="color:var(--text-sec)"></div>
+        <div class="small-text" style="color:var(--text-light);line-height:1.6">
+          🔒 密钥仅存储在浏览器本地，不会上传到任何服务器。每次调用 AI 时直接从你的浏览器发送请求到 Google。
+        </div>
       </div>
     </div>
     <div class="modal-section">
@@ -682,6 +723,15 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
           3. 开启自动同步后，每次修改会自动上传到云端<br>
           4. 手机打开时会自动拉取最新数据
         </div>
+        <div class="small-text" style="color:var(--text-sec);line-height:1.6;margin-top:10px;padding:8px 10px;background:var(--input-bg);border-radius:8px">
+          💡 <strong>跨设备同步方案对比：</strong><br>
+          • <strong>自建 Render 服务</strong>（当前方案）：免费、数据自控，需部署<br>
+          • <strong>GitHub Gist</strong>：免费、简单，适合技术用户，数据公开（需加密）<br>
+          • <strong>WebDAV（坚果云/Nextcloud）</strong>：稳定可靠，需配置 WebDAV 服务<br>
+          • <strong>Supabase</strong>：开源 Firebase 替代，免费额度充足，支持实时同步<br>
+          • <strong>不开启云同步</strong>：可手动导出/导入 JSON 文件跨设备传输<br>
+          <span style="color:var(--text-light)">推荐：日常使用自建 Render 服务 + 每周自动备份 JSON 文件双保险</span>
+        </div>
       </div>
     </div>
     </div>
@@ -692,7 +742,7 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
 <!-- 添加模块弹窗 -->
 <div class="modal-overlay" id="addModuleModal">
   <div class="modal">
-    <button class="modal-close" data-close="addModuleModal">×</button>
+    <button class="modal-close" data-close="addModuleModal">&times;</button>
     <h2>添加模块</h2>
     <div class="add-module-grid" id="addModuleGrid"></div>
   </div>
@@ -702,8 +752,8 @@ input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--pr
 /* ============================================================
    应用版本与自动更新检测
 ============================================================ */
-const APP_VERSION = 'v43';
-const APP_BUILD_TIME = '2026-08-06';
+const APP_VERSION = 'v47';
+const APP_BUILD_TIME = '2026-08-08';
 
 /**
  * 检查是否有新版本可用
@@ -1067,8 +1117,12 @@ async function englishWritingFeedback(text='',packWords=[]){
   let offlineMode=false;
   let apiSuccess=false;
   try{
-    const ltUrl=`https://api.languagetool.org/v2/check?text=${encodeURIComponent(raw)}&language=en-US`;
-    const ltRes=await fetch(ltUrl,{signal:AbortSignal.timeout(8000)});
+    const ltRes=await fetch('https://api.languagetool.org/v2/check',{
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body:`text=${encodeURIComponent(raw)}&language=en-US`,
+      signal:AbortSignal.timeout(10000)
+    });
     if(ltRes.ok){
       const ltData=await ltRes.json();
       const ltMatches=Array.isArray(ltData&&ltData.matches)?ltData.matches:[];
@@ -1090,6 +1144,8 @@ async function englishWritingFeedback(text='',packWords=[]){
         });
       }
       apiSuccess=true;
+    }else{
+      offlineMode=true;
     }
   }catch(e){
     // API 不可用，回退到本地正则规则
@@ -1314,6 +1370,36 @@ async function englishWritingFeedback(text='',packWords=[]){
   });
   let corrected = correctedSentences.join(' ');
 
+  // 2b. 如果 LanguageTool API 返回了修正建议，应用到修正版
+  if(apiSuccess&&errors.length){
+    errors.forEach(e=>{
+      if(e.orig&&e.fix&&e.orig!==e.fix&&e.orig!=='…'&&e.fix!=='（参考下方规则说明）'){
+        // 用精确匹配替换原句片段
+        const escaped=e.orig.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+        try{
+          corrected=corrected.replace(new RegExp(escaped,'i'),e.fix);
+        }catch(err){}
+      }
+    });
+  }
+
+  // 2c. 额外的本地语法修正规则（处理 LanguageTool 可能遗漏的常见错误）
+  // there are + 不可数名词 → there is
+  corrected=corrected.replace(/\bthere\s+are\s+(lots\s+of|a\s+lot\s+of|much|plenty\s+of)\s+(work|water|time|money|information|knowledge|homework|housework|evidence|advice|furniture|equipment|luggage|baggage|traffic|news|progress|research|music|weather|food|bread|rice|tea|coffee|milk|salt|sugar|hair|grass|wood|paper|glass|metal|stone|sand|soil|coal|oil|gas|air|smoke|steam|ice|rain|snow|wind|sunshine|light|darkness|heat|cold|silence|noise|peace|luck|fun|harm|damage|trouble|difficulty|danger|fear|hope|love|hate|anger|joy|sadness|happiness|courage|patience|honesty|kindness|beauty|truth|freedom|wisdom|strength|health|wealth|power|energy|space|time)\b/gi,(m,quant,noun)=>{
+    return `there is ${quant} ${noun}`;
+  });
+  // there have → there is/are (根据后面名词判断)
+  corrected=corrected.replace(/\bthere\s+have\b/gi,'there are');
+  // if there have X → if there is X (单数)
+  corrected=corrected.replace(/\bif\s+there\s+(?:are|have)\s+(complimentary|free|wi-?fi|breakfast|wifi|internet|parking|a\s+pool|a\s+gym)\b/gi,(m,noun)=>`if there is ${noun}`);
+  // is/are 混合错误
+  corrected=corrected.replace(/\bwhere\s+is\s+(\w+s)\s+there\b/gi,(m,plural)=>`where are the ${plural}`);
+  // I have booked → I've booked (in corrected version too)
+  // lots of work → a lot of work (more standard)
+  // 双重谓语修正：please help me check in → please help me check in
+  // 清理多余空格
+  corrected=corrected.replace(/\s+/g,' ').trim();
+
   // 3. 生成 Native 地道表达版本（在修正版基础上进行地道改写）
   // 注意：仅做安全、可靠的改写，避免误导用户
   let nativeVersion = corrected;
@@ -1376,12 +1462,12 @@ async function englishWritingFeedback(text='',packWords=[]){
   const suggestionBlock='\n\n<strong style="font-size:14px;color:var(--text)">💡 提升建议：</strong>\n<div style="margin-top:4px">• 使用更丰富的连接词（however, moreover, therefore, meanwhile）<br>• 增加具体细节（时间、地点、感受）让表达更生动<br>• 尝试复合句结构：It was ... because ... / Not only ... but also ...</div>';
 
   // 6. 修正版
-  const correctedBlock=`\n\n<strong style="font-size:14px;color:var(--text)">📝 修正版（已应用所有纠错）：</strong>\n<div style="background:var(--primary-light);border:1px solid var(--primary);border-radius:10px;padding:10px 14px;margin-top:6px;font-size:14px;color:var(--text);line-height:1.8">${esc(corrected)}</div>`;
+  const correctedBlock=`\n\n<strong style="font-size:14px;color:var(--text)">📝 修正版（已应用所有纠错）：</strong>\n<div style="background:var(--primary-light);border:1px solid var(--primary);border-radius:10px;padding:10px 14px;margin-top:6px;font-size:14px;color:var(--text);line-height:1.8;white-space:pre-wrap">${esc(corrected)}</div>`;
 
   // 7. Native 版本（仅在不同于修正版时显示）
   const nativeChanged=nativeVersion.toLowerCase()!==corrected.toLowerCase();
   const nativeNotesHtml=nativeNotes.length?`<div style="font-size:12px;color:var(--text-sec);margin-top:6px;padding:6px 10px;background:#fffef0;border-radius:6px">📌 本次改写要点：${[...new Set(nativeNotes)].slice(0,5).map(n=>`<span style="display:inline-block;margin:2px 4px;padding:2px 8px;background:#fff5d6;border-radius:10px">${esc(n)}</span>`).join('')}</div>`:'';
-  const nativeBlock=nativeChanged?`\n\n<strong style="font-size:14px;color:var(--text)">🌟 口语化版本（缩写+简化）：</strong>\n<div style="background:#fffbe6;border:1px solid #f0d860;border-radius:10px;padding:10px 14px;margin-top:6px;font-size:14px;color:var(--text);line-height:1.8">${esc(nativeVersion)}</div>${nativeNotesHtml}<div style="font-size:12px;color:var(--text-sec);margin-top:4px">⚠️ 以上仅为基础的缩写和句式简化建议。如需更地道的母语者表达，建议使用专业翻译工具或咨询英语母语者。</div>`:'';
+  const nativeBlock=nativeChanged?`\n\n<strong style="font-size:14px;color:var(--text)">🌟 口语化版本（缩写+简化）：</strong>\n<div style="background:#fffbe6;border:1px solid #f0d860;border-radius:10px;padding:10px 14px;margin-top:6px;font-size:14px;color:var(--text);line-height:1.8;white-space:pre-wrap">${esc(nativeVersion)}</div>${nativeNotesHtml}<div style="font-size:12px;color:var(--text-sec);margin-top:4px">⚠️ 以上仅为基础的缩写和句式简化建议。如需更地道的母语者表达，建议使用专业翻译工具或咨询英语母语者。</div>`:'';
 
   // 8. 写作小贴士
   const tipsBlock='\n\n📚 <strong style="font-size:14px;color:var(--text)">写作小贴士：</strong> <span style="font-size:13px">下次可以按「感受 → 原因 → 下一步」的结构来写，让你的表达更有层次感。试试用 because / so that / although 等连接词串联句子。</span>';
@@ -1410,19 +1496,19 @@ function weeklyReflectionText(summary){
     </div>
   </div>`;
 }
-function periodKeys(kind='week'){
+function periodKeys(kind='week',offset=0){
   const now=new Date();let start,end;
-  if(kind==='week'){start=addDays(now,(now.getDay()+6)%7*-1);end=addDays(start,6);}
-  else if(kind==='month'){start=new Date(now.getFullYear(),now.getMonth(),1);end=new Date(now.getFullYear(),now.getMonth()+1,0);}
-  else if(kind==='quarter'){const q=Math.floor(now.getMonth()/3)*3;start=new Date(now.getFullYear(),q,1);end=new Date(now.getFullYear(),q+3,0);}
-  else{start=new Date(now.getFullYear(),0,1);end=new Date(now.getFullYear(),11,31);}
+  if(kind==='week'){const base=addDays(now,offset*7);start=addDays(base,(base.getDay()+6)%7*-1);end=addDays(start,6);}
+  else if(kind==='month'){const m=now.getMonth()+offset;start=new Date(now.getFullYear(),m,1);end=new Date(now.getFullYear(),m+1,0);}
+  else if(kind==='quarter'){const q=Math.floor(now.getMonth()/3)*3+offset*3;start=new Date(now.getFullYear(),q,1);end=new Date(now.getFullYear(),q+3,0);}
+  else{start=new Date(now.getFullYear()+offset,0,1);end=new Date(now.getFullYear()+offset,11,31);}
   const keys=[];for(let d=new Date(start);d<=end;d=addDays(d,1))keys.push(dateKey(d));return keys;
 }
-function reportStats(kind='week'){
-  const keys=periodKeys(kind), mods=DB.data.modules||[];
+function reportStats(kind='week',offset=0){
+  const keys=periodKeys(kind,offset), mods=DB.data.modules||[];
   const get=t=>mods.find(m=>m.type===t)?.data||{};
   const plan=get('daily-plan'),sleep=get('sleep'),exercise=get('exercise'),meditation=get('meditation'),english=get('english'),reading=get('reading'),review=get('review'),goals=get('goals');
-  let planDone=0,planTotal=0,sleepDays=0,early=0,exDays=0,medMin=0,medDays=0,enDone=0,enTotal=0,readMin=0,reviewDays=0;
+  let planDone=0,planTotal=0,sleepDays=0,early=0,exDays=0,exMin=0,medMin=0,medDays=0,enDone=0,enTotal=0,readMin=0,readDays=0,reviewDays=0;
   // 目标相关统计
   let goalPlansDefault=0,goalPlansHealth=0,goalPlansLearning=0,goalPlansLife=0,goalPlansOther=0;
   let goalDoneDefault=0,goalDoneHealth=0,goalDoneLearning=0,goalDoneLife=0,goalDoneOther=0;
@@ -1449,15 +1535,19 @@ function reportStats(kind='week'){
       });
     }
     const sl=findByDate(sleep.records||[],key);if(sl?.bedtime){sleepDays++;if(isEarlySleep(sl.bedtime))early++;detail.sleep=sl.bedtime;dayHasData=true;}
-    const quick=exercise.quick?.[key];const ex=(exercise.records||[]).filter(r=>r.date===key);if((quick?.items||[]).length||ex.length)exDays++;
-    if((quick?.items||[]).length||ex.length){detail.exercise=true;dayHasData=true;}
+    const quick=exercise.quick?.[key];const ex=(exercise.records||[]).filter(r=>r.date===key);
+    const exHasData=(quick?.items||[]).length||ex.length;
+    if(exHasData){exDays++;detail.exercise=true;dayHasData=true;}
+    const dayExMin=(+(quick?.minutes||0))+ex.reduce((s,r)=>s+(+r.duration||0),0);
+    if(exHasData)exMin+=dayExMin;
+    if(exHasData)detail.exerciseMin=dayExMin;
     const md=findByDate(meditation.records||[],key);if(md?.minutes){medDays++;medMin+=(+md.minutes||0);detail.meditation=+md.minutes||0;dayHasData=true;}
     const enRec=english.daily?.[key];
-    const enHasData=enRec&&(enRec.words10||enRec.chunk1||enRec.pattern1||(+enRec.aiMinutes||0)>=10||(+enRec.shadowMinutes||0)>=5);
-    const ec=englishCompletion(enRec||{});enDone+=ec.done;
-    if(enHasData){enTotal+=ec.total;detail.english=ec.done+'/'+ec.total;dayHasData=true;}
-    const rd=reading.daily?.[key];if(rd)readMin+=(+rd.minutes||0);
-    if(rd&&(+rd.minutes||0)>0){detail.reading=+rd.minutes||0;dayHasData=true;}
+    const enHasData=enRec&&(enRec.words10||enRec.chunk1||enRec.pattern1||(+enRec.aiMinutes||0)>0||(+enRec.shadowMinutes||0)>0);
+    const ec=englishCompletion(enRec||{});
+    if(enHasData){enDone+=ec.done;enTotal+=ec.total;detail.english=ec.done+'/'+ec.total;dayHasData=true;}
+    const rd=reading.daily?.[key];
+    if(rd&&(+rd.minutes||0)>0){readMin+=(+rd.minutes||0);readDays++;detail.reading=+rd.minutes||0;dayHasData=true;}
     const rv=findByDate(review.records||[],key);
     if(rv&&(rv.wellDone||rv.improve)){reviewDays++;detail.review=true;dayHasData=true;}
     if(dayHasData||tasks.length)dailyDetail.push(detail);
@@ -1480,7 +1570,7 @@ function reportStats(kind='week'){
     });
   }
   return {days:keys.length,periodStart:keys[0]||'',periodEnd:keys[keys.length-1]||'',
-    planDone,planTotal,sleepDays,early,exDays,medMin,medDays,enDone,enTotal,readMin,reviewDays,
+    planDone,planTotal,sleepDays,early,exDays,exMin,medMin,medDays,enDone,enTotal,readMin,readDays,reviewDays,
     hasData:planTotal>0||sleepDays>0||exDays>0||medDays>0||enTotal>0||readMin>0||reviewDays>0,
     dailyDetail:dailyDetail,
     goalBlocks,goalDefRate,goalHealthRate,goalLearnRate,goalLifeRate,goalOtherRate,
@@ -1500,9 +1590,34 @@ function dailyQuote(){
   ];
   const d=new Date();return quotes[(d.getFullYear()+d.getMonth()+d.getDate())%quotes.length];
 }
+function getApiKey(){return localStorage.getItem('tantan_gemini_key')||'';}
+function setApiKey(key){localStorage.setItem('tantan_gemini_key',key||'');}
+async function callAI(prompt,systemPrompt=''){
+  const key=getApiKey();
+  if(!key)throw new Error('NO_API_KEY');
+  const fullPrompt=systemPrompt?`${systemPrompt}\n\n${prompt}`:prompt;
+  const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({contents:[{parts:[{text:fullPrompt}]}],generationConfig:{temperature:0.7,maxOutputTokens:1024}})
+  });
+  if(!res.ok){
+    let errMsg=`API ${res.status}`;
+    try{const errData=await res.json();errMsg=errData?.error?.message||errMsg;}catch(e){}
+    throw new Error(errMsg);
+  }
+  const data=await res.json();
+  return data.candidates?.[0]?.content?.parts?.[0]?.text||'';
+}
 function generateSkillSteps(name,resources='',notes=''){
   const source=[resources,notes].filter(Boolean).join('；')||'已收藏资料';
   return `学习目标：掌握「${name||'这项技能'}」的核心方法\n资料来源：${source}\n\n1. 快速浏览：先用20分钟了解资料目录、关键词和最终成果。\n2. 拆成3个小主题：概念/方法/案例，分别记录不懂的问题。\n3. 做一次小练习：用30-60分钟完成一个最小作品或复述。\n4. 输出一页笔记：整理步骤、常见坑、可复用模板。\n5. 每周复盘：补充新链接，更新下一步练习任务。`;
+}
+async function generateSkillStepsAI(name,resources='',notes=''){
+  const key=getApiKey();
+  if(!key)return generateSkillSteps(name,resources,notes);
+  const systemPrompt='你是一位专业的学习规划师。请根据用户提供的技能信息，生成一个具体、可执行的学习计划。要求：1. 分5-7个步骤 2. 每步包含具体行动和预计时间 3. 考虑用户当前水平 4. 用中文回答 5. 格式清晰，每步用编号开头';
+  const userPrompt=`技能名称：${name||'未指定'}\n学习资源：${resources||'未提供'}\n学习笔记：${notes||'无'}\n\n请生成详细的学习计划。`;
+  return await callAI(userPrompt,systemPrompt);
 }
 function simpleSummaryFromText(text,title=''){
   const clean=(text||'').replace(/\s+/g,' ').trim();
@@ -1528,29 +1643,66 @@ async function tryFetchWithTimeout(url,timeout=12000){
 async function summarizeLinkOrNote(entry,statusEl){
   const title=entry.title||'未命名收藏';
   const note=entry.note||'';
-  if(note.length>80)return simpleSummaryFromText(note,title);
-  if(!entry.link)return simpleSummaryFromText(note,title);
-  const encoded=encodeURIComponent(entry.link);
-  const proxies=[
-    `https://api.allorigins.win/raw?url=${encoded}`,
-    `https://corsproxy.io/?url=${encoded}`,
-    `https://api.codetabs.com/v1/proxy?quest=${encoded}`,
-    `https://api.allorigins.win/get?url=${encoded}&charset=UTF-8`,
-  ];
-  let lastErr=null;
-  for(let i=0;i<proxies.length;i++){
-    const url=proxies[i];
+  let extractedText='';
+  if(note.length>30){
+    extractedText=note;
+  }else if(!entry.link){
+    extractedText=note;
+  }else{
+    // 优先使用 Jina Reader API（免费，无需密钥，直接提取网页正文为 Markdown）
+    if(statusEl)statusEl.textContent='正在通过 Jina Reader 提取正文...';
     try{
-      if(statusEl)statusEl.textContent=`正在尝试获取(${i+1}/${proxies.length})...`;
-      const html=await tryFetchWithTimeout(url,12000);
-      const extracted=tryExtractFromMeta(html);
-      if(extracted)return simpleSummaryFromText(extracted,title);
-      throw new Error('正文过短或无可读内容');
-    }catch(err){lastErr=err;}
+      const jinaUrl=`https://r.jina.ai/${entry.link}`;
+      const jinaText=await tryFetchWithTimeout(jinaUrl,15000);
+      if(jinaText&&jinaText.length>100){
+        const clean=jinaText.replace(/^Title:\s.*$/m,'').replace(/^URL Source:\s.*$/m,'').replace(/^Markdown Content:\s*/m,'').trim();
+        if(clean.length>80){extractedText=clean;}
+      }
+    }catch(e){/* Jina 失败则回退到代理 */}
+    // 回退：CORS 代理
+    if(!extractedText){
+      const encoded=encodeURIComponent(entry.link);
+      const proxies=[
+        `https://api.allorigins.win/raw?url=${encoded}`,
+        `https://corsproxy.io/?url=${encoded}`,
+        `https://api.codetabs.com/v1/proxy?quest=${encoded}`,
+        `https://api.allorigins.win/get?url=${encoded}&charset=UTF-8`,
+      ];
+      let lastErr=null;
+      for(let i=0;i<proxies.length;i++){
+        try{
+          if(statusEl)statusEl.textContent=`Jina不可用，尝试代理获取(${i+1}/${proxies.length})...`;
+          const html=await tryFetchWithTimeout(proxies[i],12000);
+          const extracted=tryExtractFromMeta(html);
+          if(extracted){extractedText=extracted;break;}
+        }catch(err){lastErr=err;}
+      }
+      if(!extractedText){
+        if(note.trim()){
+          extractedText=note;
+        }else{
+          if(statusEl)statusEl.textContent='自动获取失败';
+          return `⚠️ 自动读取链接失败。\n\n原因：目标网站禁止跨域访问或网络不稳定。\n\n快速解决：\n1. 复制文章正文 → 粘贴到备注框 → 保存 → 点击「生成总结」\n2. 或直接在备注里写2-3句要点\n\n标题：${title}\n链接：${entry.link}`;
+        }
+      }
+    }
   }
-  if(statusEl)statusEl.textContent='自动获取失败';
-  if(note.trim())return simpleSummaryFromText(note,title);
-  return `自动读取链接失败（${lastErr?.message||lastErr}）。\n\n这通常是因为目标网站禁止了跨域访问，或网络不稳定。\n\n你可以这样做：\n1. 把文章正文复制到备注框，保存后再点击「生成总结」。\n2. 直接手动在备注里写几句要点。\n\n当前标题：${title}\n链接：${entry.link}`;
+  // 如果有 API 密钥，使用 AI 生成更好的摘要
+  if(getApiKey()&&extractedText.length>50){
+    if(statusEl)statusEl.textContent='AI 正在生成摘要...';
+    try{
+      const aiSummary=await callAI(
+        `请为以下内容生成简洁的中文摘要（200字以内），包含核心观点和关键词：\n标题：${title}\n内容：${extractedText.slice(0,3000)}`,
+        '你是一个内容摘要助手，请用简洁的中文总结文章核心内容，格式：标题、核心摘要、关键词、可行动作。'
+      );
+      if(aiSummary&&aiSummary.length>10){
+        if(statusEl)statusEl.textContent='AI摘要已生成';
+        return aiSummary;
+      }
+    }catch(e){/* AI 失败则使用本地摘要 */}
+  }
+  if(statusEl)statusEl.textContent='已生成';
+  return simpleSummaryFromText(extractedText,title);
 }
 function normalizeHotPayload(payload){
   let list=[];
@@ -1961,43 +2113,303 @@ function generateCollocations(word,meanings){
   return cols.filter(c=>{if(seen.has(c.en))return false;seen.add(c.en);return c.en.length>2&&c.en.length<30;}).slice(0,6);
 }
 
-function englishPackFor(date){
-  const packs=[
-    {
-      words:[
-        ['routine','日常安排',{phonetic:'/ruːˈtiːn/',collocations:['morning routine','daily routine','skincare routine'],examples:[{en:'My morning routine includes meditation.',zh:'我的晨间习惯包括冥想。'},{en:'A good routine helps me stay productive.',zh:'良好的习惯帮助我保持高效。'}]}],
-        ['commute','通勤',{phonetic:'/kəˈmjuːt/',collocations:['commute to work','long commute','daily commute'],examples:[{en:'My commute takes about forty minutes.',zh:'我通勤大约需要四十分钟。'},{en:'I listen to podcasts during my commute.',zh:'通勤时我会听播客。'}]}],
-        ['grocery','食品杂货',{phonetic:'/ˈɡroʊsəri/',collocations:['grocery store','grocery shopping','grocery list'],examples:[{en:'I need to stop at the grocery store.',zh:'我需要去一趟杂货店。'},{en:'She made a grocery list for the week.',zh:'她列了这一周的采购清单。'}]}],
-        ['appointment','预约',{phonetic:'/əˈpɔɪntmənt/',collocations:["make an appointment","doctor's appointment","schedule an appointment"],examples:[{en:'I have a dentist appointment at three.',zh:'我三点有一个牙医预约。'},{en:'You should make an appointment first.',zh:'你应该先预约一下。'}]}],
-        ['budget','预算',{phonetic:'/ˈbʌdʒɪt/',collocations:['monthly budget','tight budget','budget plan'],examples:[{en:'We need to stick to our monthly budget.',zh:'我们需要坚持每月的预算。'},{en:'A tight budget teaches me to save money.',zh:'紧张的预算教会我存钱。'}]}],
-        ['laundry','洗衣',{phonetic:'/ˈlɔːndri/',collocations:['do the laundry','laundry room','laundry detergent'],examples:[{en:'I do the laundry every Sunday.',zh:'我每个星期天洗衣服。'},{en:'The laundry room is in the basement.',zh:'洗衣房在地下室。'}]}],
-        ['deadline','截止日期',{phonetic:'/ˈdedlaɪn/',collocations:['meet the deadline','tight deadline','deadline for'],examples:[{en:'The deadline for this report is Friday.',zh:'这份报告的截止日期是周五。'},{en:'We must meet the deadline on time.',zh:'我们必须按时赶上截止日期。'}]}],
-        ['organize','整理',{phonetic:'/ˈɔːrɡənaɪz/',collocations:['organize files','organize time','organize an event'],examples:[{en:'I need to organize my desk today.',zh:'我今天需要整理一下我的办公桌。'},{en:'She knows how to organize a big event.',zh:'她知道如何组织大型活动。'}]}],
-        ['focus','专注',{phonetic:'/ˈfoʊkəs/',collocations:['focus on','lose focus','stay focused'],examples:[{en:'It is hard to focus on work with noise.',zh:'有噪音时很难专注工作。'},{en:'I need to stay focused to finish early.',zh:'我需要保持专注以便早点完成。'}]}],
-        ['reward','奖励',{phonetic:'/rɪˈwɔːrd/',collocations:['reward yourself','as a reward','big reward'],examples:[{en:'I will reward myself with a movie.',zh:'我会用一场电影奖励自己。'},{en:'Hard work brings its own reward.',zh:'努力工作本身就是一种回报。'}]}]
-      ],
-      chunks:['make a quick plan','做一个快速计划','stay focused for twenty minutes','保持专注20分钟','wrap up the day','结束这一天'],
-      text:'Today I start my morning routine early. My commute takes about thirty minutes, so I listen to English podcasts on the way. After work, I need to stop at the grocery store for vegetables. I have a dentist appointment at four, so I must plan my time well. This month I set a strict budget to save money. I also need to do the laundry when I get home. There is a project deadline tomorrow, so I need to focus and organize my tasks. When I finish everything, I will reward myself with a good book. A small routine helps me feel calm and clear.'
-    },
-    {
-      words:[
-        ['energy','精力',{phonetic:'/ˈenərdʒi/',collocations:['full of energy','save energy','low energy'],examples:[{en:'I am full of energy this morning.',zh:'我今天早上精力充沛。'},{en:'Drinking water helps me save energy.',zh:'喝水有助于我保存精力。'}]}],
-        ['priority','优先事项',{phonetic:'/praɪˈɔːrəti/',collocations:['top priority','high priority','make something a priority'],examples:[{en:'Finishing this report is my top priority.',zh:'完成这份报告是我的首要任务。'},{en:'Health should be a high priority.',zh:'健康应该被高度重视。'}]}],
-        ['stretch','拉伸',{phonetic:'/stretʃ/',collocations:['stretch muscles','stretch before exercise','stretch out'],examples:[{en:'I stretch for five minutes every morning.',zh:'我每天早上拉伸五分钟。'},{en:'Remember to stretch before running.',zh:'跑步前记得拉伸。'}]}],
-        ['hydrate','补水',{phonetic:'/ˈhaɪdreɪt/',collocations:['hydrate your body','stay hydrated','hydrate well'],examples:[{en:'Drink water to hydrate your body.',zh:'喝水为身体补充水分。'},{en:'Athletes need to stay hydrated.',zh:'运动员需要保持水分充足。'}]}],
-        ['journal','写日记',{phonetic:'/ˈdʒɜːrnl/',collocations:['keep a journal','write in a journal','daily journal'],examples:[{en:'I keep a journal to record my thoughts.',zh:'我坚持写日记来记录自己的想法。'},{en:'She writes in a journal every night.',zh:'她每晚都写日记。'}]}],
-        ['review','复盘',{phonetic:'/rɪˈvjuː/',collocations:['review notes','performance review','book review'],examples:[{en:'I review my notes before the exam.',zh:'考试前我会复习笔记。'},{en:'The manager gave me a performance review.',zh:'经理给我做了一次绩效评估。'}]}],
-        ['improve','改进',{phonetic:'/ɪmˈpruːv/',collocations:['improve skills','improve health','improve efficiency'],examples:[{en:'I want to improve my speaking skills.',zh:'我想提高我的口语能力。'},{en:'Small steps can improve your health.',zh:'小小的改变能改善你的健康。'}]}],
-        ['habit','习惯',{phonetic:'/ˈhæbɪt/',collocations:['good habit','break a habit','form a habit'],examples:[{en:'Reading before bed is a good habit.',zh:'睡前阅读是个好习惯。'},{en:'It takes time to form a habit.',zh:'养成习惯需要时间。'}]}],
-        ['balance','平衡',{phonetic:'/ˈbæləns/',collocations:['work-life balance','balance time','lose balance'],examples:[{en:'I need a better work-life balance.',zh:'我需要更好的工作与生活平衡。'},{en:'She knows how to balance time well.',zh:'她很懂得如何平衡时间。'}]}],
-        ['consistent','持续的',{phonetic:'/kənˈsɪstənt/',collocations:['consistent effort','consistent results','be consistent with'],examples:[{en:'Consistent effort leads to success.',zh:'持续的努力会带来成功。'},{en:'Your work should be consistent with the rules.',zh:'你的工作应该与规则保持一致。'}]}]
-      ],
-      chunks:['keep a steady rhythm','保持稳定节奏','build a small habit','建立一个小习惯','notice my energy level','留意我的精力状态'],
-      text:'This morning I notice my energy level and decide to work with a steady rhythm. I drink water to hydrate my body and stretch for five minutes. My top priority is to finish the report first. After lunch, I review my notes and think about how to improve my workflow. I want to build a good habit that is easy to repeat. Consistency is more useful than pressure. When I keep a consistent schedule, I find a better balance between work and rest. In the evening, I write in my journal about what went well. Small steps help me improve every day.'
+const ENGLISH_WORD_BANK = [
+  // Theme 1: Daily Life (1-20)
+  ["abandon", "放弃", "/əˈbændən/", "abandon hope|abandon ship|abandon a plan", "He had to abandon his car in the snow.|他不得不把车丢在雪地里。|They abandoned the project due to lack of funds.|由于资金不足，他们放弃了这个项目。"],
+  ["ability", "能力", "/əˈbɪləti/", "have the ability|develop ability|show ability", "She has the ability to learn quickly.|她有快速学习的能力。|His musical ability was evident from a young age.|他的音乐天赋从小就显露出来。"],
+  ["absolute", "绝对的", "/ˈæbsəluːt/", "absolute truth|absolute power|absolute silence", "There is no absolute certainty in science.|科学中没有绝对的确定性。|He demanded absolute silence during the meeting.|他要求会议期间保持绝对安静。"],
+  ["absorb", "吸收", "/əbˈzɔːb/", "absorb knowledge|absorb water|absorb shock", "Plants absorb sunlight to make food.|植物吸收阳光制造养分。|The sponge can absorb a lot of water.|海绵能吸收大量水分。"],
+  ["accept", "接受", "/əkˈsept/", "accept an offer|accept responsibility|accept defeat", "I am happy to accept your invitation.|我很高兴接受你的邀请。|He refused to accept responsibility for the error.|他拒绝为这个错误承担责任。"],
+  ["access", "接近；访问", "/ˈækses/", "have access to|gain access|internet access", "Students have access to the library.|学生可以使用图书馆。|He gained access to the building through a window.|他通过窗户进入了大楼。"],
+  ["accident", "事故", "/ˈæksɪdənt/", "traffic accident|by accident|avoid an accident", "The traffic accident caused a long delay.|那起交通事故造成了长时间延误。|I met her by accident at the bookstore.|我在书店偶然遇到了她。"],
+  ["accommodate", "容纳；适应", "/əˈkɒmədeɪt/", "accommodate guests|accommodate needs|accommodate changes", "The hotel can accommodate up to 500 guests.|这家酒店最多可容纳500位客人。|We will try to accommodate your special needs.|我们会尽量满足您的特殊需求。"],
+  ["accomplish", "完成；实现", "/əˈkʌmplɪʃ/", "accomplish a goal|accomplish a task|accomplish nothing", "She accomplished her goal of becoming a doctor.|她实现了当医生的目标。|We accomplished the task ahead of schedule.|我们提前完成了任务。"],
+  ["account", "账户；解释", "/əˈkaʊnt/", "open an account|bank account|take account of", "I opened a new bank account yesterday.|我昨天开了一个新银行账户。|You must take account of all the factors.|你必须考虑所有因素。"],
+  ["accurate", "准确的", "/ˈækjərət/", "accurate information|accurate measurement|accurate description", "The report provides accurate information.|这份报告提供了准确的信息。|Her description of the event was accurate.|她对事件的描述很准确。"],
+  ["achieve", "实现；达到", "/əˈtʃiːv/", "achieve a goal|achieve success|achieve results", "Hard work is needed to achieve success.|需要努力工作才能取得成功。|The team achieved remarkable results last year.|团队去年取得了显著成果。"],
+  ["acquire", "获得", "/əˈkwaɪər/", "acquire knowledge|acquire skills|acquire property", "Children acquire language naturally.|儿童自然地习得语言。|He acquired the company for a large sum.|他以巨资收购了这家公司。"],
+  ["across", "穿过；横跨", "/əˈkrɒs/", "across the street|across the country|across the world", "She walked across the street carefully.|她小心地穿过街道。|The news spread across the country quickly.|消息迅速传遍全国。"],
+  ["adapt", "适应", "/əˈdæpt/", "adapt to change|adapt quickly|adapt a story", "Animals adapt to their environment.|动物适应它们的环境。|She adapted quickly to her new school.|她很快适应了新学校。"],
+  ["adequate", "充足的；适当的", "/ˈædɪkwət/", "adequate supply|adequate funding|adequate time", "We need an adequate supply of clean water.|我们需要充足的清洁水源。|The funding was adequate for the project.|资金对这个项目来说是充足的。"],
+  ["adjust", "调整", "/əˈdʒʌst/", "adjust to|adjust the settings|adjust the price", "It took time to adjust to the new climate.|适应新气候需要时间。|Please adjust the settings on your device.|请调整您设备上的设置。"],
+  ["admire", "钦佩", "/ədˈmaɪər/", "admire someone's work|admire the view|admire courage", "I admire her courage and determination.|我钦佩她的勇气和决心。|We stopped to admire the beautiful view.|我们停下来欣赏美景。"],
+  ["admit", "承认", "/ədˈmɪt/", "admit a mistake|admit to|admit defeat", "He admitted his mistake openly.|他公开承认了自己的错误。|She admitted to being nervous before the exam.|她承认考试前很紧张。"],
+  ["adopt", "采纳；收养", "/əˈdɒpt/", "adopt a policy|adopt a child|adopt an approach", "The company adopted a new marketing policy.|公司采纳了新的营销政策。|They decided to adopt a child from abroad.|他们决定从国外收养一个孩子。"],
+
+  // Theme 2: Work / Study (21-40)
+  ["academic", "学术的", "/ˌækəˈdemɪk/", "academic performance|academic research|academic year", "His academic performance has improved greatly.|他的学业表现有了很大提高。|She published several academic research papers.|她发表了几篇学术研究论文。"],
+  ["advance", "前进；进步", "/ədˈvɑːns/", "in advance|advance technology|advance a cause", "Please book your tickets in advance.|请提前预订门票。|Technology continues to advance rapidly.|技术持续快速发展。"],
+  ["advantage", "优势", "/ədˈvɑːntɪdʒ/", "take advantage of|have an advantage|competitive advantage", "You should take advantage of every opportunity.|你应该利用每一个机会。|Experience gave him a clear advantage.|经验给了他明显的优势。"],
+  ["affect", "影响", "/əˈfekt/", "affect health|affect the outcome|affect decisions", "Stress can affect your health badly.|压力会严重影响你的健康。|The weather may affect the outcome of the game.|天气可能影响比赛结果。"],
+  ["afford", "负担得起", "/əˈfɔːd/", "afford to buy|afford the cost|cannot afford", "They cannot afford to buy a new house.|他们买不起新房子。|Few families can afford the cost of private education.|很少有家庭能负担私立教育的费用。"],
+  ["agenda", "议程", "/əˈdʒendə/", "set the agenda|on the agenda|hidden agenda", "Let us set the agenda for the meeting.|我们来制定会议议程吧。|Climate change is on the agenda today.|气候变化是今天的议题。"],
+  ["allocate", "分配", "/ˈæləkeɪt/", "allocate resources|allocate funds|allocate time", "The government will allocate more resources to education.|政府将向教育分配更多资源。|We need to allocate funds carefully.|我们需要谨慎分配资金。"],
+  ["analyze", "分析", "/ˈænəlaɪz/", "analyze data|analyze the situation|analyze results", "Scientists analyze data to find patterns.|科学家分析数据以发现规律。|We need to analyze the situation carefully.|我们需要仔细分析形势。"],
+  ["ancient", "古老的", "/ˈeɪnʃənt/", "ancient history|ancient civilization|ancient culture", "They study ancient history at university.|他们在大学学习古代历史。|The museum displays artifacts from an ancient civilization.|博物馆展出了一件古代文明的文物。"],
+  ["announce", "宣布", "/əˈnaʊns/", "announce a decision|announce results|announce a plan", "The company will announce its decision tomorrow.|公司明天将宣布决定。|They announced the results of the election.|他们宣布了选举结果。"],
+  ["annual", "年度的", "/ˈænjuəl/", "annual report|annual meeting|annual income", "The company published its annual report.|公司发布了年度报告。|Our annual meeting will be held in May.|我们的年会将在五月举行。"],
+  ["apparent", "明显的", "/əˈpærənt/", "apparent reason|become apparent|apparent difference", "There is no apparent reason for the delay.|延误没有明显的原因。|It soon became apparent that he was lying.|很快就很明显他在撒谎。"],
+  ["apply", "申请；应用", "/əˈplaɪ/", "apply for a job|apply knowledge|apply pressure", "She decided to apply for the job.|她决定申请这份工作。|You should apply what you have learned.|你应该应用你所学到的知识。"],
+  ["approach", "方法；接近", "/əˈprəʊtʃ/", "new approach|approach a problem|approach someone", "We need a new approach to the problem.|我们需要用新方法来解决这个问题。|He approached the manager about his concerns.|他就自己的担忧找过经理。"],
+  ["appropriate", "适当的", "/əˈprəʊpriət/", "appropriate action|appropriate time|appropriate manner", "We must take appropriate action immediately.|我们必须立即采取适当行动。|This is not the appropriate time to discuss it.|现在不是讨论此事的合适时机。"],
+  ["approve", "批准", "/əˈpruːv/", "approve a plan|approve a loan|approve of", "The board approved the new plan.|董事会批准了新计划。|My parents do not approve of my decision.|我父母不赞成我的决定。"],
+  ["arrange", "安排", "/əˈreɪndʒ/", "arrange a meeting|arrange flowers|arrange accommodation", "I will arrange a meeting for next week.|我来安排下周的会议。|She arranged the flowers beautifully.|她把花插得很漂亮。"],
+  ["assemble", "组装；集合", "/əˈsembl/", "assemble a team|assemble furniture|assemble data", "They assembled a team of experts.|他们组建了一支专家团队。|He assembled the furniture by himself.|他自己组装了家具。"],
+  ["assess", "评估", "/əˈses/", "assess the situation|assess risk|assess performance", "We need to assess the situation first.|我们需要先评估形势。|The bank will assess the risk of the loan.|银行将评估贷款风险。"],
+  ["assign", "分配", "/əˈsaɪn/", "assign a task|assign homework|assign a value", "The teacher assigned us a difficult task.|老师给我们布置了一项困难的任务。|Each variable is assigned a value.|每个变量都被赋予一个值。"],
+
+  // Theme 3: Travel (41-60)
+  ["assist", "协助", "/əˈsɪst/", "assist someone|assist with|assist in", "Can you assist me with this project?|你能帮我做这个项目吗？|The nurse assisted in the operation.|护士协助了这台手术。"],
+  ["assume", "假设", "/əˈsjuːm/", "assume responsibility|assume a role|assume that", "I assume that you have read the report.|我假设你已经读过报告了。|He assumed responsibility for the team.|他承担了团队的责任。"],
+  ["assure", "保证", "/əˈʃʊər/", "assure success|assure quality|rest assured", "Hard work will assure your success.|努力工作将保证你的成功。|I can assure you of the product's quality.|我可以向你保证产品的质量。"],
+  ["atmosphere", "气氛", "/ˈætməsfɪər/", "relaxed atmosphere|pollute the atmosphere|friendly atmosphere", "The restaurant has a relaxed atmosphere.|这家餐厅气氛轻松。|The meeting had a friendly atmosphere.|会议气氛友好。"],
+  ["attach", "附加；附上", "/əˈtætʃ/", "attach a file|attach importance|attach to", "Please attach the file to your email.|请把文件附在邮件里。|They attach great importance to education.|他们非常重视教育。"],
+  ["attempt", "尝试", "/əˈtempt/", "make an attempt|attempt to|failed attempt", "She made an attempt to climb the mountain.|她尝试攀登那座山。|He attempted to solve the problem alone.|他试图独自解决问题。"],
+  ["attend", "出席", "/əˈtend/", "attend a meeting|attend school|attend to", "Over 200 people attended the meeting.|超过200人出席了会议。|She attends a private school.|她上一所私立学校。"],
+  ["attract", "吸引", "/əˈtrækt/", "attract attention|attract customers|attract investment", "The display attracted a lot of attention.|这个展示吸引了很多注意。|Low prices attract many customers.|低价吸引了许多顾客。"],
+  ["authority", "权威", "/ɔːˈθɒrəti/", "local authority|challenge authority|abuse authority", "The local authority approved the project.|地方当局批准了这个项目。|Students should not challenge the teacher's authority.|学生不应挑战老师的权威。"],
+  ["available", "可获得的", "/əˈveɪləbl/", "available online|available for|readily available", "The book is available online.|这本书可以在网上找到。|I am available for an interview next week.|我下周可以参加面试。"],
+  ["avoid", "避免", "/əˈvɔɪd/", "avoid danger|avoid conflict|avoid mistakes", "You should avoid driving in heavy rain.|你应该避免在大雨中开车。|She tried to avoid conflict with her boss.|她试图避免与老板发生冲突。"],
+  ["balance", "平衡", "/ˈbæləns/", "strike a balance|balance the budget|lose balance", "It is important to strike a balance between work and life.|在工作与生活之间取得平衡很重要。|The government struggles to balance the budget.|政府努力平衡预算。"],
+  ["barrier", "障碍", "/ˈbæriər/", "language barrier|trade barrier|break down barriers", "The language barrier made communication difficult.|语言障碍使沟通变得困难。|We must break down the barriers between cultures.|我们必须打破文化之间的障碍。"],
+  ["behave", "表现", "/bɪˈheɪv/", "behave well|behave badly|behave responsibly", "The children behaved well during the trip.|孩子们在旅途中表现很好。|He behaved responsibly in a difficult situation.|他在困难局面中表现得很有责任感。"],
+  ["benefit", "利益；好处", "/ˈbenɪfɪt/", "benefit from|for the benefit of|health benefits", "Many people benefit from regular exercise.|许多人从规律运动中受益。|The project is for the benefit of the community.|这个项目是为了社区的利益。"],
+  ["board", "登上；委员会", "/bɔːd/", "board a plane|on board|board of directors", "Passengers began to board the plane.|乘客开始登机。|There are 200 people on board the ship.|船上有200人。"],
+  ["bound", "受约束的；前往", "/baʊnd/", "be bound to|bound for|out of bounds", "He is bound to succeed eventually.|他最终一定会成功。|The train is bound for the capital.|这趟列车开往首都。"],
+  ["brief", "简短的", "/briːf/", "brief summary|in brief|brief description", "Here is a brief summary of the report.|这是报告的简要摘要。|In brief, the plan is not feasible.|简而言之，这个计划不可行。"],
+  ["broad", "广泛的", "/brɔːd/", "broad range|broad appeal|broad knowledge", "The store offers a broad range of products.|这家店提供种类广泛的产品。|He has a broad knowledge of history.|他有广博的历史知识。"],
+  ["budget", "预算", "/ˈbʌdʒɪt/", "within budget|budget deficit|annual budget", "The project was completed within budget.|项目在预算内完成。|The country faces a serious budget deficit.|该国面临严重的预算赤字。"],
+
+  // Theme 4: Emotions (61-80)
+  ["capable", "有能力的", "/ˈkeɪpəbl/", "capable of|highly capable|capable person", "She is capable of leading the team.|她有能力领导这个团队。|He is a highly capable engineer.|他是一位非常有能力的工程师。"],
+  ["capacity", "容量；能力", "/kəˈpæsəti/", "full capacity|learning capacity|production capacity", "The stadium has a capacity of 50,000.|这个体育场可容纳5万人。|The factory is running at full capacity.|工厂正在满负荷运转。"],
+  ["capture", "捕获；捕捉", "/ˈkæptʃər/", "capture attention|capture data|capture the moment", "The photo captured the beauty of the sunset.|这张照片捕捉到了日落的美。|The advertisement captured everyone's attention.|广告吸引了所有人的注意。"],
+  ["career", "职业", "/kəˈrɪər/", "career path|career goal|successful career", "She started her career as a teacher.|她以教师身份开始了职业生涯。|Planning your career path is important.|规划你的职业道路很重要。"],
+  ["category", "类别", "/ˈkætəɡəri/", "fall into a category|broad category|product category", "The books fall into three main categories.|这些书分为三大类。|This product belongs to a new category.|这个产品属于一个新类别。"],
+  ["challenge", "挑战", "/ˈtʃælɪndʒ/", "face a challenge|accept a challenge|big challenge", "The new job presents a real challenge.|新工作带来了真正的挑战。|She accepted the challenge bravely.|她勇敢地接受了挑战。"],
+  ["characteristic", "特征", "/ˌkærəktəˈrɪstɪk/", "key characteristic|distinctive characteristic|share characteristics", "Honesty is a key characteristic of a leader.|诚实是领导者的关键特征。|Each species has distinctive characteristics.|每个物种都有独特的特征。"],
+  ["charge", "收费；负责", "/tʃɑːdʒ/", "in charge of|take charge|no charge", "He is in charge of the marketing department.|他负责营销部门。|There is no charge for delivery.|送货不收费。"],
+  ["circulate", "循环；流传", "/ˈsɜːkjəleɪt/", "circulate blood|circulate a petition|circulate rumors", "The heart circulates blood through the body.|心脏使血液在全身循环。|Rumors began to circulate about the merger.|关于合并的传言开始流传。"],
+  ["circumstance", "情况", "/ˈsɜːkəmstəns/", "under the circumstances|difficult circumstances|given the circumstances", "Under the circumstances, we did our best.|在这种情况下，我们已尽力。|They live in very difficult circumstances.|他们生活在非常困难的环境中。"],
+  ["claim", "声称；索赔", "/kleɪm/", "make a claim|claim responsibility|false claim", "He claimed that he was innocent.|他声称自己是无辜的。|The company made a claim for damages.|公司提出了损害赔偿要求。"],
+  ["clarify", "澄清", "/ˈklærɪfaɪ/", "clarify a point|clarify the situation|clarify meaning", "Could you clarify your point for us?|你能为我们澄清一下你的观点吗？|The statement clarified the situation.|这份声明澄清了情况。"],
+  ["classic", "经典的", "/ˈklæsɪk/", "classic example|classic novel|classic case", "This is a classic example of bad design.|这是糟糕设计的典型例子。|She loves reading classic novels.|她喜欢读经典小说。"],
+  ["climate", "气候", "/ˈklaɪmət/", "climate change|mild climate|business climate", "Climate change affects us all.|气候变化影响着我们每个人。|The region has a mild climate.|该地区气候温和。"],
+  ["coincide", "同时发生；一致", "/ˌkəʊɪnˈsaɪd/", "coincide with|coincide exactly|timing coincides", "His visit coincided with the festival.|他的访问恰逢节日。|Their opinions coincided on most issues.|他们在大多数问题上的意见一致。"],
+  ["collaborate", "合作", "/kəˈlæbəreɪt/", "collaborate with|collaborate on|collaborate closely", "The two companies collaborate on research.|两家公司在研究上合作。|Scientists collaborate closely on the project.|科学家们在项目上密切合作。"],
+  ["collapse", "倒塌；崩溃", "/kəˈlæps/", "collapse of|economic collapse|collapse under", "The old building collapsed in the earthquake.|那栋旧楼在地震中倒塌了。|The country faced an economic collapse.|该国面临经济崩溃。"],
+  ["combine", "结合", "/kəmˈbaɪn/", "combine forces|combine with|combine efforts", "They combined forces to fight the disease.|他们联合力量对抗疾病。|The two ingredients combine to form a gas.|这两种成分结合形成气体。"],
+  ["comfort", "安慰；舒适", "/ˈkʌmfət/", "find comfort|comfort zone|physical comfort", "She found comfort in her family.|她从家人那里得到安慰。|Stepping out of your comfort zone helps you grow.|走出舒适区有助于你成长。"],
+  ["command", "命令；掌握", "/kəˈmɑːnd/", "take command|command attention|command of language", "The general took command of the army.|将军接管了军队的指挥权。|She has an excellent command of English.|她精通英语。"],
+
+  // Theme 5: Health (81-100)
+  ["comment", "评论", "/ˈkɒment/", "make a comment|no comment|comment on", "The minister refused to comment on the issue.|部长拒绝就该问题发表评论。|She made a helpful comment during the discussion.|她在讨论中提出了有益的意见。"],
+  ["commission", "委员会；佣金", "/kəˈmɪʃn/", "set up a commission|earn a commission|commission a study", "The government set up a commission to investigate.|政府成立了一个委员会进行调查。|He earns a commission on every sale.|他每笔销售都赚取佣金。"],
+  ["commit", "承诺；犯罪", "/kəˈmɪt/", "commit to|commit a crime|commit resources", "She committed to finishing the project on time.|她承诺按时完成项目。|He was accused of committing a crime.|他被指控犯罪。"],
+  ["communicate", "交流", "/kəˈmjuːnɪkeɪt/", "communicate effectively|communicate with|communicate ideas", "It is vital to communicate effectively at work.|在工作中有效沟通至关重要。|Birds communicate with each other through songs.|鸟类通过鸣叫相互交流。"],
+  ["community", "社区", "/kəˈmjuːnɪti/", "local community|community service|sense of community", "The local community supported the charity.|当地社区支持这个慈善机构。|Volunteers do valuable community service.|志愿者做着有价值的社区服务。"],
+  ["compare", "比较", "/kəmˈpeər/", "compare with|compare to|compared to", "Do not compare yourself to others.|不要拿自己和别人比较。|The results were compared with last year's data.|结果与去年的数据进行了比较。"],
+  ["compete", "竞争", "/kəmˈpiːt/", "compete with|compete for|compete internationally", "Small businesses compete with large chains.|小企业与大型连锁店竞争。|Athletes compete for the gold medal.|运动员们争夺金牌。"],
+  ["complex", "复杂的", "/ˈkɒmpleks/", "complex problem|complex system|increasingly complex", "This is a complex problem to solve.|这是一个复杂的难题。|The human brain is a complex system.|人脑是一个复杂的系统。"],
+  ["compose", "组成；创作", "/kəmˈpəʊz/", "compose music|be composed of|compose a letter", "She loves to compose music in her free time.|她喜欢在空闲时间作曲。|Water is composed of hydrogen and oxygen.|水由氢和氧组成。"],
+  ["concept", "概念", "/ˈkɒnsept/", "basic concept|new concept|grasp a concept", "The children grasped the basic concept quickly.|孩子们很快掌握了基本概念。|The book introduces a new concept in physics.|这本书介绍了物理学中的一个新概念。"],
+  ["concern", "关切；关心", "/kənˈsɜːn/", "cause concern|express concern|of concern", "The pollution levels cause serious concern.|污染水平引起了严重关切。|Parents expressed concern about school safety.|家长对学校安全表示关切。"],
+  ["conclude", "得出结论；结束", "/kənˈkluːd/", "conclude that|conclude a deal|to conclude", "We can conclude that the theory is correct.|我们可以得出结论，这个理论是正确的。|They concluded a deal after long negotiations.|经过长期谈判，他们达成了一项交易。"],
+  ["conduct", "进行；行为", "/kənˈdʌkt/", "conduct research|conduct a survey|code of conduct", "The team will conduct research on the topic.|团队将就该主题进行研究。|The company follows a strict code of conduct.|公司遵循严格的行为准则。"],
+  ["confidence", "信心", "/ˈkɒnfɪdəns/", "have confidence|build confidence|lack confidence", "She has great confidence in her abilities.|她对自己的能力很有信心。|Practice helps build confidence in public speaking.|练习有助于建立公开演讲的信心。"],
+  ["confirm", "确认", "/kənˈfɜːm/", "confirm a booking|confirm the details|confirm a theory", "Please confirm your booking by email.|请通过电子邮件确认您的预订。|The experiment confirmed the theory.|实验证实了这个理论。"],
+  ["conflict", "冲突", "/ˈkɒnflɪkt/", "armed conflict|conflict of interest|resolve a conflict", "The region has suffered from armed conflict.|该地区饱受武装冲突之苦。|A mediator helped resolve the conflict.|调解员帮助解决了冲突。"],
+  ["confront", "面对", "/kənˈfrʌnt/", "confront a problem|confront someone|confront reality", "We must confront the problem directly.|我们必须直面这个问题。|She confronted her fears and gave the speech.|她直面恐惧，发表了演讲。"],
+  ["confuse", "使困惑", "/kənˈfjuːz/", "confuse with|confuse the issue|easily confused", "People often confuse these two words.|人们经常混淆这两个词。|His explanation only confused the issue further.|他的解释只会让问题更混乱。"],
+  ["connect", "连接", "/kəˈnekt/", "connect to|connect with|connect ideas", "You can connect to the internet wirelessly.|你可以无线连接互联网。|Good teachers connect with their students.|好老师能与他们的学生沟通。"],
+  ["conscious", "有意识的", "/ˈkɒnʃəs/", "conscious of|conscious decision|become conscious", "She was conscious of everyone watching her.|她意识到每个人都在看她。|He made a conscious decision to eat healthier.|他有意识地决定吃得更健康。"],
+
+  // Theme 6: Technology (101-120)
+  ["consequence", "后果", "/ˈkɒnsɪkwəns/", "face consequences|as a consequence|serious consequences", "You must face the consequences of your actions.|你必须承担行为的后果。|Pollution has serious consequences for health.|污染对健康有严重后果。"],
+  ["consider", "考虑", "/kənˈsɪdər/", "consider carefully|consider doing|all things considered", "Please consider my application carefully.|请仔细考虑我的申请。|I am considering changing my job.|我正在考虑换工作。"],
+  ["consist", "由...组成", "/kənˈsɪst/", "consist of|consist mainly|consist entirely", "The committee consists of ten members.|委员会由十名成员组成。|The diet consists mainly of vegetables.|这种饮食主要由蔬菜组成。"],
+  ["constant", "持续的", "/ˈkɒnstənt/", "constant change|constant pressure|constant companion", "There is constant change in technology.|技术领域不断变化。|She lives under constant pressure at work.|她在工作中承受着持续的压力。"],
+  ["construct", "建造", "/kənˈstrʌkt/", "construct a building|construct a theory|construct an argument", "They will construct a new bridge here.|他们将在这里建造一座新桥。|The scientist constructed a new theory.|这位科学家构建了一个新理论。"],
+  ["consume", "消耗", "/kənˈsjuːm/", "consume energy|consume food|time-consuming", "The new car consumes less fuel.|新车消耗的燃料更少。|Reading long reports is time-consuming.|阅读长报告很耗时。"],
+  ["contain", "包含", "/kənˈteɪn/", "contain information|contain a virus|contain anger", "The report contains useful information.|报告包含有用的信息。|She struggled to contain her anger.|她努力克制自己的愤怒。"],
+  ["context", "上下文；背景", "/ˈkɒntekst/", "in context|out of context|social context", "Words change meaning in different contexts.|词语在不同语境中含义会改变。|His words were taken out of context.|他的话被断章取义了。"],
+  ["contract", "合同", "/ˈkɒntrækt/", "sign a contract|break a contract|under contract", "Both parties signed the contract today.|双方今天签署了合同。|The company is under contract to deliver the goods.|公司签约交付这批货物。"],
+  ["contrast", "对比", "/ˈkɒntrɑːst/", "in contrast|contrast with|sharp contrast", "In contrast, the second method is faster.|相比之下，第二种方法更快。|His calm manner was a sharp contrast to her panic.|他的冷静与她的恐慌形成鲜明对比。"],
+  ["contribute", "贡献", "/kənˈtrɪbjuːt/", "contribute to|contribute money|contribute significantly", "Everyone can contribute to society.|每个人都能为社会做贡献。|Smoking contributes to heart disease.|吸烟会导致心脏病。"],
+  ["control", "控制", "/kənˈtrəʊl/", "take control|lose control|under control", "The pilot managed to take control of the plane.|飞行员设法控制住了飞机。|The fire is now under control.|火势现已得到控制。"],
+  ["convince", "说服", "/kənˈvɪns/", "convince someone|convince yourself|fully convinced", "She convinced me to try the new restaurant.|她说服我试试那家新餐厅。|I am fully convinced of his honesty.|我完全相信他的诚实。"],
+  ["cooperate", "合作", "/kəʊˈɒpəreɪt/", "cooperate with|cooperate fully|refuse to cooperate", "The two countries cooperate on security issues.|两国在安全问题上合作。|The suspect refused to cooperate with police.|嫌疑人拒绝与警方合作。"],
+  ["cope", "应对", "/kəʊp/", "cope with|cope effectively|unable to cope", "She found ways to cope with stress.|她找到了应对压力的方法。|He was unable to cope with the workload.|他无法应付工作量。"],
+  ["correct", "正确的", "/kəˈrekt/", "correct answer|correct a mistake|politically correct", "Please give the correct answer.|请给出正确答案。|The teacher corrected my mistakes patiently.|老师耐心地纠正了我的错误。"],
+  ["correspond", "符合；通信", "/ˌkɒrəˈspɒnd/", "correspond to|correspond with|correspond closely", "The results correspond to our expectations.|结果与我们的预期相符。|They have corresponded with each other for years.|他们相互通信已有多年。"],
+  ["create", "创造", "/kriˈeɪt/", "create jobs|create opportunities|create a problem", "The new factory will create many jobs.|新工厂将创造许多就业机会。|Technology creates new opportunities for businesses.|技术为企业创造了新机遇。"],
+  ["credit", "信用；学分", "/ˈkredɪt/", "take credit|credit card|give credit", "He tried to take credit for the success.|他试图把成功的功劳归于自己。|You can pay by credit card.|你可以用信用卡付款。"],
+  ["crisis", "危机", "/ˈkraɪsɪs/", "economic crisis|face a crisis|in crisis", "The country is facing an economic crisis.|该国正面临经济危机。|The company is in crisis after the scandal.|丑闻之后公司陷入危机。"],
+
+  // Theme 7: Society (121-140)
+  ["critical", "关键的；批判的", "/ˈkrɪtɪkl/", "critical of|critical role|critical condition", "He was very critical of the new policy.|他对新政策非常批判。|Education plays a critical role in development.|教育在发展中起着关键作用。"],
+  ["culture", "文化", "/ˈkʌltʃər/", "local culture|popular culture|company culture", "We should respect the local culture.|我们应该尊重当地文化。|Company culture affects employee satisfaction.|企业文化影响员工满意度。"],
+  ["current", "当前的", "/ˈkʌrənt/", "current situation|current events|current trend", "What is your opinion on the current situation?|你对当前局势有何看法？|The magazine covers current events worldwide.|这本杂志报道全球时事。"],
+  ["data", "数据", "/ˈdeɪtə/", "collect data|analyze data|data protection", "Scientists collect data from experiments.|科学家从实验中收集数据。|Data protection is a major concern online.|数据保护是网上的一个主要问题。"],
+  ["debate", "辩论", "/dɪˈbeɪt/", "open debate|heated debate|under debate", "The issue sparked a heated debate.|这个问题引发了激烈的辩论。|The proposal is still under debate.|该提案仍在讨论中。"],
+  ["decline", "下降；拒绝", "/dɪˈklaɪn/", "sharp decline|decline an offer|decline in", "There has been a sharp decline in sales.|销售额急剧下降。|She politely declined the job offer.|她礼貌地拒绝了工作邀请。"],
+  ["decrease", "减少", "/dɪˈkriːs/", "decrease significantly|decrease in|steady decrease", "Prices have decreased significantly this year.|今年价格大幅下降。|There was a steady decrease in crime.|犯罪率稳步下降。"],
+  ["define", "定义", "/dɪˈfaɪn/", "define clearly|define a term|well-defined", "The law clearly defines the rights of citizens.|法律明确界定了公民的权利。|Can you define this term for me?|你能为我定义这个术语吗？"],
+  ["demand", "需求", "/dɪˈmɑːnd/", "high demand|meet demand|in demand", "There is high demand for skilled workers.|对技术工人的需求很高。|The factory struggles to meet demand.|工厂难以满足需求。"],
+  ["demonstrate", "证明；演示", "/ˈdemənstreɪt/", "demonstrate ability|demonstrate that|demonstrate a product", "She demonstrated great ability in the exam.|她在考试中展示了出色的能力。|The results demonstrate that the drug is effective.|结果表明这种药物有效。"],
+  ["depend", "依赖", "/dɪˈpend/", "depend on|depend largely|it depends", "Children depend on their parents for support.|孩子依靠父母的支持。|Success depends largely on hard work.|成功在很大程度上取决于努力。"],
+  ["derive", "源于", "/dɪˈraɪv/", "derive from|derive benefit|derive energy", "Many English words derive from Latin.|许多英语单词源于拉丁语。|We derive energy from the food we eat.|我们从食物中获取能量。"],
+  ["describe", "描述", "/dɪˈskraɪb/", "describe in detail|describe as|hard to describe", "Can you describe the scene in detail?|你能详细描述一下那个场景吗？|He described the experience as unforgettable.|他把这次经历描述为难忘的。"],
+  ["design", "设计", "/dɪˈzaɪn/", "design a product|modern design|by design", "They will design a new product next year.|他们明年将设计一款新产品。|The building has a very modern design.|这栋建筑设计非常现代。"],
+  ["desire", "渴望", "/dɪˈzaɪər/", "strong desire|desire for|fulfill a desire", "She has a strong desire to travel the world.|她有强烈的环游世界的愿望。|He finally fulfilled his desire to learn the piano.|他终于实现了学钢琴的愿望。"],
+  ["despite", "尽管", "/dɪˈspaɪt/", "despite the fact|despite efforts|despite difficulties", "He went to work despite the heavy rain.|尽管下大雨，他还是去上班了。|Despite efforts, the problem remains unsolved.|尽管做出了努力，问题仍未解决。"],
+  ["detect", "发现；探测", "/dɪˈtekt/", "detect a problem|detect changes|hard to detect", "The device can detect small changes in temperature.|这个设备能探测到温度的微小变化。|Doctors detected the disease early.|医生及早发现了这种疾病。"],
+  ["determine", "决定", "/dɪˈtɜːmɪn/", "determine the cause|determine whether|determined to", "Scientists are trying to determine the cause.|科学家正试图确定原因。|She is determined to succeed in her career.|她决心在事业上取得成功。"],
+  ["develop", "发展", "/dɪˈveləp/", "develop a plan|develop skills|develop rapidly", "The company will develop a new strategy.|公司将制定一项新战略。|The city has developed rapidly in recent years.|这座城市近年来发展迅速。"],
+  ["device", "设备", "/dɪˈvaɪs/", "electronic device|mobile device|safety device", "This electronic device is very popular.|这款电子设备很受欢迎。|A mobile device can access the internet.|移动设备可以上网。"],
+
+  // Theme 8: Nature (141-160)
+  ["dimension", "维度；方面", "/dɪˈmenʃn/", "new dimension|three dimensions|add a dimension", "The problem has a new dimension now.|这个问题现在有了新的方面。|The box has three dimensions: length, width, and height.|这个盒子有三个维度：长、宽、高。"],
+  ["disaster", "灾难", "/dɪˈzɑːstər/", "natural disaster|avoid disaster|disaster relief", "The earthquake was a terrible natural disaster.|地震是一场可怕的自然灾害。|The government provided disaster relief quickly.|政府迅速提供了灾难救援。"],
+  ["discipline", "纪律；学科", "/ˈdɪsəplɪn/", "maintain discipline|strict discipline|academic discipline", "The school maintains strict discipline.|学校维持严格的纪律。|Sociology is an academic discipline.|社会学是一门学科。"],
+  ["discover", "发现", "/dɪˈskʌvər/", "discover something|discover the truth|newly discovered", "Scientists discovered a new species of frog.|科学家发现了一个新的青蛙物种。|She finally discovered the truth about her past.|她终于发现了自己过去的真相。"],
+  ["display", "展示", "/dɪˈspleɪ/", "on display|display a message|display skills", "The paintings are on display at the museum.|这些画作在博物馆展出。|The screen displays a warning message.|屏幕显示一条警告信息。"],
+  ["distinguish", "区分", "/dɪˈstɪŋɡwɪʃ/", "distinguish between|distinguish from|easily distinguished", "Children learn to distinguish between right and wrong.|孩子们学会区分对错。|His accent distinguishes him from the others.|他的口音使他与别人不同。"],
+  ["distribute", "分配；分发", "/dɪˈstrɪbjuːt/", "distribute to|distribute evenly|distribute resources", "The charity distributed food to the poor.|慈善机构向穷人分发食物。|Resources must be distributed evenly among regions.|资源必须在各地区之间均匀分配。"],
+  ["diverse", "多样的", "/daɪˈvɜːs/", "diverse population|diverse range|culturally diverse", "The city has a very diverse population.|这座城市人口非常多样。|The store offers a diverse range of goods.|这家店提供种类繁多的商品。"],
+  ["domestic", "国内的；家庭的", "/dəˈmestɪk/", "domestic market|domestic violence|domestic flights", "The domestic market is growing steadily.|国内市场稳步增长。|Domestic flights are cheaper than international ones.|国内航班比国际航班便宜。"],
+  ["dominate", "主导", "/ˈdɒmɪneɪt/", "dominate the market|dominate a conversation|male-dominated", "One company dominates the smartphone market.|一家公司主导着智能手机市场。|He tended to dominate the conversation.|他往往主导着谈话。"],
+  ["economy", "经济", "/ɪˈkɒnəmi/", "global economy|boost the economy|strong economy", "The global economy is recovering slowly.|全球经济正在缓慢复苏。|Tourism helps boost the local economy.|旅游业有助于提振当地经济。"],
+  ["educate", "教育", "/ˈedʒukeɪt/", "educate children|educate the public|well-educated", "It is our duty to educate our children.|教育孩子是我们的责任。|The campaign aims to educate the public about health.|这项运动旨在向公众普及健康知识。"],
+  ["effective", "有效的", "/ɪˈfektɪv/", "effective method|highly effective|cost-effective", "This is an effective method for learning English.|这是学习英语的有效方法。|The treatment proved highly effective.|这种疗法证明非常有效。"],
+  ["efficient", "高效的", "/ɪˈfɪʃnt/", "efficient system|energy-efficient|more efficient", "We need a more efficient transport system.|我们需要一个更高效的交通系统。|The new machine is very energy-efficient.|新机器非常节能。"],
+  ["element", "元素", "/ˈelɪmənt/", "key element|essential element|chemical element", "Trust is a key element of any relationship.|信任是任何关系的关键要素。|Gold is a valuable chemical element.|金是一种有价值的化学元素。"],
+  ["emerge", "出现", "/ɪˈmɜːdʒ/", "emerge from|newly emerged|emerge as", "New industries are emerging from the technology boom.|新技术热潮中涌现出新兴产业。|She emerged as the clear winner.|她作为明显的胜者出现。"],
+  ["emotion", "情感", "/ɪˈməʊʃn/", "express emotion|strong emotion|mixed emotions", "Men often find it hard to express emotion.|男人常常觉得难以表达情感。|She had mixed emotions about leaving home.|她对离家心情复杂。"],
+  ["emphasize", "强调", "/ˈemfəsaɪz/", "emphasize the importance|strongly emphasize|emphasize that", "The report emphasizes the importance of education.|报告强调了教育的重要性。|She strongly emphasized that time was limited.|她强烈强调时间有限。"],
+  ["employ", "雇用", "/ɪmˈplɔɪ/", "employ staff|employ a method|self-employed", "The factory employs over 500 staff.|这家工厂雇用了500多名员工。|He is self-employed and works from home.|他是自由职业者，在家工作。"],
+  ["encourage", "鼓励", "/ɪnˈkʌrɪdʒ/", "encourage someone|encourage participation|highly encouraging", "Parents should encourage their children to read.|父母应鼓励孩子阅读。|The results are highly encouraging.|结果非常令人鼓舞。"],
+
+  // Theme 9: Abstract Concepts (161-180)
+  ["enormous", "巨大的", "/ɪˈnɔːməs/", "enormous amount|enormous impact|enormous size", "The project requires an enormous amount of money.|这个项目需要巨额资金。|The internet has had an enormous impact on society.|互联网对社会产生了巨大影响。"],
+  ["ensure", "确保", "/ɪnˈʃʊər/", "ensure safety|ensure quality|ensure that", "We must ensure the safety of all passengers.|我们必须确保所有乘客的安全。|Strict rules ensure quality in production.|严格的规则确保了生产质量。"],
+  ["environment", "环境", "/ɪnˈvaɪrənmənt/", "protect the environment|working environment|natural environment", "We all must protect the environment.|我们都必须保护环境。|A good working environment boosts productivity.|良好的工作环境能提高生产力。"],
+  ["establish", "建立", "/ɪˈstæblɪʃ/", "establish a company|establish a rule|well-established", "They established the company in 1990.|他们于1990年创立了这家公司。|The school is well-established and respected.|这所学校历史悠久，备受尊敬。"],
+  ["estimate", "估计", "/ˈestɪmeɪt/", "rough estimate|estimate the cost|conservative estimate", "Can you give me a rough estimate of the cost?|你能给我一个大概的费用估计吗？|Experts estimate the cost at one million dollars.|专家估计费用为100万美元。"],
+  ["evaluate", "评估", "/ɪˈvæljueɪt/", "evaluate performance|evaluate the impact|carefully evaluated", "Managers evaluate employee performance annually.|经理每年评估员工表现。|The impact of the policy was carefully evaluated.|政策的影响被仔细评估。"],
+  ["evidence", "证据", "/ˈevɪdəns/", "strong evidence|scientific evidence|in evidence", "There is strong evidence to support the theory.|有强有力的证据支持这个理论。|Scientific evidence shows that smoking causes cancer.|科学证据表明吸烟致癌。"],
+  ["evolve", "进化；演变", "/ɪˈvɒlv/", "evolve from|evolve into|gradually evolve", "Humans evolved from earlier species.|人类由更早的物种进化而来。|The small business evolved into a large corporation.|这家小企业逐渐发展成一家大公司。"],
+  ["examine", "检查", "/ɪɡˈzæmɪn/", "examine carefully|examine a patient|examine the evidence", "The doctor will examine the patient now.|医生现在要检查病人。|Police examined the evidence thoroughly.|警方彻底检查了证据。"],
+  ["exceed", "超过", "/ɪkˈsiːd/", "exceed expectations|exceed the limit|exceed sales", "The results exceeded all our expectations.|结果超出了我们所有的预期。|The car exceeded the speed limit on the highway.|那辆车在高速公路上超速了。"],
+  ["exchange", "交换", "/ɪksˈtʃeɪndʒ/", "exchange ideas|exchange rate|in exchange", "The meeting is a chance to exchange ideas.|这次会议是交流想法的机会。|The exchange rate changes daily.|汇率每天都在变化。"],
+  ["exist", "存在", "/ɪɡˈzɪst/", "exist in|exist on|continue to exist", "Do aliens really exist in the universe?|外星人真的存在于宇宙中吗？|Many species exist only in tropical forests.|许多物种只存在于热带森林中。"],
+  ["expand", "扩大", "/ɪkˈspænd/", "expand a business|expand rapidly|expand into", "They plan to expand their business overseas.|他们计划将业务扩展到海外。|The city has expanded rapidly in recent decades.|近几十年来，这座城市迅速扩张。"],
+  ["expect", "期待", "/ɪkˈspekt/", "expect to|expect too much|as expected", "I expect to finish the work by Friday.|我预计周五前完成工作。|Do not expect too much from others.|不要对别人期望过高。"],
+  ["experience", "经验；经历", "/ɪkˈspɪəriəns/", "gain experience|personal experience|work experience", "You can gain experience by volunteering.|你可以通过做志愿者获得经验。|Her personal experience inspired the novel.|她的个人经历启发了这部小说。"],
+  ["experiment", "实验", "/ɪkˈsperɪmənt/", "conduct an experiment|scientific experiment|experiment with", "The students conducted an experiment in class.|学生们在课堂上做了一个实验。|Scientists experiment with new materials.|科学家们试验新材料。"],
+  ["explain", "解释", "/ɪkˈspleɪn/", "explain clearly|explain the reason|hard to explain", "Can you explain the rules clearly?|你能清楚地解释一下规则吗？|He tried to explain the reason for his absence.|他试图解释缺席的原因。"],
+  ["explore", "探索", "/ɪkˈsplɔːr/", "explore options|explore the area|explore possibilities", "We need to explore all available options.|我们需要探索所有可行的选择。|They explored the area for new resources.|他们探索该地区以寻找新资源。"],
+  ["expose", "暴露", "/ɪkˈspəʊz/", "expose to|expose the truth|be exposed", "Do not expose your skin to the sun too long.|不要让皮肤长时间暴露在阳光下。|The journalist exposed the truth about the scandal.|记者揭露了丑闻的真相。"],
+  ["extend", "延伸", "/ɪkˈstend/", "extend a deadline|extend a hand|extend the range", "The teacher agreed to extend the deadline.|老师同意延长截止日期。|The road will extend to the next town.|这条路将延伸到下一个城镇。"],
+
+  // Theme 10: Advanced / Academic (181-200)
+  ["extensive", "广泛的", "/ɪkˈstensɪv/", "extensive research|extensive knowledge|extensive damage", "They carried out extensive research on the topic.|他们就该主题进行了广泛的研究。|The storm caused extensive damage to crops.|暴风雨对农作物造成了广泛破坏。"],
+  ["factor", "因素", "/ˈfæktər/", "key factor|deciding factor|risk factor", "Money is a key factor in the decision.|金钱是这项决定的关键因素。|Weather was the deciding factor in the match.|天气是这场比赛的决定性因素。"],
+  ["feature", "特征", "/ˈfiːtʃər/", "key feature|special feature|distinctive feature", "Safety is a key feature of the new car.|安全是这款新车的关键特点。|The software has many special features.|这款软件有许多特殊功能。"],
+  ["figure", "数字；人物", "/ˈfɪɡər/", "figure out|key figure|official figures", "I cannot figure out how to use this machine.|我弄不明白怎么用这台机器。|He is a key figure in the industry.|他是该行业的关键人物。"],
+  ["finance", "财务", "/ˈfaɪnæns/", "public finance|finance a project|personal finance", "The minister manages public finance carefully.|部长谨慎管理公共财政。|The bank will finance the new project.|银行将为新项目提供资金。"],
+  ["focus", "集中", "/ˈfəʊkəs/", "focus on|lose focus|main focus", "We need to focus on the main issue.|我们需要关注主要问题。|It is easy to lose focus when you are tired.|疲倦时很容易走神。"],
+  ["function", "功能", "/ˈfʌŋkʃn/", "basic function|function properly|vital function", "The heart performs a vital function in the body.|心脏在身体中起着至关重要的作用。|The machine does not function properly.|这台机器运转不正常。"],
+  ["generate", "产生", "/ˈdʒenəreɪt/", "generate income|generate ideas|generate electricity", "The business generates a steady income.|这项业务产生稳定的收入。|Solar panels generate electricity from sunlight.|太阳能电池板利用阳光发电。"],
+  ["global", "全球的", "/ˈɡləʊbl/", "global market|global warming|global economy", "The company now serves the global market.|这家公司现在服务于全球市场。|Global warming is a serious threat to the planet.|全球变暖是对地球的严重威胁。"],
+  ["guarantee", "保证", "/ˌɡærənˈtiː/", "guarantee quality|money-back guarantee|guarantee that", "We guarantee the quality of our products.|我们保证产品的质量。|The shop offers a money-back guarantee.|这家商店提供退款保证。"],
+  ["handle", "处理", "/ˈhændl/", "handle a problem|handle carefully|handle the pressure", "She knows how to handle difficult problems.|她知道如何处理难题。|Please handle the glass carefully.|请小心拿放玻璃制品。"],
+  ["highlight", "强调；突出", "/ˈhaɪlaɪt/", "highlight the importance|highlight a problem|key highlights", "The report highlights the importance of teamwork.|报告强调了团队合作的重要性。|The study highlights a growing problem in cities.|这项研究突出了城市中日益严重的问题。"],
+  ["identify", "识别", "/aɪˈdentɪfaɪ/", "identify the cause|identify with|easily identified", "Doctors must identify the cause of the illness.|医生必须找出病因。|Many readers identify with the main character.|许多读者与主人公产生共鸣。"],
+  ["impact", "影响", "/ˈɪmpækt/", "significant impact|positive impact|have an impact", "Technology has a significant impact on our lives.|技术对我们的生活有重大影响。|Exercise has a positive impact on health.|运动对健康有积极影响。"],
+  ["implement", "实施", "/ˈɪmplɪment/", "implement a plan|implement a policy|implement changes", "The government will implement the new policy soon.|政府将很快实施新政策。|It is hard to implement changes in a large company.|在大公司里实施变革很难。"],
+  ["imply", "暗示", "/ɪmˈplaɪ/", "imply that|strongly imply|clearly implied", "His words implied that he was unhappy.|他的话暗示他不高兴。|The results imply that the method works.|结果暗示这种方法有效。"],
+  ["improve", "改善", "/ɪmˈpruːv/", "improve quality|improve performance|improve significantly", "We need to improve the quality of our products.|我们需要提高产品质量。|Her performance has improved significantly this year.|她今年的表现显著提高。"],
+  ["include", "包括", "/ɪnˈkluːd/", "include something|include details|prices include", "The price does not include breakfast.|价格不包括早餐。|Please include all relevant details in the report.|请在报告中包括所有相关细节。"],
+  ["increase", "增加", "/ɪnˈkriːs/", "increase significantly|increase in|sharp increase", "Prices have increased significantly this year.|今年价格大幅上涨。|There has been a sharp increase in demand.|需求急剧增加。"],
+  ["indicate", "表明", "/ˈɪndɪkeɪt/", "indicate that|clearly indicate|indicate a trend", "The data indicates that sales are rising.|数据显示销售额在上升。|His gestures clearly indicated his anger.|他的手势清楚地表明了他的愤怒。"]
+];
+
+function generatePackFromBank(bank, startIndex, count) {
+  count = count || 10;
+  var words = [];
+  for (var i = 0; i < count; i++) {
+    var entry = bank[startIndex + i];
+    var word = entry[0];
+    var meaning = entry[1];
+    var phonetic = entry[2];
+    var collocations = entry[3].split("|");
+    var exampleParts = entry[4].split("|");
+    var examples = [];
+    for (var j = 0; j + 1 < exampleParts.length; j += 2) {
+      examples.push({ en: exampleParts[j], zh: exampleParts[j + 1] });
     }
-  ];
-  const idx=new Date(date).getDate()%packs.length;
-  return packs[idx];
+    words.push([word, meaning, { phonetic: phonetic, collocations: collocations, examples: examples }]);
+  }
+
+  // chunks: 3 pairs of English|Chinese collocation phrases
+  var chunks = [];
+  for (var k = 0; k < 3 && k < words.length; k++) {
+    var w = words[k];
+    var col = w[2].collocations[k % w[2].collocations.length] || w[2].collocations[0];
+    chunks.push(col + "|" + w[1]);
+  }
+
+  // text: a short paragraph using some of the day's words
+  var enText = "";
+  var zhText = "";
+  var useCount = Math.min(5, words.length);
+  for (var m = 0; m < useCount; m++) {
+    enText += words[m][2].examples[0].en + " ";
+    zhText += words[m][2].examples[0].zh + " ";
+  }
+  var text = enText.trim() + " " + zhText.trim();
+
+  return { words: words, chunks: chunks, text: text };
+}
+
+function englishShuffleIndices(n, seed) {
+  var arr = [];
+  for (var i = 0; i < n; i++) arr.push(i);
+  var s = (seed * 2654435761) & 0x7fffffff;
+  if (s === 0) s = 1;
+  for (var i = n - 1; i > 0; i--) {
+    s = (s * 1103515245 + 12345) & 0x7fffffff;
+    var j = Math.floor((s / 0x7fffffff) * (i + 1));
+    var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+  }
+  return arr;
+}
+function englishPackFor(date) {
+  var bank = ENGLISH_WORD_BANK;
+  var n = bank.length;
+  var target = new Date(date);
+  var jun1 = new Date(2026, 5, 1);
+  if (target < jun1) {
+    return generatePackFromBank(bank, 0, 10);
+  }
+  var year = target.getFullYear();
+  var month = target.getMonth();
+  var day = target.getDate();
+  var monthOffset = (year - 2026) * 12 + (month - 5);
+  var dayIdx = day - 1;
+  var packSize = 10;
+  var packsPerPass = Math.floor(n / packSize);
+  var pass = Math.floor(dayIdx / packsPerPass);
+  var dayInPass = dayIdx % packsPerPass;
+  var seed = monthOffset * 100 + pass + 1;
+  var shuffled = englishShuffleIndices(n, seed);
+  var startIdx = dayInPass * packSize;
+  var subBank = [];
+  for (var k = 0; k < packSize; k++) {
+    subBank.push(bank[shuffled[(startIdx + k) % n]]);
+  }
+  return generatePackFromBank(subBank, 0, packSize);
 }
 const DEFAULT_ROUTINE_TASKS=[
   '11点前入睡',
@@ -2973,7 +3385,7 @@ const MODULE_TYPES={
       const yearTotalEarly=yearSummary.reduce((s,m)=>s+m.earlyDays,0);
       const sleepChart=`<div style="background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:12px;margin-bottom:8px">
         <div class="flex-between" style="margin-bottom:6px"><strong style="font-size:13px">${year} 年度睡眠趋势</strong><span class="small-text">早睡天数 / 记录天数 · 早睡率${yearTotalDays?Math.round(yearTotalEarly/yearTotalDays*100):0}%</span></div>
-        <div style="overflow-x:auto"><svg width="${chartW}" height="${chartH+4}" viewBox="0 0 ${chartW} ${chartH+4}" style="max-width:100%;overflow:visible">
+        <div style="overflow:visible"><svg width="${chartW}" height="${chartH+20}" viewBox="0 0 ${chartW} ${chartH+20}" style="max-width:100%;overflow:visible">
           <line x1="${padL}" y1="${chartH-padB}" x2="${chartW-4}" y2="${chartH-padB}" stroke="var(--card-border)" stroke-width="1"/>
           ${chartBars}
         </svg></div>
@@ -3221,7 +3633,7 @@ const MODULE_TYPES={
       const exYearTotalMin=exYearSummary.reduce((s,m)=>s+m.minutes,0);
       const exChart=`<div style="background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:12px;margin-bottom:8px">
         <div class="flex-between" style="margin-bottom:6px"><strong style="font-size:13px">${exYear} 年度运动趋势</strong><span class="small-text">运动${exYearTotalDays}天 · ${exYearTotalMin}分钟 · 日均${exYearTotalDays?Math.round(exYearTotalMin/exYearTotalDays):0}分钟</span></div>
-        <div style="overflow-x:auto"><svg width="${exChartW}" height="${exChartH+4}" viewBox="0 0 ${exChartW} ${exChartH+4}" style="max-width:100%;overflow:visible">
+        <div style="overflow:visible"><svg width="${exChartW}" height="${exChartH+20}" viewBox="0 0 ${exChartW} ${exChartH+20}" style="max-width:100%;overflow:visible">
           <line x1="${exPadL}" y1="${exChartH-exPadB}" x2="${exChartW-4}" y2="${exChartH-exPadB}" stroke="var(--card-border)" stroke-width="1"/>
           ${exChartBars}
         </svg></div>
@@ -3248,7 +3660,7 @@ const MODULE_TYPES={
             const list=cur&&!types.includes(cur)?[...types.slice(0,-1),cur,'其他']:types;
             return list.map(t=>`<option value="${t}" ${cur===t?'selected':''}>${t}</option>`).join('');
           })()}</select></div>
-          <div class="form-group" style="max-width:100px"><label>时长(分)</label><input type="number" class="ex-dur" value="${selectedRec.duration||30}" min="1" max="600"></div>
+          <div class="form-group" style="max-width:100px"><label>时长(分)</label><input type="number" class="ex-dur" value="${selectedRec.duration??''}" min="1" max="600" placeholder="30"></div>
         </div>
         <div class="form-group"><label>备注</label><input type="text" class="ex-notes" value="${esc(selectedRec.notes||'')}" placeholder="如：5km、上肢训练等" maxlength="80"></div>
         <button class="btn btn-primary btn-sm btn-block ex-add">保存选中日期运动</button>
@@ -3284,7 +3696,7 @@ const MODULE_TYPES={
         });
       }
       body.querySelector('.ex-add').addEventListener('click',e=>{const date=dateInput.value||todayStr();mod.data.selectedDate=date;mod.data.records=upsertByDate(mod.data.records||[],date,{type:body.querySelector('.ex-type').value,duration:body.querySelector('.ex-dur').value,notes:body.querySelector('.ex-notes').value.trim()});saveAndRerenderWithConfirm(e.currentTarget,mod,save);});
-      body.querySelector('.ex-week-save')?.addEventListener('click',e=>{_undoSnapshot(mod);mod.data.quick=mod.data.quick||{};body.querySelectorAll('.day-card').forEach(card=>{const items=[...card.querySelectorAll('input[type=checkbox]:checked')].map(x=>x.value);const minutes=+(card.querySelector('.ex-week-min')?.value||0);const note=card.querySelector('.ex-week-note')?.value.trim()||'';if(items.length||minutes||note)mod.data.quick[card.dataset.date]={items,minutes,note};});saveAndRerenderWithConfirm(e.currentTarget,mod,save);});
+      body.querySelector('.ex-week-save')?.addEventListener('click',e=>{_undoSnapshot(mod);mod.data.quick=mod.data.quick||{};body.querySelectorAll('.day-card').forEach(card=>{const items=[...card.querySelectorAll('input[type=checkbox]:checked')].map(x=>x.value);const minutes=+(card.querySelector('.ex-week-min')?.value||0);const note=card.querySelector('.ex-week-note')?.value.trim()||'';if(items.length||minutes||note){mod.data.quick[card.dataset.date]={items,minutes,note};}else{delete mod.data.quick[card.dataset.date];}});saveAndRerenderWithConfirm(e.currentTarget,mod,save);});
       const exUndo=body.querySelector('.ex-week-undo');
       if(exUndo&&_undoStack[mod.id])exUndo.style.display='';
       if(exUndo)exUndo.addEventListener('click',()=>{if(_undoRestore(mod,save)){rerender(mod);}});
@@ -3306,7 +3718,7 @@ const MODULE_TYPES={
         const r=findByDate(d.records,key)||{};
         return r.minutes?`<span class="month-dot"></span>${r.minutes}分钟${r.feeling?`<br>${esc(r.feeling).slice(0,18)}`:''}`:'';
       },`<div class="small-text" style="margin:8px 0;text-align:center">本月冥想 ${monthRows.length} 天 · ${monthMin} 分钟 · 日均 ${monthRows.length?Math.round(monthMin/monthRows.length):0} 分钟</div>`);
-      const meditationWeek=weekDates().map(day=>{const key=dateKey(day), r=findByDate(d.records,key)||{};const hasRecord=!!(r.minutes||r.feeling);return `<div class="day-card ${key===todayStr()?'today':''}" data-date="${key}" data-touched="${hasRecord?'1':'0'}"><div class="day-name">周${dayLabel(day)}</div><div class="day-num">${day.getDate()}</div><div class="mini-field"><label>分钟</label><input type="number" class="md-week-min" value="${r.minutes||''}" min="0" placeholder="5" style="${hasRecord?'':'color:var(--text-sec)'}"></div><div class="mini-field"><label>感受</label><textarea class="md-week-feel" placeholder="放松/焦虑/清醒...">${esc(r.feeling||'')}</textarea></div></div>`;}).join('');
+      const meditationWeek=weekDates().map(day=>{const key=dateKey(day), r=findByDate(d.records,key)||{};const hasRecord=!!(r.minutes||r.feeling);return `<div class="day-card ${key===todayStr()?'today':''}" data-date="${key}" data-touched="${hasRecord?'1':'0'}"><div class="day-name">周${dayLabel(day)}</div><div class="day-num">${day.getDate()}</div><div class="mini-field"><label>分钟</label><input type="number" class="md-week-min" value="${r.minutes||''}" min="0" placeholder="" style="${hasRecord?'':'color:var(--text-sec)'}"></div><div class="mini-field"><label>感受</label><textarea class="md-week-feel" placeholder="放松/焦虑/清醒...">${esc(r.feeling||'')}</textarea></div></div>`;}).join('');
       const selectedRec=findByDate(d.records,d.selectedDate)||{};const recent=d.records.slice(-8).reverse();
       // 年度冥想趋势
       const mdNow=new Date();
@@ -3336,7 +3748,7 @@ const MODULE_TYPES={
       const mdYearTotalMin=mdYearSummary.reduce((s,m)=>s+m.minutes,0);
       const mdChart=`<div style="background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:12px;margin-bottom:8px">
         <div class="flex-between" style="margin-bottom:6px"><strong style="font-size:13px">${mdYear} 年度冥想趋势</strong><span class="small-text">冥想${mdYearTotalDays}天 · ${mdYearTotalMin}分钟 · 日均${mdYearTotalDays?Math.round(mdYearTotalMin/mdYearTotalDays):0}分钟</span></div>
-        <div style="overflow-x:auto"><svg width="${mdChartW}" height="${mdChartH+4}" viewBox="0 0 ${mdChartW} ${mdChartH+4}" style="max-width:100%;overflow:visible">
+        <div style="overflow:visible"><svg width="${mdChartW}" height="${mdChartH+20}" viewBox="0 0 ${mdChartW} ${mdChartH+20}" style="max-width:100%;overflow:visible">
           <line x1="${mdPadL}" y1="${mdChartH-mdPadB}" x2="${mdChartW-4}" y2="${mdChartH-mdPadB}" stroke="var(--card-border)" stroke-width="1"/>
           ${mdChartBars}
         </svg></div>
@@ -3348,7 +3760,7 @@ const MODULE_TYPES={
         <button class="btn btn-primary btn-sm btn-block md-week-save">保存本周正念冥想</button>
         <button class="btn btn-ghost btn-sm md-week-undo" style="display:none;width:100%;margin-top:4px">↩ 撤回本周保存</button>
         <div class="form-row"><div class="form-group" style="max-width:180px"><label>选择日期</label><input type="date" class="md-date" value="${esc(d.selectedDate)}"></div><button class="btn btn-ghost btn-sm md-load-date">载入选中日期</button></div>
-        <div class="form-row"><div class="form-group" style="max-width:120px"><label>冥想分钟</label><input type="number" class="md-min" value="${selectedRec.minutes||5}" min="0" max="300"></div><button class="btn btn-primary btn-sm md-save">保存选中日期正念冥想</button></div>
+        <div class="form-row"><div class="form-group" style="max-width:120px"><label>冥想分钟</label><input type="number" class="md-min" value="${selectedRec.minutes??''}" min="0" max="300" placeholder="5"></div><button class="btn btn-primary btn-sm md-save">保存选中日期正念冥想</button></div>
         <div class="form-group"><label>冥想感受</label><textarea class="md-feeling" placeholder="冥想后的身体/情绪/念头变化">${esc(selectedRec.feeling||'')}</textarea></div>
         <div class="record-list">${recent.length?recent.map(r=>`<div class="record-item"><div class="record-content"><strong>${esc(r.minutes)}分钟</strong>${r.feeling?`<div class="small-text">${esc(r.feeling)}</div>`:''}<div class="record-meta">${formatDate(r.date)}</div></div><button class="record-del md-del" data-id="${r.id}">✕</button></div>`).join(''):'<div class="empty-state">暂无正念冥想记录</div>'}</div>`;
     },
@@ -3369,7 +3781,12 @@ const MODULE_TYPES={
           if(card.dataset.touched!=='1')return;
           const minutes=+(card.querySelector('.md-week-min')?.value||0);
           const feeling=card.querySelector('.md-week-feel')?.value.trim()||'';
-          if(minutes||feeling)mod.data.records=upsertByDate(mod.data.records,card.dataset.date,{minutes,feeling});
+          if(minutes||feeling){
+            mod.data.records=upsertByDate(mod.data.records,card.dataset.date,{minutes,feeling});
+          }else{
+            // 用户清空了数据，删除该日期记录
+            mod.data.records=mod.data.records.filter(r=>r.date!==card.dataset.date);
+          }
         });
         saveAndRerenderWithConfirm(e.currentTarget,mod,save);
       });
@@ -3702,7 +4119,7 @@ const MODULE_TYPES={
         return `<div class="day-card ${key===todayStr()?'today':''}" data-date="${key}" data-touched="${hasRecord?'1':'0'}">
           <div class="day-name">周${dayLabel(day)}</div><div class="day-num">${day.getDate()}</div>
           <div class="mini-field"><label>书名</label><input class="rd-week-title" value="${esc(rec.title||'')}" placeholder="${esc(currentTitles[0]||'今天读什么')}"></div>
-          <div class="mini-field"><label>分钟</label><input type="number" class="rd-week-min" value="${rec.minutes||''}" min="0" placeholder="0" style="${hasRecord?'':'color:var(--text-sec)'}"></div>
+          <div class="mini-field"><label>分钟</label><input type="number" class="rd-week-min" value="${rec.minutes||''}" min="0" placeholder="10" style="${hasRecord?'':'color:var(--text-sec)'}"></div>
           <div class="mini-field"><label>页数/笔记</label><input class="rd-week-note" value="${esc(rec.note||'')}" placeholder="p12-20 / 感悟"></div>
         </div>`;
       }).join('');
@@ -3761,7 +4178,7 @@ const MODULE_TYPES={
       const rdYearTotalMin=rdYearSummary.reduce((s,m)=>s+m.minutes,0);
       const rdChart=`<div style="background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:12px;margin-bottom:8px">
         <div class="flex-between" style="margin-bottom:6px"><strong style="font-size:13px">${rdYear} 年度阅读趋势</strong><span class="small-text">阅读${rdYearTotalDays}天 · ${rdYearTotalMin}分钟 · 日均${rdYearTotalDays?Math.round(rdYearTotalMin/rdYearTotalDays):0}分钟</span></div>
-        <div style="overflow-x:auto"><svg width="${rdChartW}" height="${rdChartH+4}" viewBox="0 0 ${rdChartW} ${rdChartH+4}" style="max-width:100%;overflow:visible">
+        <div style="overflow:visible"><svg width="${rdChartW}" height="${rdChartH+20}" viewBox="0 0 ${rdChartW} ${rdChartH+20}" style="max-width:100%;overflow:visible">
           <line x1="${rdPadL}" y1="${rdChartH-rdPadB}" x2="${rdChartW-4}" y2="${rdChartH-rdPadB}" stroke="var(--card-border)" stroke-width="1"/>
           ${rdChartBars}
         </svg></div>
@@ -3849,7 +4266,12 @@ const MODULE_TYPES={
           const title=card.querySelector('.rd-week-title')?.value.trim()||'';
           const minutes=+(card.querySelector('.rd-week-min')?.value||0);
           const note=card.querySelector('.rd-week-note')?.value.trim()||'';
-          if(title||minutes||note)mod.data.daily[card.dataset.date]={title,minutes,note};
+          if(title||minutes||note){
+            mod.data.daily[card.dataset.date]={title,minutes,note};
+          }else{
+            // 用户清空了所有字段，删除该日期记录
+            delete mod.data.daily[card.dataset.date];
+          }
         });
         saveAndRerenderWithConfirm(weekSave,mod,save);
       });
@@ -3943,9 +4365,9 @@ const MODULE_TYPES={
         <div class="quick-chips" style="margin-top:6px"><label class="chip"><input type="checkbox" class="en-sound-toggle" ${d.soundEnabled?'checked':''}> 朗读开关</label></div>
         <div class="form-row"><div class="form-group" style="max-width:180px"><label>选择日期</label><input type="date" class="en-date" value="${esc(d.selectedDate)}"></div><button class="btn btn-ghost btn-sm en-load-date">载入选中日期</button></div>
         <div class="quick-chips"><label class="chip"><input type="checkbox" class="en-selected-words" ${selectedDaily.words10?'checked':''}>10个单词</label><label class="chip"><input type="checkbox" class="en-selected-chunk" ${selectedDaily.chunk1?'checked':''}>1个词组</label><label class="chip"><input type="checkbox" class="en-selected-pattern" ${selectedDaily.pattern1?'checked':''}>1个句型</label><span class="tag">当日完成率 ${selC.rate}% (${selC.done}/5)</span></div>
-        <div class="form-row"><div class="form-group"><label>AI对话(分)</label><input type="number" class="en-selected-ai" value="${selectedDaily.aiMinutes||0}" min="0"></div><div class="form-group"><label>影子跟读(分)</label><input type="number" class="en-selected-shadow" value="${selectedDaily.shadowMinutes||0}" min="0"></div><div class="form-group"><label>学习时长(分)</label><input type="number" class="en-min" value="${selectedLog.minutes||30}" min="1" max="600"></div></div>
+        <div class="form-row"><div class="form-group"><label>AI对话(分)</label><input type="number" class="en-selected-ai" value="${selectedDaily.aiMinutes||0}" min="0"></div><div class="form-group"><label>影子跟读(分)</label><input type="number" class="en-selected-shadow" value="${selectedDaily.shadowMinutes||0}" min="0"></div><div class="form-group"><label>学习时长(分)</label><input type="number" class="en-min" value="${selectedLog.minutes??''}" min="1" max="600" placeholder="30"></div></div>
         <div class="form-group"><label>备注</label><input type="text" class="en-selected-note" value="${esc(selectedDaily.note||'')}" placeholder="主题/材料"></div><button class="btn btn-primary btn-sm btn-block en-save-selected">保存选中日期英语打卡</button>
-        <div class="english-pack"><h4>选中日期英语包：10个生活词 + chunk + 短文</h4><div class="word-grid">${pack.words.map(([w,m,extra])=>{const e=extra||{};const cols=(e.collocations||[]).map(c=>`<span class="tag" style="margin:2px 2px 0 0;font-size:11px">${esc(c)}</span>`).join('');const exs=(e.examples||[]).map(ex=>{const en=typeof ex==='string'?ex:(ex.en||'');const zh=typeof ex==='string'?'':(ex.zh||'');return `<div class="en-example" style="margin-top:3px;font-size:12px;color:#888;cursor:pointer" data-text="${esc(en)}">${esc(en)}${zh?`<span style="display:block;color:var(--primary);font-size:11px;margin-left:6px">${esc(zh)}</span>`:''}</div>`;}).join('');const vocabItem=d.words.find(v=>v.word.toLowerCase()===w.toLowerCase());const statusLabels={known:'已认识',fuzzy:'模糊',unknown:'不认识'};const statusColors={known:'#22a06b',fuzzy:'#f5b42f',unknown:'#d64545'};const st=vocabItem?(vocabItem.status||'unknown'):null;const vocabBtn=vocabItem?`<span class="tag" style="margin-left:auto;font-size:11px;background:${statusColors[st]}20;color:${statusColors[st]};border-color:${statusColors[st]}40">${statusLabels[st]}</span>`:`<button class="btn btn-ghost btn-sm en-add-vocab" data-word="${esc(w)}" data-meaning="${esc(m)}" style="margin-left:auto;padding:3px 8px;font-size:11px">+生词本</button>`;return `<div class="word-card" style="position:relative"><div style="display:flex;align-items:center;flex-wrap:wrap"><span class="word">${w}</span><span class="en-speak-word" data-word="${esc(w)}" style="cursor:pointer;margin-left:4px" title="朗读"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;pointer-events:none"><path d="M3 9v6h4l5 5V4L7 9H3zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg></span>${e.phonetic?`<span style="margin-left:6px;color:#666;font-size:13px">${esc(e.phonetic)}</span>`:''}${vocabBtn}</div><div class="meaning">${m}</div>${cols?`<div style="margin-top:4px">${cols}</div>`:''}${exs}</div>`;}).join('')}</div><div style="margin-top:8px">${pack.chunks.map((c,i)=>i%2===0?`<span class="tag" style="margin:2px">${esc(c)} / ${esc(pack.chunks[i+1]||'')}</span>`:'').join('')}</div><div class="small-text" style="margin-top:8px;line-height:1.7">${esc(pack.text)}</div><button class="btn btn-ghost btn-sm en-speak-text" style="margin-top:6px">朗读短文</button><button class="btn btn-primary btn-sm btn-block en-import-pack" style="margin-top:8px">加入选中日期学习记录</button></div>
+        <div class="english-pack"><h4>选中日期英语包：10个生活词 + chunk + 短文</h4><div class="word-grid">${pack.words.map(([w,m,extra])=>{const e=extra||{};const cols=(e.collocations||[]).map(c=>`<span class="tag" style="margin:2px 2px 0 0;font-size:11px">${esc(c)}</span>`).join('');const exs=(e.examples||[]).map(ex=>{const en=typeof ex==='string'?ex:(ex.en||'');const zh=typeof ex==='string'?'':(ex.zh||'');return `<div class="en-example" style="margin-top:3px;font-size:12px;color:#888;cursor:pointer" data-text="${esc(en)}">${esc(en)}${zh?` <span class="en-zh-toggle-inline" style="color:var(--primary);font-size:11px;user-select:none;cursor:pointer">[译]</span><span class="en-zh-hidden" style="display:none;color:var(--primary);font-size:11px;margin-left:6px">${esc(zh)}</span>`:''}</div>`;}).join('');const vocabItem=d.words.find(v=>v.word.toLowerCase()===w.toLowerCase());const statusLabels={known:'已认识',fuzzy:'模糊',unknown:'不认识'};const statusColors={known:'#22a06b',fuzzy:'#f5b42f',unknown:'#d64545'};const st=vocabItem?(vocabItem.status||'unknown'):null;const vocabBtn=vocabItem?`<span class="tag" style="margin-left:auto;font-size:11px;background:${statusColors[st]}20;color:${statusColors[st]};border-color:${statusColors[st]}40">${statusLabels[st]}</span>`:`<button class="btn btn-ghost btn-sm en-add-vocab" data-word="${esc(w)}" data-meaning="${esc(m)}" style="margin-left:auto;padding:3px 8px;font-size:11px">+生词本</button>`;return `<div class="word-card" style="position:relative"><div style="display:flex;align-items:center;flex-wrap:wrap"><span class="word">${w}</span><span class="en-speak-word" data-word="${esc(w)}" style="cursor:pointer;margin-left:4px" title="朗读"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;pointer-events:none"><path d="M3 9v6h4l5 5V4L7 9H3zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg></span>${e.phonetic?`<span style="margin-left:6px;color:#666;font-size:13px">${esc(e.phonetic)}</span>`:''}${vocabBtn}</div><div class="meaning">${m}</div>${cols?`<div style="margin-top:4px">${cols}</div>`:''}${exs}</div>`;}).join('')}</div><div style="margin-top:8px">${pack.chunks.map((c,i)=>i%2===0?`<span class="tag" style="margin:2px;display:inline-flex;align-items:center;gap:2px"><span>${esc(c)}</span><span class="en-chunk-zh-toggle" style="color:var(--primary);font-size:11px;cursor:pointer;user-select:none">[译]</span><span class="en-chunk-zh-hidden" style="display:none">${esc(pack.chunks[i+1]||'')}</span></span>`:'').join('')}</div><div class="small-text" style="margin-top:8px;line-height:1.7">${esc(pack.text)}</div><button class="btn btn-ghost btn-sm en-speak-text" style="margin-top:6px">朗读短文</button><button class="btn btn-primary btn-sm btn-block en-import-pack" style="margin-top:8px">加入选中日期学习记录</button></div>
         <div class="section-label">英文写作练习</div>
         <div class="form-group"><label>用英文写几句今天的感想</label><textarea class="en-writing" placeholder="Try to write 2-5 sentences. You can use today's words." style="min-height:96px">${esc(writing.text||'')}</textarea></div>
         <button class="btn btn-primary btn-sm btn-block en-writing-save">保存写作并重新生成反馈</button>
@@ -4020,6 +4442,21 @@ const MODULE_TYPES={
       body.querySelector('.en-speak-text')?.addEventListener('click',()=>{if(mod.data.soundEnabled){const pack=englishPackFor(dateInput.value||todayStr());speakText(pack.text);}});
       body.querySelectorAll('.en-speak-word').forEach(el=>el.addEventListener('click',()=>{if(mod.data.soundEnabled)speakText(el.dataset.word);}));
       body.querySelectorAll('.en-example').forEach(el=>el.addEventListener('click',()=>{if(mod.data.soundEnabled)speakText(el.dataset.text);}));
+      // 中文释义折叠展开
+      body.querySelectorAll('.en-zh-toggle-inline').forEach(btn=>{
+        btn.addEventListener('click',e=>{
+          e.stopPropagation();
+          const hidden=btn.nextElementSibling;
+          if(hidden){const show=hidden.style.display==='none';hidden.style.display=show?'inline':'none';btn.textContent=show?'[收起]':'[译]';}
+        });
+      });
+      body.querySelectorAll('.en-chunk-zh-toggle').forEach(btn=>{
+        btn.addEventListener('click',e=>{
+          e.stopPropagation();
+          const hidden=btn.nextElementSibling;
+          if(hidden){const show=hidden.style.display==='none';hidden.style.display=show?'inline':'none';btn.textContent=show?'[收起]':'[译]';}
+        });
+      });
       // 英语包单词加入生词本
       body.querySelectorAll('.en-add-vocab').forEach(btn=>btn.addEventListener('click',()=>{
         const w=btn.dataset.word, m=btn.dataset.meaning;
@@ -4210,11 +4647,14 @@ const MODULE_TYPES={
                 </div>
               </div>
               <div class="form-row" style="margin-top:4px">
-                <input type="text" class="sk-resources" placeholder="学习资源(如:书、课程、网站)" value="${esc(s.resources||'')}" data-id="${s.id}">
+                <textarea class="sk-resources" placeholder="学习资源(如:书、课程、网站链接，可换行)" data-id="${s.id}" style="min-height:40px;resize:vertical">${esc(s.resources||'')}</textarea>
               </div>
-              <textarea class="sk-notes" placeholder="学习笔记..." data-id="${s.id}" style="margin-top:4px;min-height:40px">${esc(s.notes||'')}</textarea>
-              <button class="btn btn-ghost btn-sm sk-generate" data-id="${s.id}" style="margin-top:6px">根据资源生成学习步骤</button>
-              ${s.steps?`<div class="skill-steps">${esc(s.steps)}</div>`:''}
+              <textarea class="sk-notes" placeholder="学习笔记..." data-id="${s.id}" style="margin-top:4px;min-height:40px;resize:vertical">${esc(s.notes||'')}</textarea>
+              <div class="form-row" style="margin-top:6px;gap:6px">
+                <button class="btn btn-ghost btn-sm sk-generate" data-id="${s.id}">📋 生成学习步骤</button>
+                <button class="btn btn-primary btn-sm sk-generate-ai" data-id="${s.id}">🤖 AI生成学习计划</button>
+              </div>
+              ${s.steps?`<div class="skill-steps">${markdownLite(s.steps)}</div>`:''}
             </div>
           `).join(''):'<div class="empty-state">暂无技能，添加一个开始追踪吧～</div>'}
         </div>
@@ -4248,7 +4688,7 @@ const MODULE_TYPES={
         });
       });
       body.querySelectorAll('.sk-resources').forEach(inp=>{
-        inp.addEventListener('change',()=>{
+        inp.addEventListener('input',()=>{
           const sk=mod.data.skills.find(x=>x.id===inp.dataset.id);if(sk){sk.resources=inp.value;save();}
         });
       });
@@ -4260,6 +4700,27 @@ const MODULE_TYPES={
           const sk=mod.data.skills.find(x=>x.id===btn.dataset.id);if(!sk)return;
           sk.steps=generateSkillSteps(sk.name,sk.resources,sk.notes);
           save();rerender(mod);
+        });
+      });
+      body.querySelectorAll('.sk-generate-ai').forEach(btn=>{
+        btn.addEventListener('click',async()=>{
+          const sk=mod.data.skills.find(x=>x.id===btn.dataset.id);if(!sk)return;
+          if(!getApiKey()){alert('请先在设置中配置 Gemini API 密钥\n\n获取方式：\n1. 访问 https://aistudio.google.com/apikey\n2. 创建一个 API Key（免费）\n3. 在设置 → AI 助手中粘贴');return;}
+          btn.disabled=true;btn.textContent='🤖 AI生成中...';
+          try{
+            sk.steps=await generateSkillStepsAI(sk.name,sk.resources,sk.notes);
+            save();rerender(mod);
+          }catch(err){
+            if(err.message==='NO_API_KEY'){
+              alert('请先在设置中配置 Gemini API 密钥');
+            }else{
+              alert('AI生成失败：'+err.message+'\n\n已为你生成本地版学习步骤');
+              sk.steps=generateSkillSteps(sk.name,sk.resources,sk.notes);
+              save();rerender(mod);
+            }
+          }finally{
+            btn.disabled=false;btn.textContent='🤖 AI生成学习计划';
+          }
         });
       });
     }
@@ -4772,20 +5233,22 @@ const MODULE_TYPES={
   /* ---- 长期报告 ---- */
   'report':{
     title:'长期报告',icon:'report',desc:'自动聚合周/月/季/年回顾',
-    defaultData:{period:'week',view:'cards',showDetail:false},
+    defaultData:{period:'week',view:'cards',showDetail:false,periodOffset:0},
     render(d){
-      d.period=d.period||'week';d.view=d.view||'cards';d.showDetail=d.showDetail||false;
-      const stats=reportStats(d.period);
+      d.period=d.period||'week';d.view=d.view||'cards';d.showDetail=d.showDetail||false;d.periodOffset=d.periodOffset||0;
+      const stats=reportStats(d.period,d.periodOffset);
       const labels={week:'本周',month:'本月',quarter:'本季度',year:'今年'};
-      const periodLen=periodKeys(d.period).length;
+      const offsetLabel=d.periodOffset===0?'':(d.periodOffset>0?`+${d.periodOffset}`:`${d.periodOffset}`);
+      const periodLabel=offsetLabel?`${labels[d.period]}(${offsetLabel})`:labels[d.period];
+      const periodLen=periodKeys(d.period,d.periodOffset).length;
       const planRate=stats.planTotal?Math.round(stats.planDone/stats.planTotal*100):0;
       const earlyRate=stats.sleepDays?Math.round(stats.early/stats.sleepDays*100):0;
       const enRate=stats.enTotal?Math.round(stats.enDone/stats.enTotal*100):0;
       const reviewRate=periodLen?Math.round(stats.reviewDays/periodLen*100):0;
       // 多周期对比数据
       const allPeriods=['week','month','quarter','year'].map(p=>{
-        const s=reportStats(p);
-        return{label:labels[p],hasData:s.hasData,planRate:s.planTotal?Math.round(s.planDone/s.planTotal*100):0,earlyRate:s.sleepDays?Math.round(s.early/s.sleepDays*100):0,exDays:s.exDays,enRate:s.enTotal?Math.round(s.enDone/s.enTotal*100):0,readMin:s.readMin,reviewDays:s.reviewDays,sleepDays:s.sleepDays};
+        const s=reportStats(p,d.periodOffset);
+        return{label:labels[p],hasData:s.hasData,planRate:s.planTotal?Math.round(s.planDone/s.planTotal*100):0,earlyRate:s.sleepDays?Math.round(s.early/s.sleepDays*100):0,exDays:s.exDays,exMin:s.exMin,enRate:s.enTotal?Math.round(s.enDone/s.enTotal*100):0,readMin:s.readMin,readDays:s.readDays,reviewDays:s.reviewDays,sleepDays:s.sleepDays,medDays:s.medDays,medMin:s.medMin};
       });
       // 进度条组件
       const bar=(label,val,max,unit,color)=>{
@@ -4808,16 +5271,20 @@ const MODULE_TYPES={
         else if(earlyRate>0)improveList.push(`早睡率 ${earlyRate}%，需要改善入睡时间`);
       }
       if(stats.exDays>0){
-        if(stats.exDays>=3)goodList.push(`运动 ${stats.exDays} 天，保持良好运动习惯`);
+        if(stats.exDays>=3)goodList.push(`运动 ${stats.exDays} 天/${stats.exMin}分钟，保持良好运动习惯`);
         else improveList.push(`运动仅 ${stats.exDays} 天，运动频率偏低`);
       }
       if(stats.readMin>0){
-        if(stats.readMin>=60)goodList.push(`阅读 ${stats.readMin} 分钟，持续学习输入`);
+        if(stats.readMin>=60)goodList.push(`阅读 ${stats.readDays} 天/${stats.readMin} 分钟，持续学习输入`);
         else improveList.push(`阅读仅 ${stats.readMin} 分钟，输入量不足`);
       }
       if(stats.enTotal>0){
-        if(enRate>=60)goodList.push(`英语完成率 ${enRate}%，学习进度良好`);
-        else if(enRate>0)improveList.push(`英语完成率 ${enRate}%，需加强每日练习`);
+        if(enRate>=60)goodList.push(`英语学习情况 ${enRate}%，学习进度良好`);
+        else if(enRate>0)improveList.push(`英语学习情况 ${enRate}%，需加强每日练习`);
+      }
+      if(stats.medDays>0){
+        if(stats.medDays>=3)goodList.push(`冥想 ${stats.medDays} 天/${stats.medMin}分钟，保持正念练习`);
+        else improveList.push(`冥想仅 ${stats.medDays} 天，可以增加练习频率`);
       }
       if(stats.reviewDays>0){
         if(stats.reviewDays>=3)goodList.push(`复盘 ${stats.reviewDays} 天，保持反思习惯`);
@@ -4847,15 +5314,16 @@ const MODULE_TYPES={
       const compareTable=`<div style="overflow-x:auto;margin-top:12px"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:var(--primary-light)"><th style="padding:8px;text-align:left;border-radius:8px 0 0 0">指标</th>${allPeriods.map(p=>`<th style="padding:8px;text-align:center">${p.label}</th>`).join('')}</tr></thead><tbody>
         <tr style="border-bottom:1px solid var(--card-border)"><td style="padding:6px 8px;font-weight:600">计划完成率</td>${allPeriods.map(p=>`<td style="padding:6px 8px;text-align:center;${p.hasData&&p.planRate>=70?'color:#22a06b':p.hasData&&p.planRate>=40?'color:#f5b42f':p.hasData?'color:#d64545':''};font-weight:700">${fmtVal(p,'planRate')}</td>`).join('')}</tr>
         <tr style="border-bottom:1px solid var(--card-border)"><td style="padding:6px 8px;font-weight:600">早睡率</td>${allPeriods.map(p=>`<td style="padding:6px 8px;text-align:center;font-weight:700">${fmtVal(p,'earlyRate')}</td>`).join('')}</tr>
-        <tr style="border-bottom:1px solid var(--card-border)"><td style="padding:6px 8px;font-weight:600">运动天数</td>${allPeriods.map(p=>`<td style="padding:6px 8px;text-align:center;font-weight:700">${fmtVal(p,'exDays')}</td>`).join('')}</tr>
-        <tr style="border-bottom:1px solid var(--card-border)"><td style="padding:6px 8px;font-weight:600">英语完成率</td>${allPeriods.map(p=>`<td style="padding:6px 8px;text-align:center;font-weight:700">${fmtVal(p,'enRate')}</td>`).join('')}</tr>
-        <tr style="border-bottom:1px solid var(--card-border)"><td style="padding:6px 8px;font-weight:600">阅读(分钟)</td>${allPeriods.map(p=>`<td style="padding:6px 8px;text-align:center;font-weight:700">${fmtVal(p,'readMin')}</td>`).join('')}</tr>
+        <tr style="border-bottom:1px solid var(--card-border)"><td style="padding:6px 8px;font-weight:600">运动(天/分)</td>${allPeriods.map(p=>`<td style="padding:6px 8px;text-align:center;font-weight:700">${p.hasData?(p.exDays?p.exDays+'天/'+p.exMin+'分':'-'):'-'}</td>`).join('')}</tr>
+        <tr style="border-bottom:1px solid var(--card-border)"><td style="padding:6px 8px;font-weight:600">冥想(天/分)</td>${allPeriods.map(p=>`<td style="padding:6px 8px;text-align:center;font-weight:700">${p.hasData?(p.medDays?p.medDays+'天/'+p.medMin+'分':'-'):'-'}</td>`).join('')}</tr>
+        <tr style="border-bottom:1px solid var(--card-border)"><td style="padding:6px 8px;font-weight:600">英语学习情况</td>${allPeriods.map(p=>`<td style="padding:6px 8px;text-align:center;font-weight:700">${fmtVal(p,'enRate')}</td>`).join('')}</tr>
+        <tr style="border-bottom:1px solid var(--card-border)"><td style="padding:6px 8px;font-weight:600">阅读(天/分)</td>${allPeriods.map(p=>`<td style="padding:6px 8px;text-align:center;font-weight:700">${p.hasData?(p.readDays?p.readDays+'天/'+p.readMin+'分':'-'):'-'}</td>`).join('')}</tr>
         <tr><td style="padding:6px 8px;font-weight:600">复盘天数</td>${allPeriods.map(p=>`<td style="padding:6px 8px;text-align:center;font-weight:700">${fmtVal(p,'reviewDays')}</td>`).join('')}</tr>
       </tbody></table></div>`;
       // 无数据时的提示
-      const noDataMsg=`<div style="background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:32px 16px;margin-bottom:12px;text-align:center"><div style="font-size:36px;margin-bottom:8px">📭</div><div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px">${labels[d.period]}暂无记录数据</div><div style="font-size:13px;color:var(--text-sec)">开始在每日计划、睡眠、运动、复盘等板块记录数据后，这里会自动生成${labels[d.period]}的可视化报告和总结摘要。</div></div>`;
+      const noDataMsg=`<div style="background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:32px 16px;margin-bottom:12px;text-align:center"><div style="font-size:36px;margin-bottom:8px">📭</div><div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px">${periodLabel}暂无记录数据</div><div style="font-size:13px;color:var(--text-sec)">开始在每日计划、睡眠、运动、复盘等板块记录数据后，这里会自动生成${periodLabel}的可视化报告和总结摘要。</div></div>`;
       // 日期范围信息
-      const dateRangeInfo=`<div style="background:var(--primary-light);border:1px solid var(--primary);border-radius:10px;padding:8px 14px;margin-bottom:10px;font-size:12px"><strong style="color:var(--primary)">${labels[d.period]}数据范围</strong>：${stats.periodStart} 至 ${stats.periodEnd}（共 ${stats.days} 天），有记录 ${stats.dailyDetail?.length||0} 天</div>`;
+      const dateRangeInfo=`<div style="background:var(--primary-light);border:1px solid var(--primary);border-radius:10px;padding:8px 14px;margin-bottom:10px;font-size:12px"><strong style="color:var(--primary)">${periodLabel}数据范围</strong>：${stats.periodStart} 至 ${stats.periodEnd}（共 ${stats.days} 天），有记录 ${stats.dailyDetail?.length||0} 天</div>`;
       // 数据明细表（可折叠）
       const detailRows=(stats.dailyDetail||[]).slice().reverse().map(dd=>{
         const dObj=new Date(dd.date);
@@ -4864,9 +5332,9 @@ const MODULE_TYPES={
           <td style="padding:4px 6px;font-size:11px;font-weight:600">${dStr}</td>
           <td style="padding:4px 6px;text-align:center;font-size:11px">${dd.plan?dd.plan+'项':'-'}</td>
           <td style="padding:4px 6px;text-align:center;font-size:11px">${dd.sleep||'-'}</td>
-          <td style="padding:4px 6px;text-align:center;font-size:11px">${dd.exercise?'✓':'-'}</td>
+          <td style="padding:4px 6px;text-align:center;font-size:11px">${dd.exercise?(dd.exerciseMin?dd.exerciseMin+'分':'✓'):'-'}</td>
           <td style="padding:4px 6px;text-align:center;font-size:11px">${dd.meditation?dd.meditation+'分':'-'}</td>
-          <td style="padding:4px 6px;text-align:center;font-size:11px">${dd.english!=='0'?dd.english:'-'}</td>
+          <td style="padding:4px 6px;text-align:center;font-size:11px">${dd.english&&dd.english!=='0/5'?dd.english:'-'}</td>
           <td style="padding:4px 6px;text-align:center;font-size:11px">${dd.reading?dd.reading+'分':'-'}</td>
           <td style="padding:4px 6px;text-align:center;font-size:11px">${dd.review?'✓':'-'}</td>
         </tr>`;
@@ -4883,15 +5351,16 @@ const MODULE_TYPES={
         <div class="form-row">
           <div class="form-group" style="max-width:180px"><label>报告周期</label><select class="rp-period">${[['week','周报告'],['month','月度报告'],['quarter','季度报告'],['year','年报告']].map(([k,v])=>`<option value="${k}" ${d.period===k?'selected':''}>${v}</option>`).join('')}</select></div>
           <div class="form-group" style="max-width:180px"><label>预览形式</label><select class="rp-view"><option value="cards" ${d.view==='cards'?'selected':''}>可视化看板</option><option value="text" ${d.view==='text'?'selected':''}>文字报告</option></select></div>
+          <div class="form-group" style="max-width:200px"><label>日期回溯</label><div style="display:flex;gap:4px;align-items:center"><button class="btn btn-ghost btn-sm rp-prev" style="padding:2px 8px">‹</button><span class="small-text" style="min-width:80px;text-align:center">${periodLabel}</span><button class="btn btn-ghost btn-sm rp-next" style="padding:2px 8px">›</button>${d.periodOffset!==0?'<button class="btn btn-ghost btn-sm rp-reset" style="padding:2px 8px;margin-left:4px">回到当前</button>':''}</div></div>
         </div>
         ${dateRangeInfo}
         ${!stats.hasData?noDataMsg:d.view==='cards'?`
         <div style="background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:16px;margin-bottom:12px">
-          <div style="font-weight:700;font-size:15px;margin-bottom:12px">🎯 ${labels[d.period]}核心指标</div>
+          <div style="font-weight:700;font-size:15px;margin-bottom:12px">🎯 ${periodLabel}核心指标</div>
           <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:space-around">
             ${ring('计划完成',planRate,'var(--primary)')}
             ${ring('早睡率',earlyRate,'#22a06b')}
-            ${ring('英语完成',enRate,'#6EA8FF')}
+            ${ring('英语学习',enRate,'#6EA8FF')}
             ${ring('复盘覆盖',reviewRate,'#f5b42f')}
           </div>
         </div>
@@ -4899,14 +5368,15 @@ const MODULE_TYPES={
           <div style="font-weight:700;font-size:15px;margin-bottom:12px">📊 详细进度</div>
           ${bar('计划完成',stats.planDone,stats.planTotal,'项','var(--primary)')}
           ${bar('早睡天数',stats.early,stats.sleepDays,'天','#22a06b')}
-          ${bar('运动天数',stats.exDays,periodLen,'天','#f5b42f')}
-          ${bar('冥想天数',stats.medDays,periodLen,'天','#9b6dff')}
-          ${bar('英语完成',stats.enDone,stats.enTotal,'项','#6EA8FF')}
-          ${bar('复盘天数',stats.reviewDays,periodLen,'天','#ff7a7a')}
+          ${bar('运动',stats.exDays,periodLen,'天','#f5b42f')}
+          ${bar('冥想',stats.medDays,periodLen,'天','#9b6dff')}
+          ${bar('英语学习',stats.enDone,stats.enTotal,'项','#6EA8FF')}
+          ${bar('阅读',stats.readDays,periodLen,'天','#ec4899')}
+          ${bar('复盘',stats.reviewDays,periodLen,'天','#ff7a7a')}
           ${goalBars?`<div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--card-border)"><div style="font-weight:700;font-size:13px;margin-bottom:6px">📌 目标板块完成率</div>${goalBars}</div>`:''}
         </div>
         <div style="background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:16px;margin-bottom:12px">
-          <div style="font-weight:700;font-size:15px;margin-bottom:10px">📋 ${labels[d.period]}总结摘要</div>
+          <div style="font-weight:700;font-size:15px;margin-bottom:10px">📋 ${periodLabel}总结摘要</div>
           <div style="display:grid;gap:10px">
             <div style="background:#22a06b10;border-left:3px solid #22a06b;border-radius:0 8px 8px 0;padding:8px 12px">
               <div style="font-weight:700;color:#22a06b;font-size:13px;margin-bottom:4px">✓ 做得好的</div>
@@ -4922,16 +5392,16 @@ const MODULE_TYPES={
             </div>
           </div>
         </div>
-        `:`<div class="report-text" style="white-space:pre-wrap;line-height:1.8">${stats.hasData?`${labels[d.period]}回顾
+        `:`<div class="report-text" style="white-space:pre-wrap;line-height:1.8">${stats.hasData?`${periodLabel}回顾
 
 【执行】计划完成 ${stats.planDone}/${stats.planTotal}，完成率 ${planRate}%。
-【健康】睡眠 ${stats.sleepDays} 天，早睡 ${stats.early} 天（${earlyRate}%）；运动 ${stats.exDays} 天；冥想 ${stats.medDays} 天/${stats.medMin} 分。
-【学习】英语完成率 ${enRate}%（${stats.enDone}/${stats.enTotal}）；阅读 ${stats.readMin} 分钟。
+【健康】睡眠 ${stats.sleepDays} 天，早睡 ${stats.early} 天（${earlyRate}%）；运动 ${stats.exDays} 天/${stats.exMin}分钟；冥想 ${stats.medDays} 天/${stats.medMin} 分钟。
+【学习】英语学习情况 ${enRate}%（${stats.enDone}/${stats.enTotal}）；阅读 ${stats.readDays} 天/${stats.readMin} 分钟。
 【复盘】记录 ${stats.reviewDays} 天。
 
 做得好的：${goodList.length?goodList.join('；'):'已开始记录。'}
 需要改进：${improveList.length?improveList.join('；'):'保持当前节奏。'}
-优化建议：${suggestions.map((s,i)=>`${i+1}. ${s}`).join(' ')}`:`${labels[d.period]}暂无记录数据。
+优化建议：${suggestions.map((s,i)=>`${i+1}. ${s}`).join(' ')}`:`${periodLabel}暂无记录数据。
 
 请在每日计划、睡眠、运动、复盘等板块记录数据后查看报告。`}</div>`}
         <div style="background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:16px;margin-bottom:12px">
@@ -4942,9 +5412,12 @@ const MODULE_TYPES={
       </div>`;
     },
     bind(body,mod,save){
-      body.querySelector('.rp-period')?.addEventListener('change',e=>{mod.data.period=e.target.value;save();rerender(mod);});
+      body.querySelector('.rp-period')?.addEventListener('change',e=>{mod.data.period=e.target.value;mod.data.periodOffset=0;save();rerender(mod);});
       body.querySelector('.rp-view')?.addEventListener('change',e=>{mod.data.view=e.target.value;save();rerender(mod);});
       body.querySelector('.rp-detail-toggle')?.addEventListener('click',()=>{mod.data.showDetail=!mod.data.showDetail;save();rerender(mod);});
+      body.querySelector('.rp-prev')?.addEventListener('click',()=>{mod.data.periodOffset=(mod.data.periodOffset||0)-1;save();rerender(mod);});
+      body.querySelector('.rp-next')?.addEventListener('click',()=>{mod.data.periodOffset=(mod.data.periodOffset||0)+1;save();rerender(mod);});
+      body.querySelector('.rp-reset')?.addEventListener('click',()=>{mod.data.periodOffset=0;save();rerender(mod);});
     }
   },
 
@@ -4964,7 +5437,7 @@ const MODULE_TYPES={
           <div style="font-size:12px;color:var(--text-sec);margin-top:4px">缓存版本号用于自动更新检测，功能版本号记录每次更新的内容变化</div>
         </div>
         <div class="form-row">
-          <div class="form-group" style="max-width:100px"><input type="text" class="cl-version" placeholder="V9.0" value="V9.0"></div>
+          <div class="form-group" style="max-width:100px"><input type="text" class="cl-version" placeholder="V9.2" value="V9.2"></div>
           <div class="form-group" style="max-width:140px"><input type="date" class="cl-date" value="${todayStr()}"></div>
         </div>
         <div class="form-group"><textarea class="cl-changes" placeholder="更新内容，每行一个要点..." style="min-height:80px"></textarea></div>
@@ -5062,7 +5535,7 @@ const MODULE_TYPES={
           <div class="form-group"><input type="text" class="cl-link" placeholder="链接(可选，保存后可生成摘要)"></div>
           <button class="btn btn-primary btn-sm cl-add">收藏</button>
         </div>
-        <div class="form-group"><textarea class="cl-note" placeholder="备注(可选，支持换行；也可以粘贴正文用于生成总结)" style="min-height:78px"></textarea></div>
+        <div class="form-group"><textarea class="cl-note" placeholder="备注(可选)：可粘贴文章正文用于自动生成总结，或直接写几句要点" style="min-height:78px"></textarea></div>
         <div class="collection-groups">
           ${visibleCats.map(cat=>{
             const rows=d.entries.filter(e=>e.category===cat).slice().reverse();
@@ -5218,7 +5691,7 @@ const MODULE_TYPES={
           entry.link=newLink;
           entry.category=newCat;
           entry.note=newNote;
-          entry.summary='';
+          // 保留已有摘要，不清除
           if(!mod.data.categories.includes(newCat))mod.data.categories.push(newCat);
           mod.data.editingId='';
           entry.updatedAt=nowStr();
@@ -5661,10 +6134,22 @@ function renderSideNav(){
       if(iconWrap)iconWrap.innerHTML=iconSvg(moreOpen?'up':'down');
     });
   }
-  // 迭代更新聚焦
+  // 关于本站折叠（使用 onclick 避免重复绑定）
+  const aboutToggle=document.getElementById('aboutToggle');
+  const aboutBody=document.getElementById('aboutBody');
+  if(aboutToggle&&aboutBody){
+    aboutToggle.onclick=()=>{
+      const expanded=aboutBody.style.display!=='none';
+      aboutBody.style.display=expanded?'none':'block';
+      aboutToggle.classList.toggle('expanded',!expanded);
+      const icon=aboutToggle.querySelector('.more-section-icon');
+      if(icon)icon.textContent=expanded?'▸':'▾';
+    };
+  }
+  // 更新日志按钮
   const moreChangelogBtn=document.getElementById('moreChangelogBtn');
   if(moreChangelogBtn){
-    moreChangelogBtn.addEventListener('click',()=>{
+    moreChangelogBtn.onclick=()=>{
       const changelogMod=DB.data.modules.find(m=>m.type==='changelog');
       if(changelogMod){
         DB.data.focusModule=changelogMod.id;
@@ -5672,7 +6157,7 @@ function renderSideNav(){
         renderDashboard();
         highlightActiveNav();
       }
-    });
+    };
   }
   highlightActiveNav();
 }
@@ -5980,6 +6465,70 @@ function exportData(){
   const a=document.createElement('a');
   a.href=url;a.download=`tantan-workbench-${todayStr()}.json`;
   a.click();URL.revokeObjectURL(url);
+}
+
+/* 自动备份：每7天自动导出一次 JSON 备份文件（如配置了云同步则先同步再备份） */
+async function checkAutoBackup(){
+  try{
+    const lastBackup=localStorage.getItem('tantan_last_auto_backup')||'';
+    const now=Date.now();
+    const sevenDays=7*24*60*60*1000;
+    if(!lastBackup||now-parseInt(lastBackup,10)>sevenDays){
+      const score=dataScore(DB.data);
+      if(score<10)return; // 数据太少不自动备份
+      // 如果配置了自动同步，先同步数据
+      const cfg=getSyncConfig();
+      let syncMsg='';
+      if(cfg.autoSync&&cfg.serverUrl&&cfg.syncKey){
+        try{
+          await syncPush(true);
+          syncMsg='（已先同步到云端）';
+        }catch(e){syncMsg='（云端同步失败，仅本地备份）';}
+      }
+      // 自动导出
+      const data=JSON.stringify(DB.data,null,2);
+      const blob=new Blob([data],{type:'application/json'});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=url;a.download=`tantan-backup-auto-${todayStr()}.json`;
+      document.body.appendChild(a);a.click();document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      localStorage.setItem('tantan_last_auto_backup',String(now));
+      // 显示温和提示
+      setTimeout(()=>{
+        const toast=document.createElement('div');
+        toast.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--primary);color:#fff;padding:10px 20px;border-radius:12px;font-size:13px;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,.2);animation:fadeIn .3s';
+        toast.textContent='📦 已自动备份本周数据'+syncMsg;
+        document.body.appendChild(toast);
+        setTimeout(()=>{toast.style.opacity='0';toast.style.transition='opacity .5s';setTimeout(()=>toast.remove(),500);},4000);
+      },2000);
+    }
+  }catch(e){}
+}
+
+/* 数据完整性校验：加载时检测数据是否损坏 */
+function checkDataIntegrity(){
+  try{
+    const raw=localStorage.getItem(DB.KEY);
+    if(!raw)return true;
+    JSON.parse(raw); // 如果 JSON 损坏会抛异常
+    return true;
+  }catch(e){
+    // 数据损坏，尝试恢复备份
+    const backups=[
+      localStorage.getItem('tantan_workbench_backup_latest'),
+      localStorage.getItem('tantan_workbench_backup')
+    ].filter(Boolean);
+    for(const backup of backups){
+      try{
+        JSON.parse(backup); // 验证备份是否有效
+        localStorage.setItem(DB.KEY,backup);
+        alert('⚠️ 检测到数据损坏，已自动从备份恢复。\n\n建议立即导出数据保存备份。');
+        return true;
+      }catch(e2){}
+    }
+    return false;
+  }
 }
 
 // 智能合并导入：保留旧数据的所有记录，只补充新模块
@@ -6677,6 +7226,30 @@ function migrateWorkbenchData(){
         changes:'V9.0 全面升级与数据安全增强（对应缓存版本 v43）：\n• 图表动态高度：所有柱状图（睡眠/运动/冥想/阅读）根据实际数据动态调整高度，不再截断\n• 英语语法检查重构：集成LanguageTool API在线检测引擎，支持be动词缺失、时态、主谓一致等全面语法检查，API失败时自动回退本地规则\n• 翻译质量提升：优先使用Google翻译API，MyMemory作为备用，修复"人少景美"等翻译不准确问题\n• 中英双向查词：支持输入中文查询对应英文单词，先本地匹配再调翻译API兜底\n• 爆款话题平台修复：修复选择小红书返回B站内容的问题，严格映射平台别名（xiaohongshu/xhs），确保数据源正确\n• 运动类型扩展：新增有氧、无氧、八段锦类型，"其他"支持自定义输入弹框\n• 收藏库"其他"自定义：收藏库分类"其他"同样支持自定义输入\n• 阅读模块保存修复：仅保存编辑过的日期数据，未编辑日期自动清除不显示在看板上\n• 英语看板日期跳转：点击月历日期自动跳转并高亮当天单词内容区域\n• 灵感记录标签分组：按标签分类显示，支持折叠/展开，内容多时更整洁\n• 自定义模块扩展：新增"目标追踪"（OKR式）和"习惯打卡"（31天日历）两种模块类型\n• 回收站功能：删除的模块移入回收站，可随时恢复，支持清空\n• 撤回按钮：各模块周保存支持撤回，恢复上次保存前的数据\n• 数据安全：版本更新自动备份、本地多重备份机制、数据导出导入确保数据不丢失'
       });
     }
+    if(!changelog.data.logs.some(l=>l.version==='V9.1')){
+      changelog.data.logs.push({
+        id:genId(),date:todayStr(),version:'V9.1',
+        changes:'V9.1 全面修复与优化（对应缓存版本 v44）：\n• 英语单词去重：从2个词包扩展到7个，使用day-of-year算法确保全年不重复\n• 冥想记录修复：支持保存0分钟，修改后数据正确持久化\n• 阅读默认值修复：未编辑日期不再显示10分钟默认值\n• 长期报告升级：支持日期回溯，统一按日历周期聚合，新增运动报告\n• 英语完成率修复：从0%显示问题修复，重命名为"英语学习情况"\n• 柱状图截断修复：所有图表动态调整高度，不再截断底部文字\n• 关于本站折叠：改为点击展开/收起，节省空间\n• 英语写作纠错：应用LanguageTool API建议到修正版\n• 收藏库优化：降低总结阈值，改进错误提示，提供清晰解决步骤'
+      });
+    }
+    if(!changelog.data.logs.some(l=>l.version==='V9.2')){
+      changelog.data.logs.push({
+        id:genId(),date:todayStr(),version:'V9.2',
+        changes:'V9.2 智能升级：AI助手+收藏库智能提取+自动备份（对应缓存版本 v45）：\n• 收藏库智能提取：集成Jina Reader API，无需密钥即可直接提取网页正文，成功率大幅提升，CORS代理作为回退\n• AI学习计划生成：接入Gemini API（免费），技能板块新增"AI生成学习计划"按钮，根据技能名称、资源和笔记自动生成个性化分步骤学习计划\n• AI助手设置：设置页新增AI助手配置区，支持保存/清除/测试Gemini API密钥，密钥仅存储在浏览器本地\n• 自动备份机制：每7天自动导出JSON备份到下载文件夹，加载时自动检测数据完整性，损坏时自动从备份恢复\n• 数据安全增强：多层备份保护（自动备份+版本更新备份+本地备份+手动导出）'
+      });
+    }
+    if(!changelog.data.logs.some(l=>l.version==='V9.3')){
+      changelog.data.logs.push({
+        id:genId(),date:todayStr(),version:'V9.3',
+        changes:'V9.3 全面优化修复（对应缓存版本 v46）：\n• Gemini API修复：模型更新为gemini-2.0-flash，解决404错误\n• 英语单词重复修复：新增200词词库，按日期分配不重复词包\n• 英语单词中文折叠：例句和词组中文释义默认隐藏，点击[译]展开\n• 英语写作纠错修复：API改为POST，CSS修复使纠错结果正确显示\n• 阅读模块修复：分钟placeholder改为10，未填写日期不保存\n• 收藏库智能提取增强：新增AI摘要功能，提取失败时回退本地摘要\n• 技能板块优化：资源输入框支持换行，AI学习计划生成修复\n• 关于本站修复：onclick避免重复绑定\n• 收藏库编辑优化：编辑后保留摘要，新增取消按钮\n• 自动备份优化：配置云同步时先同步再备份\n• 云同步方案说明：设置页新增同步方案对比'
+      });
+    }
+    if(!changelog.data.logs.some(l=>l.version==='V9.4')){
+      changelog.data.logs.push({
+        id:genId(),date:todayStr(),version:'V9.4',
+        changes:'V9.4 英语单词去重算法重构（对应缓存版本 v47）：\n• 英语单词算法重构：改用种子化洗牌算法，每月不同排列组合\n• 彻底解决7/8与8/5、7/9与8/6等跨月重复问题\n• 解决月份内21日与1日单词重复问题（分pass洗牌）\n• 确保每月每天单词组合均不相同'
+      });
+    }
   }
   DB.save();
 }
@@ -6685,6 +7258,8 @@ function migrateWorkbenchData(){
    初始化
 ============================================================ */
 function init(){
+  // 数据完整性校验：加载前检测数据是否损坏
+  checkDataIntegrity();
   try{
     const existing=localStorage.getItem('tantan_workbench_data')||localStorage.getItem('tantan_workbench_v1');
     if(existing)localStorage.setItem('tantan_workbench_backup',existing);
@@ -6829,6 +7404,34 @@ function init(){
   document.getElementById('exportBtn').addEventListener('click',exportData);
   document.getElementById('importBtn').addEventListener('click',()=>document.getElementById('importFile').click());
   document.getElementById('recoverBtn').addEventListener('click',recoverStoredData);
+
+  // AI 助手设置
+  const geminiInput=document.getElementById('geminiApiKey');
+  if(geminiInput)geminiInput.value=getApiKey();
+  document.getElementById('saveApiKeyBtn')?.addEventListener('click',()=>{
+    setApiKey(geminiInput?.value?.trim()||'');
+    document.getElementById('apiKeyStatus').textContent=getApiKey()?'✅ 密钥已保存':'密钥已清除';
+    document.getElementById('apiKeyStatus').style.color=getApiKey()?'#15803d':'var(--text-sec)';
+  });
+  document.getElementById('clearApiKeyBtn')?.addEventListener('click',()=>{
+    setApiKey('');if(geminiInput)geminiInput.value='';
+    document.getElementById('apiKeyStatus').textContent='密钥已清除';
+    document.getElementById('apiKeyStatus').style.color='var(--text-sec)';
+  });
+  document.getElementById('testApiKeyBtn')?.addEventListener('click',async()=>{
+    const key=getApiKey();
+    if(!key){document.getElementById('apiKeyStatus').textContent='⚠️ 请先保存密钥';document.getElementById('apiKeyStatus').style.color='#dc2626';return;}
+    const statusEl=document.getElementById('apiKeyStatus');
+    statusEl.textContent='正在测试连接...';statusEl.style.color='var(--text-sec)';
+    try{
+      const reply=await callAI('请回复"连接成功"四个字');
+      statusEl.textContent=reply.includes('成功')?'✅ 连接成功！AI 助手已就绪':'✅ 收到回复：'+reply.slice(0,30);
+      statusEl.style.color='#15803d';
+    }catch(err){
+      statusEl.textContent='❌ 连接失败：'+err.message;
+      statusEl.style.color='#dc2626';
+    }
+  });
   document.getElementById('importFile').addEventListener('change',e=>{
     if(e.target.files[0])importData(e.target.files[0]);
     e.target.value='';
@@ -6841,6 +7444,9 @@ function init(){
   });
 
   initSync();
+
+  // 自动备份：每7天自动导出一次 JSON 到下载文件夹
+  setTimeout(()=>{checkAutoBackup();},3000);
 
   // 自动更新检测：页面加载后延迟检查，避免阻塞首屏
   setTimeout(() => {
@@ -6927,6 +7533,5 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
-
-
-</body></html>
+</body>
+</html>
