@@ -1,12 +1,12 @@
 {
   "weibo": {
     "source": "微博热搜",
-    "updatedAt": "2026-10-06T06:39:13.672Z",
+    "updatedAt": "2026-10-07T06:16:12.759Z",
     "items": []
   },
   "zhihu": {
     "source": "知乎热榜",
-    "updatedAt": "2026-10-06T06:39:13.672Z",
+    "updatedAt": "2026-10-07T06:16:12.759Z",
     "items": []
   }
 }
